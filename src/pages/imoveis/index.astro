@@ -22,6 +22,13 @@ const quartos = [
   { value: '3', label: '3+' },
   { value: '4', label: '4+' },
 ];
+const areas = [
+  { value: 'all', label: 'Qualquer' },
+  { value: '0-100', label: 'Até 100 m²' },
+  { value: '100-200', label: '100 – 200 m²' },
+  { value: '200-300', label: '200 – 300 m²' },
+  { value: '300-', label: '+300 m²' },
+];
 ---
 <Base
   title="Imóveis"
@@ -93,6 +100,14 @@ const quartos = [
             <div class="cfpills">
               {quartos.map((o) => (
                 <button type="button" class:list={['chip', { 'is-active': o.value === 'all' }]} data-group="quartos" data-value={o.value} aria-pressed={o.value === 'all' ? 'true' : 'false'}>{o.label}</button>
+              ))}
+            </div>
+          </div>
+          <div class="cfgroup">
+            <span class="cflabel"><Icon name="ruler" size={13} stroke={1.7} /> Área</span>
+            <div class="cfpills">
+              {areas.map((o) => (
+                <button type="button" class:list={['chip', { 'is-active': o.value === 'all' }]} data-group="area" data-value={o.value} aria-pressed={o.value === 'all' ? 'true' : 'false'}>{o.label}</button>
               ))}
             </div>
           </div>
