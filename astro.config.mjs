@@ -12,18 +12,8 @@ export default defineConfig({
   },
   vite: {
     build: {
-      minify: 'terser',
+      minify: 'esbuild',
       cssCodeSplit: true,
-      rollupOptions: {
-        output: {
-          manualChunks: {
-            vendor: ['astro'],
-          },
-        },
-      },
-    },
-    ssr: {
-      external: [],
     },
   },
 });
