@@ -200,8 +200,8 @@ const isActive = (href: string) => {
   @media (max-width: 560px) {
     .nav__inner {
       width: min(96vw, calc(100% - 2 * var(--gutter)));
-      height: clamp(56px, 12vw, 62px);
-      padding: 0 clamp(12px, 2vw, 16px);
+      height: clamp(64px, 14vw, 72px);
+      padding: 0 clamp(14px, 2.4vw, 18px);
       gap: auto;
       border-radius: 999px;
       justify-content: space-between;
@@ -211,7 +211,7 @@ const isActive = (href: string) => {
       flex-shrink: 0;
     }
     .nav__brand img {
-      height: 18px;
+      height: 24px;
       width: auto;
     }
     .nav__phone { display: none; }
@@ -219,12 +219,12 @@ const isActive = (href: string) => {
       margin-left: auto;
     }
     .nav__toggle {
-      width: clamp(40px, 8vw, 44px);
-      height: clamp(40px, 8vw, 44px);
+      width: clamp(44px, 9vw, 48px);
+      height: clamp(44px, 9vw, 48px);
       margin-left: 0;
     }
     .nav__toggle span {
-      width: clamp(18px, 3.5vw, 20px);
+      width: clamp(19px, 3.6vw, 21px);
     }
   }
   @media (min-width: 1121px) {
