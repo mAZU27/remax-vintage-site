@@ -66,44 +66,44 @@ const tipologias = ['T0', 'T1', 'T2', 'T3', 'T4', 'T5+', 'Moradia', 'Outro'];
 <style>
   .vform {
     background: var(--cream-soft); border: 1px solid var(--hairline-gold); border-radius: var(--radius-lg);
-    padding: clamp(24px, 3vw, 40px); box-shadow: var(--shadow-card); color: var(--ink);
+    padding: clamp(16px, 3vw, 40px); box-shadow: var(--shadow-card); color: var(--ink);
   }
   .vform__grid { display: grid; grid-template-columns: 1fr 1fr; gap: 16px 18px; }
   .field { display: flex; flex-direction: column; gap: 7px; margin: 0; }
   .field--full { grid-column: 1 / -1; }
-  .field label { font-size: 12.5px; letter-spacing: 0.04em; font-weight: 500; color: var(--ink-60); }
+  .field label { font-size: clamp(11px, 1.2vw, 12.5px); letter-spacing: 0.04em; font-weight: 500; color: var(--ink-60); }
   .field__opt { color: var(--ink-40); font-weight: 400; text-transform: none; letter-spacing: 0; }
   .vform input, .vform select, .vform textarea {
-    width: 100%; padding: 13px 14px; font-size: 15px; color: var(--ink);
+    width: 100%; padding: clamp(9px, 1.2vw, 13px) clamp(10px, 1.5vw, 14px); font-size: clamp(13px, 1.1vw, 15px); color: var(--ink);
     background: var(--cream); border: 1px solid var(--ink-20); border-radius: var(--radius-sm);
     transition: border-color var(--t-fast), box-shadow var(--t-fast);
   }
-  .vform textarea { resize: vertical; min-height: 78px; }
+  .vform textarea { resize: vertical; min-height: clamp(60px, 20vw, 78px); }
   .vform input:focus, .vform select:focus, .vform textarea:focus {
     outline: none; border-color: var(--gold); box-shadow: var(--ring);
   }
   .vform [aria-invalid="true"] { border-color: var(--error); }
-  .field__err { font-size: 12px; color: var(--error); }
+  .field__err { font-size: clamp(10px, 1vw, 12px); color: var(--error); }
 
   .vform__consent {
-    display: flex; gap: 11px; align-items: flex-start; margin-top: 18px;
-    font-size: 13px; line-height: 1.5; color: var(--ink-60);
+    display: flex; gap: clamp(7px, 1vw, 11px); align-items: flex-start; margin-top: clamp(12px, 1.5vw, 18px);
+    font-size: clamp(11px, 1.1vw, 13px); line-height: 1.5; color: var(--ink-60);
   }
-  .vform__consent input { width: 18px; height: 18px; margin-top: 1px; flex-shrink: 0; accent-color: var(--gold-deep); }
-  :global(.vform__submit) { margin-top: 22px; width: 100%; }
+  .vform__consent input { width: 16px; height: 16px; margin-top: 1px; flex-shrink: 0; accent-color: var(--gold-deep); }
+  :global(.vform__submit) { margin-top: clamp(14px, 2vw, 22px); width: 100%; }
   .vform__note {
-    display: flex; align-items: center; justify-content: center; gap: 8px;
-    margin: 16px 0 0; font-size: 12.5px; color: var(--ink-40); letter-spacing: 0.02em;
+    display: flex; align-items: center; justify-content: center; gap: clamp(6px, 1vw, 8px);
+    margin: clamp(10px, 1.5vw, 16px) 0 0; font-size: clamp(11px, 1vw, 12.5px); color: var(--ink-40); letter-spacing: 0.02em;
   }
-  .vform__note :global(.icon) { color: var(--gold-deep); }
+  .vform__note :global(.icon) { color: var(--gold-deep); flex-shrink: 0; }
 
   /* Success state */
-  .vform__success { text-align: center; padding: clamp(20px, 3vw, 40px) 0; }
+  .vform__success { text-align: center; padding: clamp(14px, 3vw, 40px) 0; }
   .vform__success-icon {
-    display: inline-grid; place-items: center; width: 58px; height: 58px; border-radius: 50%;
-    background: var(--gold); color: var(--navy-ink); margin-bottom: 18px;
+    display: inline-grid; place-items: center; width: clamp(48px, 10vw, 58px); height: clamp(48px, 10vw, 58px); border-radius: 50%;
+    background: var(--gold); color: var(--navy-ink); margin-bottom: clamp(12px, 2vw, 18px);
   }
-  .vform__success p { margin: 10px auto 0; color: var(--ink-60); max-width: 42ch; }
+  .vform__success p { margin: clamp(6px, 1vw, 10px) auto 0; color: var(--ink-60); max-width: 42ch; }
 
   @media (max-width: 540px) { .vform__grid { grid-template-columns: 1fr; } }
 </style>

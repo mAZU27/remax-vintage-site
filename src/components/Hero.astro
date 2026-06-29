@@ -9,17 +9,20 @@ import { primaryCta } from '../data/site';
 ---
 <section class="hero" data-hero>
   <div class="hero__media">
-    <img
-      class="hero__bg"
-      src="/media/hero-collection-1280.jpg"
-      srcset="/media/hero-collection-768.jpg 768w, /media/hero-collection-1280.jpg 1280w, /media/hero-collection-1672.jpg 1672w"
-      sizes="100vw"
-      alt=""
-      width="1672"
-      height="941"
-      fetchpriority="high"
-      decoding="async"
-    />
+    <picture>
+      <source media="(max-width: 560px)" srcset="/media/hero-interior-porto.jpg" />
+      <img
+        class="hero__bg"
+        src="/media/hero-collection-1280.jpg"
+        srcset="/media/hero-collection-768.jpg 768w, /media/hero-collection-1280.jpg 1280w, /media/hero-collection-1672.jpg 1672w"
+        sizes="100vw"
+        alt=""
+        width="1672"
+        height="941"
+        fetchpriority="high"
+        decoding="async"
+      />
+    </picture>
     <div class="hero__scrim"></div>
     <div class="hero__grain" aria-hidden="true"></div>
   </div>
@@ -171,12 +174,49 @@ import { primaryCta } from '../data/site';
     .hero__bg { object-position: 52% center; }
   }
   @media (max-width: 560px) {
-    .hero__bg { object-position: 42% center; }
-    .hero__copy { min-width: 0; }
-    /* Stack CTAs full-width so neither button is clipped or hard to tap. */
-    .hero__ctas { flex-direction: column; align-items: stretch; }
-    .hero__ctas :global(.btn) { width: 100%; }
-    .hero__card { max-width: none; }
+    .hero { min-height: 100svh; justify-content: flex-start; align-items: flex-start; padding: calc(var(--nav-h) + 20px) var(--gutter) var(--gutter); flex-direction: column; }
+    .hero__bg { object-position: 70% center; }
+    .hero__copy {
+      display: flex;
+      flex-direction: column;
+      max-width: 100%;
+      z-index: 2;
+    }
+    .hero__eyebrow {
+      font-size: clamp(10px, 1vw, 11px);
+      letter-spacing: 0.08em;
+    }
+    .hero__title {
+      margin-top: 12px;
+      font-size: clamp(28px, 6vw, 38px);
+      max-width: 18ch;
+    }
+    .hero__rule {
+      margin-top: 16px;
+      width: 60px;
+    }
+    .hero__lede {
+      margin-top: 14px;
+      font-size: clamp(14px, 1.2vw, 16px);
+      max-width: 38ch;
+    }
+    .hero__ctas {
+      margin-top: 20px;
+      flex-direction: column;
+      gap: 12px;
+    }
+    .hero__cue { display: none; }
+    .hero__card {
+      display: flex;
+      position: absolute;
+      bottom: var(--gutter);
+      left: var(--gutter);
+      right: var(--gutter);
+      max-width: none;
+      width: auto;
+      margin-top: 0;
+      z-index: 2;
+    }
   }
   @media (prefers-reduced-motion: reduce) {
     .hero__cue :global(.icon) { animation: none; }

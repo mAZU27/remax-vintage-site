@@ -1,0 +1,34 @@
+---
+import Base from '../../layouts/Base.astro';
+import PageHeader from '../../components/PageHeader.astro';
+import BlogCard from '../../components/BlogCard.astro';
+import { articles } from '../../data/insights';
+
+const feature = articles.find((a) => a.featured) ?? articles[0];
+const rest = articles.filter((a) => a.slug !== feature.slug);
+---
+<Base
+  title="Insights"
+  description="Leitura do mercado imobiliário premium do Porto — análises, guias de zona e perspetivas da equipa Collection Vintage."
+>
+  <PageHeader
+    eyebrow="Insights"
+    title={'Leitura do mercado <em class="em-gold serif-it">premium</em>'}
+    lede="Análises, guias de zona e perspetivas sobre o segmento de luxo no Porto — pela equipa Collection Vintage."
+  />
+
+  <section class="section section--cream">
+    <div class="container">
+      <div class="bgrid">
+        <BlogCard article={feature} feature />
+        {rest.map((a) => <BlogCard article={a} />)}
+      </div>
+    </div>
+  </section>
+</Base>
+
+<style>
+  .bgrid { display: grid; grid-template-columns: repeat(3, 1fr); gap: clamp(18px, 2vw, 30px); }
+  @media (max-width: 980px) { .bgrid { grid-template-columns: repeat(2, 1fr); } }
+  @media (max-width: 640px) { .bgrid { grid-template-columns: 1fr; } }
+</style>

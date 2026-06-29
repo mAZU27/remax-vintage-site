@@ -102,9 +102,8 @@ export function detectIntent(text: string): IntentId | null {
       if (t.includes(` ${normalize(p)} `) || t.includes(normalize(p))) score += 3;
     }
     for (const k of intent.keywords) {
-      const nk = normalize(k);
-      // word-boundary-ish match to avoid partial-substring noise
-      if (t.includes(` ${nk} `) || t.includes(` ${nk}`) && nk.length > 2) score += 1;
+      // whole-word / whole-phrase match (t is space-padded) to avoid substring noise
+      if (t.includes(` ${normalize(k)} `)) score += 1;
     }
     if (score > 0 && (!best || score > best.score)) best = { id: intent.id, score };
   }

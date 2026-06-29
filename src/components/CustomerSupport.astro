@@ -1,91 +1,59 @@
 ---
-// Floating customer-support widget — liquid-glass navy/gold aesthetic,
-// matching the chat-pin reference. Site-wide (mounted in Base.astro).
-// Channels use the central placeholder contacts from site.ts.
-import { site } from '../data/site';
+// Floating customer-support assistant — a conversational, intent-driven chat
+// widget in the Collection Vintage liquid-glass navy/gold aesthetic. Site-wide
+// (mounted in Base.astro). The brain lives in src/data/support*.ts:
+//   supportKnowledge.ts — real, honest content (composed from site.ts/faqs.ts)
+//   supportIntents.ts   — accent-insensitive intent detection + FAQ search
+//   supportResponses.ts — intent → reply + lead-capture flows
+// This file is UI + a thin client controller that imports that engine.
 import Icon from './Icon.astro';
-
-const channels = [
-  {
-    icon: 'whatsapp',
-    label: 'WhatsApp',
-    desc: 'Resposta rápida, no seu ritmo',
-    href: site.whatsappHref,
-    external: true,
-  },
-  {
-    icon: 'phone',
-    label: 'Telefone',
-    desc: site.phone,
-    href: site.phoneHref,
-    external: false,
-  },
-  {
-    icon: 'mail',
-    label: 'E-mail',
-    desc: site.email,
-    href: `mailto:${site.email}`,
-    external: false,
-  },
-  {
-    icon: 'chat',
-    label: 'Deixar mensagem',
-    desc: 'Falamos consigo com discrição',
-    href: '/contacto',
-    external: false,
-  },
-];
 ---
 <div class="cs" data-cs>
   <!-- Panel -->
-  <div class="cs__panel" id="cs-panel" role="dialog" aria-label="Apoio ao cliente" aria-modal="false" hidden>
+  <div class="cs__panel" id="cs-panel" role="dialog" aria-label="Assistente Collection Vintage" aria-modal="false" hidden>
     <header class="cs__head">
-      <span class="cs__avatar" aria-hidden="true">
-        <Icon name="chat" size={22} stroke={1.5} />
-      </span>
+      <span class="cs__avatar" aria-hidden="true"><Icon name="chat" size={22} stroke={1.5} /></span>
       <span class="cs__head-text">
-        <span class="cs__title">Apoio Collection Vintage</span>
-        <span class="cs__status"><span class="cs__dot" aria-hidden="true"></span> Disponível · sem compromisso</span>
+        <span class="cs__title">Assistente Collection Vintage</span>
+        <span class="cs__status"><span class="cs__dot" aria-hidden="true"></span> Assistente digital · sem compromisso</span>
       </span>
-      <button class="cs__close" type="button" aria-label="Fechar apoio" data-cs-close>
+      <button class="cs__close" type="button" aria-label="Fechar assistente" data-cs-close>
         <Icon name="close" size={18} stroke={1.7} />
       </button>
     </header>
 
-    <p class="cs__lead">Como prefere falar connosco?</p>
+    <div class="cs__thread" data-cs-thread role="log" aria-live="polite" aria-label="Conversa"></div>
 
-    <ul class="cs__channels">
-      {channels.map((c) => (
-        <li>
-          <a
-            class="cs__channel"
-            href={c.href}
-            target={c.external ? '_blank' : undefined}
-            rel={c.external ? 'noopener noreferrer' : undefined}
-          >
-            <span class="cs__channel-ic"><Icon name={c.icon} size={19} stroke={1.6} /></span>
-            <span class="cs__channel-text">
-              <span class="cs__channel-label">{c.label}</span>
-              <span class="cs__channel-desc">{c.desc}</span>
-            </span>
-            <span class="cs__channel-arrow"><Icon name="arrow" size={16} stroke={1.6} /></span>
-          </a>
-        </li>
-      ))}
-    </ul>
+    <form class="cs__input" data-cs-form>
+      <input
+        class="cs__field"
+        type="text"
+        data-cs-text
+        placeholder="Escreva a sua mensagem…"
+        autocomplete="off"
+        aria-label="Escreva a sua mensagem"
+      />
+      <button class="cs__send" type="submit" aria-label="Enviar mensagem">
+        <Icon name="send" size={19} stroke={1.7} />
+      </button>
+    </form>
 
     <p class="cs__foot"><Icon name="shield-check" size={14} stroke={1.6} /> Confidencial em cada etapa</p>
   </div>
 
   <!-- Floating button -->
-  <button class="cs__fab" type="button" aria-label="Apoio ao cliente" aria-expanded="false" aria-controls="cs-panel" data-cs-toggle>
+  <button class="cs__fab" type="button" aria-label="Abrir assistente" aria-expanded="false" aria-controls="cs-panel" data-cs-toggle>
     <span class="cs__fab-ring" aria-hidden="true"></span>
     <span class="cs__fab-icon cs__fab-icon--chat" aria-hidden="true"><Icon name="chat" size={26} stroke={1.5} /></span>
     <span class="cs__fab-icon cs__fab-icon--close" aria-hidden="true"><Icon name="close" size={24} stroke={1.8} /></span>
   </button>
 </div>
 
-<style>
+<style is:global>
+  /* Global (not scoped): the message/chip/CTA elements are created at runtime by
+     the controller below, so they never receive Astro's [data-astro-*] scope
+     attribute. Scoped rules would silently miss them. Every selector here is
+     namespaced (cs / cs__*) and the widget mounts once, so global is safe. */
   .cs {
     position: fixed; right: clamp(16px, 2.4vw, 30px); bottom: clamp(16px, 2.4vw, 30px);
     z-index: 950; display: flex; flex-direction: column; align-items: flex-end; gap: 14px;
@@ -108,7 +76,6 @@ const channels = [
   .cs__fab:hover { transform: translateY(-2px); border-color: var(--hairline-gold-strong); }
   .cs__fab:active { transform: translateY(0); }
 
-  /* Gold rim that reads as the pin's bezel */
   .cs__fab-ring {
     position: absolute; inset: 4px; border-radius: 50%; pointer-events: none;
     border: 1px solid rgba(184, 153, 104, 0.55);
@@ -120,7 +87,6 @@ const channels = [
   .cs[data-open] .cs__fab-icon--chat { opacity: 0; transform: scale(0.7) rotate(30deg); }
   .cs[data-open] .cs__fab-icon--close { opacity: 1; transform: scale(1) rotate(0); color: var(--cream); }
 
-  /* Gentle attention pulse on the rim — disabled for reduced motion */
   .cs__fab::after {
     content: ""; position: absolute; inset: 0; border-radius: 50%; pointer-events: none;
     border: 1px solid rgba(212, 187, 133, 0.5);
@@ -132,14 +98,14 @@ const channels = [
     70% { transform: scale(1.45); opacity: 0; }
     100% { transform: scale(1.45); opacity: 0; }
   }
-  @media (prefers-reduced-motion: reduce) {
-    .cs__fab::after { animation: none; opacity: 0; }
-  }
+  @media (prefers-reduced-motion: reduce) { .cs__fab::after { animation: none; opacity: 0; } }
 
   /* ---------- Panel (liquid-glass card) ---------- */
   .cs__panel {
-    width: min(340px, calc(100vw - 32px));
-    background: linear-gradient(180deg, rgba(16, 36, 61, 0.9), rgba(10, 23, 41, 0.88));
+    display: flex; flex-direction: column;
+    width: min(386px, calc(100vw - 28px));
+    height: min(582px, calc(100svh - 112px));
+    background: linear-gradient(180deg, rgba(16, 36, 61, 0.92), rgba(10, 23, 41, 0.9));
     -webkit-backdrop-filter: blur(22px) saturate(150%); backdrop-filter: blur(22px) saturate(150%);
     border: 1px solid rgba(176, 198, 230, 0.22);
     border-radius: 22px;
@@ -147,14 +113,20 @@ const channels = [
       0 34px 80px -30px rgba(6, 13, 26, 0.88),
       inset 0 1px 0 rgba(255, 255, 255, 0.14),
       inset 0 0 28px -12px rgba(150, 185, 235, 0.3);
-    padding: 16px;
+    overflow: hidden;
     transform-origin: bottom right; transform: translateY(10px) scale(0.96); opacity: 0;
     transition: transform var(--t-med), opacity var(--t-med);
   }
   .cs__panel[hidden] { display: none; }
   .cs[data-open] .cs__panel { transform: translateY(0) scale(1); opacity: 1; }
 
-  .cs__head { display: flex; align-items: center; gap: 12px; }
+  /* ---------- Header ---------- */
+  .cs__head {
+    display: flex; align-items: center; gap: 12px; padding: 15px 16px;
+    border-bottom: 1px solid rgba(176, 198, 230, 0.14);
+    background: linear-gradient(180deg, rgba(20, 43, 71, 0.6), rgba(20, 43, 71, 0));
+    flex-shrink: 0;
+  }
   .cs__avatar {
     width: 42px; height: 42px; border-radius: 50%; flex-shrink: 0;
     display: grid; place-items: center; color: var(--navy-ink);
@@ -162,12 +134,9 @@ const channels = [
     box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.4);
   }
   .cs__head-text { display: flex; flex-direction: column; gap: 3px; min-width: 0; }
-  .cs__title {
-    font-family: var(--font-serif); font-weight: 500; font-size: 16px; color: var(--cream);
-    line-height: 1.1;
-  }
+  .cs__title { font-family: var(--font-serif); font-weight: 500; font-size: 16px; color: var(--cream); line-height: 1.1; }
   .cs__status { display: inline-flex; align-items: center; gap: 6px; font-size: 11.5px; color: var(--white-70); letter-spacing: 0.02em; }
-  .cs__dot { width: 7px; height: 7px; border-radius: 50%; background: #6FCF97; box-shadow: 0 0 7px rgba(111, 207, 151, 0.8); }
+  .cs__dot { width: 7px; height: 7px; border-radius: 50%; background: #6FCF97; box-shadow: 0 0 7px rgba(111, 207, 151, 0.8); flex-shrink: 0; }
   .cs__close {
     margin-left: auto; flex-shrink: 0; width: 30px; height: 30px; border-radius: 50%;
     display: grid; place-items: center; cursor: pointer; color: var(--white-70);
@@ -176,66 +145,285 @@ const channels = [
   }
   .cs__close:hover { color: var(--cream); background: rgba(255, 255, 255, 0.1); }
 
-  .cs__lead { margin: 16px 2px 12px; font-size: 13px; color: var(--white-70); }
+  /* ---------- Thread ---------- */
+  .cs__thread {
+    flex: 1; min-height: 0; overflow-y: auto; overscroll-behavior: contain;
+    padding: 16px 14px 6px; display: flex; flex-direction: column; gap: 10px;
+    scrollbar-width: thin; scrollbar-color: rgba(176, 198, 230, 0.3) transparent;
+  }
+  .cs__thread::-webkit-scrollbar { width: 7px; }
+  .cs__thread::-webkit-scrollbar-thumb { background: rgba(176, 198, 230, 0.24); border-radius: 6px; }
 
-  .cs__channels { list-style: none; margin: 0; padding: 0; display: flex; flex-direction: column; gap: 8px; }
-  .cs__channel {
-    display: flex; align-items: center; gap: 12px; text-decoration: none;
-    padding: 11px 12px; border-radius: 14px;
-    background: rgba(255, 255, 255, 0.04);
-    border: 1px solid rgba(176, 198, 230, 0.14);
-    transition: background var(--t-fast), border-color var(--t-fast), transform var(--t-fast);
+  .cs__msg {
+    max-width: 86%; padding: 10px 13px; border-radius: 16px; font-size: 13.5px; line-height: 1.5;
+    white-space: pre-wrap; word-wrap: break-word; animation: cs-rise 0.3s var(--t-ease, ease) both;
   }
-  .cs__channel:hover {
-    background: rgba(184, 153, 104, 0.12);
-    border-color: var(--hairline-gold-strong);
-    transform: translateX(2px);
+  @keyframes cs-rise { from { opacity: 0; transform: translateY(6px); } to { opacity: 1; transform: none; } }
+
+  .cs__msg--bot {
+    align-self: flex-start; color: var(--cream);
+    background: rgba(255, 255, 255, 0.06); border: 1px solid rgba(176, 198, 230, 0.16);
+    border-bottom-left-radius: 6px;
   }
-  .cs__channel-ic {
-    width: 34px; height: 34px; border-radius: 50%; flex-shrink: 0;
-    display: grid; place-items: center; color: var(--gold-light);
-    background: rgba(11, 26, 46, 0.5); border: 1px solid var(--hairline-gold);
+  .cs__msg--user {
+    align-self: flex-end; color: var(--navy-ink); font-weight: 500;
+    background: linear-gradient(160deg, var(--gold-light), var(--gold));
+    border-bottom-right-radius: 6px;
   }
-  .cs__channel-text { display: flex; flex-direction: column; gap: 1px; min-width: 0; }
-  .cs__channel-label { font-size: 13.5px; font-weight: 500; color: var(--cream); }
-  .cs__channel-desc { font-size: 12px; color: var(--white-50); overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
-  .cs__channel-arrow { margin-left: auto; color: var(--white-30); transition: color var(--t-fast), transform var(--t-fast); }
-  .cs__channel:hover .cs__channel-arrow { color: var(--gold-light); transform: translateX(2px); }
+
+  /* Typing indicator */
+  .cs__typing { display: inline-flex; gap: 4px; align-items: center; }
+  .cs__typing span {
+    width: 6px; height: 6px; border-radius: 50%; background: var(--gold-light); opacity: 0.5;
+    animation: cs-blink 1.2s infinite ease-in-out;
+  }
+  .cs__typing span:nth-child(2) { animation-delay: 0.2s; }
+  .cs__typing span:nth-child(3) { animation-delay: 0.4s; }
+  @keyframes cs-blink { 0%, 80%, 100% { opacity: 0.3; transform: scale(0.85); } 40% { opacity: 1; transform: scale(1); } }
+  @media (prefers-reduced-motion: reduce) { .cs__typing span { animation: none; } .cs__msg { animation: none; } }
+
+  /* In-bubble CTA */
+  .cs__cta {
+    display: inline-flex; align-items: center; gap: 8px; margin-top: 10px;
+    padding: 8px 14px; border-radius: 999px; text-decoration: none; font-size: 12.5px; font-weight: 500;
+    color: var(--navy-ink); background: linear-gradient(160deg, var(--gold-light), var(--gold-deep));
+    box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.35); transition: transform var(--t-fast), box-shadow var(--t-fast);
+  }
+  .cs__cta:hover { transform: translateY(-1px); box-shadow: 0 8px 18px -10px rgba(212, 187, 133, 0.7); }
+  .cs__cta-arrow { transition: transform var(--t-fast); }
+  .cs__cta:hover .cs__cta-arrow { transform: translateX(3px); }
+
+  /* Quick-reply chips */
+  .cs__chips { display: flex; flex-wrap: wrap; gap: 7px; align-self: flex-start; max-width: 96%; margin: 2px 0 4px; }
+  .cs__chip {
+    cursor: pointer; font-family: inherit; font-size: 12.5px; color: var(--gold-light); text-decoration: none;
+    padding: 7px 13px; border-radius: 999px; background: rgba(184, 153, 104, 0.1);
+    border: 1px solid var(--hairline-gold-strong); transition: background var(--t-fast), color var(--t-fast), transform var(--t-fast);
+    line-height: 1.2;
+  }
+  .cs__chip:hover { background: rgba(184, 153, 104, 0.22); color: var(--cream); transform: translateY(-1px); }
+
+  /* ---------- Input ---------- */
+  .cs__input {
+    display: flex; align-items: center; gap: 8px; padding: 12px 12px 6px;
+    flex-shrink: 0; border-top: 1px solid rgba(176, 198, 230, 0.12);
+  }
+  .cs__field {
+    flex: 1; min-width: 0; height: 42px; padding: 0 16px; border-radius: 999px;
+    font-family: inherit; font-size: 13.5px; color: var(--cream);
+    background: rgba(255, 255, 255, 0.06); border: 1px solid rgba(176, 198, 230, 0.18);
+    transition: border-color var(--t-fast), background var(--t-fast);
+  }
+  .cs__field::placeholder { color: var(--white-50); }
+  .cs__field:focus { outline: none; border-color: var(--hairline-gold-strong); background: rgba(255, 255, 255, 0.09); }
+  .cs__send {
+    width: 42px; height: 42px; border-radius: 50%; flex-shrink: 0; cursor: pointer;
+    display: grid; place-items: center; color: var(--navy-ink);
+    background: linear-gradient(160deg, var(--gold-light), var(--gold-deep));
+    box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.35);
+    transition: transform var(--t-fast), box-shadow var(--t-fast), opacity var(--t-fast);
+  }
+  .cs__send:hover { transform: translateY(-1px); box-shadow: 0 8px 18px -10px rgba(212, 187, 133, 0.7); }
+  .cs__send:disabled { opacity: 0.5; cursor: default; transform: none; box-shadow: none; }
 
   .cs__foot {
-    margin: 14px 2px 2px; display: flex; align-items: center; justify-content: center; gap: 7px;
-    font-size: 11.5px; letter-spacing: 0.02em; color: var(--white-50);
+    margin: 0; padding: 0 12px 12px; display: flex; align-items: center; justify-content: center; gap: 7px;
+    font-size: 11px; letter-spacing: 0.02em; color: var(--white-50); flex-shrink: 0;
   }
   .cs__foot :global(.icon) { color: var(--gold); }
+
+  /* ---------- Mobile (not fullscreen-aggressive) ---------- */
+  @media (max-width: 480px) {
+    .cs { right: 14px; bottom: 14px; gap: 12px; }
+    .cs__panel { width: calc(100vw - 24px); height: min(74svh, 600px); }
+  }
 </style>
 
 <script>
-  const root = document.querySelector('[data-cs]') as HTMLElement | null;
-  if (root) {
-    const toggle = root.querySelector('[data-cs-toggle]') as HTMLButtonElement | null;
-    const closeBtn = root.querySelector('[data-cs-close]') as HTMLButtonElement | null;
-    const panel = root.querySelector('#cs-panel') as HTMLElement | null;
+  import { getReply, getWelcome, flows, composeLead, type BotReply, type Chip, type FlowId } from '../data/supportResponses';
+  import { quickStart } from '../data/supportKnowledge';
 
+  const root = document.querySelector<HTMLElement>('[data-cs]');
+  if (root) {
+    const toggle = root.querySelector<HTMLButtonElement>('[data-cs-toggle]');
+    const closeBtn = root.querySelector<HTMLButtonElement>('[data-cs-close]');
+    const panel = root.querySelector<HTMLElement>('#cs-panel');
+    const thread = root.querySelector<HTMLElement>('[data-cs-thread]');
+    const form = root.querySelector<HTMLFormElement>('[data-cs-form]');
+    const field = root.querySelector<HTMLInputElement>('[data-cs-text]');
+
+    let started = false;
+    let flow: { id: FlowId; step: number; answers: Record<string, string> } | null = null;
+    let chain: Promise<void> = Promise.resolve();
+
+    /* ---------- panel open/close ---------- */
     const open = () => {
       root.setAttribute('data-open', '');
       toggle?.setAttribute('aria-expanded', 'true');
-      toggle?.setAttribute('aria-label', 'Fechar apoio');
+      toggle?.setAttribute('aria-label', 'Fechar assistente');
       if (panel) panel.hidden = false;
+      if (!started) { started = true; greet(); }
+      setTimeout(() => field?.focus(), 220);
     };
     const close = () => {
       root.removeAttribute('data-open');
       toggle?.setAttribute('aria-expanded', 'false');
-      toggle?.setAttribute('aria-label', 'Apoio ao cliente');
+      toggle?.setAttribute('aria-label', 'Abrir assistente');
       if (panel) panel.hidden = true;
     };
-
-    toggle?.addEventListener('click', () =>
-      root.hasAttribute('data-open') ? close() : open()
-    );
+    toggle?.addEventListener('click', () => (root.hasAttribute('data-open') ? close() : open()));
     closeBtn?.addEventListener('click', close);
-    document.addEventListener('keydown', (e) => e.key === 'Escape' && close());
-    document.addEventListener('click', (e) => {
-      if (root.hasAttribute('data-open') && !root.contains(e.target as Node)) close();
+    document.addEventListener('keydown', (e) => e.key === 'Escape' && root.hasAttribute('data-open') && close());
+
+    /* ---------- rendering helpers ---------- */
+    const scrollDown = () => { if (thread) thread.scrollTop = thread.scrollHeight; };
+
+    function renderText(el: HTMLElement, text: string) {
+      const lines = text.split('\n');
+      lines.forEach((line, i) => {
+        el.appendChild(document.createTextNode(line));
+        if (i < lines.length - 1) el.appendChild(document.createElement('br'));
+      });
+    }
+
+    function userSay(text: string) {
+      if (!thread) return;
+      const el = document.createElement('div');
+      el.className = 'cs__msg cs__msg--user';
+      renderText(el, text);
+      thread.appendChild(el);
+      scrollDown();
+    }
+
+    function clearChips() {
+      thread?.querySelectorAll('.cs__chips').forEach((n) => n.remove());
+    }
+
+    // Render a finished bot reply (text + optional cta + chips + step chips).
+    function renderBot(reply: BotReply & { stepChips?: string[] }) {
+      if (!thread) return;
+      const el = document.createElement('div');
+      el.className = 'cs__msg cs__msg--bot';
+      renderText(el, reply.text);
+      if (reply.cta) {
+        const a = document.createElement('a');
+        a.className = 'cs__cta';
+        a.href = reply.cta.href;
+        if (reply.cta.external) { a.target = '_blank'; a.rel = 'noopener noreferrer'; }
+        a.appendChild(document.createTextNode(reply.cta.label));
+        const arrow = document.createElement('span');
+        arrow.className = 'cs__cta-arrow'; arrow.textContent = '→';
+        a.appendChild(arrow);
+        el.appendChild(a);
+      }
+      thread.appendChild(el);
+
+      const chips: Chip[] = [...(reply.chips ?? [])];
+      const stepChips = (reply.stepChips ?? []).map((label) => ({ label, answer: true } as Chip & { answer: boolean }));
+      const all = [...stepChips, ...chips] as (Chip & { answer?: boolean })[];
+      if (all.length) {
+        const row = document.createElement('div');
+        row.className = 'cs__chips';
+        for (const c of all) {
+          if (c.href) {
+            const a = document.createElement('a');
+            a.className = 'cs__chip'; a.href = c.href; a.textContent = c.label;
+            if (c.external) { a.target = '_blank'; a.rel = 'noopener noreferrer'; }
+            row.appendChild(a);
+          } else {
+            const b = document.createElement('button');
+            b.type = 'button'; b.className = 'cs__chip'; b.textContent = c.label;
+            if (c.answer) b.dataset.answer = '1';
+            if (c.flow) b.dataset.flow = c.flow;
+            if (c.send) b.dataset.send = c.send;
+            row.appendChild(b);
+          }
+        }
+        thread.appendChild(row);
+      }
+      scrollDown();
+    }
+
+    // Queue a bot message behind a short typing indicator (sequential).
+    function botSay(reply: BotReply & { stepChips?: string[] }) {
+      chain = chain.then(
+        () =>
+          new Promise<void>((resolve) => {
+            if (!thread) return resolve();
+            const typing = document.createElement('div');
+            typing.className = 'cs__msg cs__msg--bot cs__typing';
+            typing.innerHTML = '<span></span><span></span><span></span>';
+            thread.appendChild(typing);
+            scrollDown();
+            window.setTimeout(() => { typing.remove(); renderBot(reply); resolve(); }, 440);
+          }),
+      );
+    }
+
+    /* ---------- conversation logic ---------- */
+    function greet() {
+      botSay({ ...getWelcome(), chips: quickStart.map((q) => ({ label: q.label, flow: q.flow as FlowId | undefined, send: q.send })) });
+    }
+
+    function startFlow(id: FlowId) {
+      flow = { id, step: 0, answers: {} };
+      botSay({ text: flows[id].intro });
+      askStep();
+    }
+
+    function askStep() {
+      if (!flow) return;
+      const step = flows[flow.id].steps[flow.step];
+      botSay({ text: step.question, stepChips: step.chips });
+    }
+
+    function answerStep(value: string) {
+      if (!flow) return;
+      const f = flows[flow.id];
+      flow.answers[f.steps[flow.step].key] = value;
+      flow.step += 1;
+      if (flow.step < f.steps.length) { askStep(); return; }
+      const lead = composeLead(flow.id, flow.answers);
+      botSay({
+        text: lead.closing + '\n\n' + lead.lines.join('\n'),
+        cta: { label: 'Enviar à equipa (WhatsApp)', href: lead.waHref, external: true },
+        chips: [{ label: 'Página de contacto', href: '/contacto' }],
+      });
+      flow = null;
+    }
+
+    function deliver(reply: BotReply) {
+      botSay(reply);
+      if (reply.flow) startFlow(reply.flow);
+    }
+
+    function handleUser(text: string) {
+      const t = text.trim();
+      if (!t) return;
+      userSay(t);
+      clearChips();
+      if (flow) { answerStep(t); return; }
+      deliver(getReply(t));
+    }
+
+    /* ---------- input + chip events ---------- */
+    form?.addEventListener('submit', (e) => {
+      e.preventDefault();
+      if (!field) return;
+      const v = field.value;
+      field.value = '';
+      handleUser(v);
+    });
+
+    thread?.addEventListener('click', (e) => {
+      const target = e.target as HTMLElement;
+      const btn = target.closest('button.cs__chip') as HTMLButtonElement | null;
+      if (!btn) return;
+      const label = btn.textContent ?? '';
+      clearChips();
+      if (btn.dataset.answer) { userSay(label); answerStep(label); return; }
+      if (btn.dataset.flow) { userSay(label); startFlow(btn.dataset.flow as FlowId); return; }
+      if (btn.dataset.send) { userSay(label); deliver(getReply(btn.dataset.send)); return; }
     });
   }
 </script>

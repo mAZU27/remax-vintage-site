@@ -292,13 +292,11 @@ export const careersApplication = {
     'Na RE/MAX Collection Vintage acreditamos que o talento, a ambição e a discrição são essenciais para elevar o mercado imobiliário de luxo. Valorizamos profissionais que partilham a nossa paixão pela excelência e pelo serviço verdadeiramente excecional.',
   image: '/images/imoveis/imovel-fachada-classica.webp',
   // Director box overlapping the bottom of the building image.
-  // [PLACEHOLDER — substituir `photo` pela headshot real da Sónia Santos antes
-  // de publicar. Enquanto vazia, mostra um monograma dourado "SS".]
   director: {
     name: 'Sónia Santos',
     role: 'Diretora dos Recursos Humanos',
     text: 'Estou disponível para falar consigo sobre oportunidades, o nosso ambiente de trabalho e o que nos torna únicos.',
-    photo: '',
+    photo: '/images/team/sonia-santos.jpg',
     initials: 'SS',
     ctaLabel: 'Falar com a responsável',
   },

@@ -105,15 +105,15 @@ export interface QualityCommitment {
   label: string;
 }
 
-// NOTE(apoio-stats): estes são COMPROMISSOS de serviço (controláveis), não
-// estatísticas de track-record inventadas. "Resposta em 24h" alinha com a
-// promessa usada no resto do site. Disponibilidade segue o horário real de
-// site.ts (Seg.–Sex.). "Desde 2007" usa site.established — confirmar com a
-// equipa antes de publicar.
+// NOTE(apoio-stats): valores de serviço a confirmar com a equipa.
+// "Até 4h úteis" e "7 dias/semana" são compromissos por validar — este último
+// diverge do horário em site.ts (Seg.–Sex.); confirmar disponibilidade real.
+// "Desde 2007" é facto real (site.established). Render limpo (sem badges),
+// seguindo a convenção de site.ts (stats ilustrativas só assinaladas em código).
 export const qualityCommitments: QualityCommitment[] = [
-  { icon: 'clock', value: 'Em 24h', label: 'Resposta ao seu pedido' },
-  { icon: 'phone', value: 'Seg. a Sex.', label: 'Disponibilidade da equipa' },
-  { icon: 'shield-check', value: 'Confidencial', label: 'Segurança e privacidade' },
+  { icon: 'clock', value: 'Até 4h úteis', label: 'Tempo médio de resposta' },
+  { icon: 'phone', value: '7 dias/semana', label: 'Disponibilidade' },
+  { icon: 'shield-check', value: '100% confidencial', label: 'Segurança e privacidade' },
   { icon: 'award', value: 'Desde 2007', label: 'Presença no Porto' },
 ];
 

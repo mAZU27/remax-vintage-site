@@ -197,8 +197,26 @@ const isActive = (href: string) => {
     .nav__toggle { display: flex; }
   }
   @media (max-width: 560px) {
+    .nav__inner {
+      width: min(96vw, calc(100% - 2 * var(--gutter)));
+      height: clamp(56px, 12vw, 62px);
+      padding: 0 clamp(12px, 2vw, 16px);
+      gap: clamp(12px, 2vw, 16px);
+      border-radius: 999px;
+    }
     :global(.nav__cta) { display: none; }
-    .nav__brand img { height: 24px; }
+    .nav__brand img {
+      height: clamp(20px, 4vw, 24px);
+      width: auto;
+    }
+    .nav__phone { display: none; }
+    .nav__toggle {
+      width: clamp(40px, 8vw, 44px);
+      height: clamp(40px, 8vw, 44px);
+    }
+    .nav__toggle span {
+      width: clamp(18px, 3.5vw, 20px);
+    }
   }
   @media (min-width: 1121px) {
     .nav__drawer { display: none; }

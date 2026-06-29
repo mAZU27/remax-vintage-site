@@ -158,7 +158,42 @@ const aboutTestimonials = testimonials.slice(0, 3);
     </div>
   </section>
 
-  <!-- S6 — Equipa -->
+  <!-- S6 — Sobre Nós + Galeria de Equipa -->
+  <section class="section section--cream ab-about">
+    <div class="container">
+      <div class="ab-about__header">
+        <div>
+          <SectionEyebrow text="A Nossa Equipa" />
+          <h2 class="h2 ab-about__title" data-reveal style="--reveal-delay:80ms">Sobre Nós</h2>
+          <p class="lede ab-about__desc" data-reveal style="--reveal-delay:150ms">
+            Uma equipa de especialistas em imóveis premium do Porto, dedicados a apresentar cada propriedade com rigor, discrição e estratégia.
+          </p>
+        </div>
+        <Button href="/contacto" variant="gold" arrow reveal class="ab-about__cta">Conheça a nossa equipa</Button>
+      </div>
+
+      <div class="ab-about__gallery">
+        <div class="ab-gal__item" data-reveal style="--reveal-delay:100ms">
+          <img src="/images/equipa-1.png" alt="Equipa Collection Vintage" loading="lazy" decoding="async" />
+          <span class="ab-gal__cap">Missão 2026</span>
+        </div>
+        <div class="ab-gal__item" data-reveal style="--reveal-delay:150ms">
+          <img src="/images/equipa-2.png" alt="Consultores Collection Vintage" loading="lazy" decoding="async" />
+          <span class="ab-gal__cap">Consultores</span>
+        </div>
+        <div class="ab-gal__item" data-reveal style="--reveal-delay:200ms">
+          <img src="/images/equipa-3.png" alt="Rede RE/MAX Portugal" loading="lazy" decoding="async" />
+          <span class="ab-gal__cap">Rede RE/MAX</span>
+        </div>
+        <div class="ab-gal__item" data-reveal style="--reveal-delay:250ms">
+          <img src="/images/equipa-4.png" alt="Encontro Equipa" loading="lazy" decoding="async" />
+          <span class="ab-gal__cap">Encontro</span>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- S7 — Equipa (detalhe) -->
   <TeamShowcase />
 
   <!-- S7 — Testemunhos -->
@@ -231,11 +266,11 @@ const aboutTestimonials = testimonials.slice(0, 3);
     display: grid; grid-template-columns: repeat(3, 1fr); gap: clamp(16px, 2vw, 24px);
   }
   .ab-fact {
-    padding: clamp(24px, 2.4vw, 34px); border: 1px solid var(--ink-10); border-radius: var(--radius-lg);
-    background: var(--cream-soft); display: flex; flex-direction: column; gap: 10px;
+    padding: clamp(16px, 2.4vw, 34px); border: 1px solid var(--ink-10); border-radius: var(--radius-lg);
+    background: var(--cream-soft); display: flex; flex-direction: column; gap: 8px;
   }
-  .ab-fact__value { font-family: var(--font-serif); font-weight: 500; font-size: clamp(24px, 2.4vw, 32px); color: var(--gold-deep); letter-spacing: -0.01em; }
-  .ab-fact__label { font-size: 13.5px; color: var(--ink-60); letter-spacing: 0.02em; }
+  .ab-fact__value { font-family: var(--font-serif); font-weight: 500; font-size: clamp(18px, 2.4vw, 32px); color: var(--gold-deep); letter-spacing: -0.01em; }
+  .ab-fact__label { font-size: clamp(11.5px, 1.2vw, 13.5px); color: var(--ink-60); letter-spacing: 0.02em; }
 
   /* S3 — Filosofia */
   .ab-phil { text-align: center; }
@@ -261,21 +296,21 @@ const aboutTestimonials = testimonials.slice(0, 3);
     display: grid; grid-template-columns: repeat(4, 1fr); gap: clamp(16px, 2vw, 24px); counter-reset: none;
   }
   .ab-step {
-    position: relative; padding: clamp(26px, 2.4vw, 34px) clamp(22px, 2vw, 28px);
+    position: relative; padding: clamp(18px, 2.4vw, 34px) clamp(16px, 2vw, 28px);
     border: 1px solid var(--ink-10); border-radius: var(--radius-lg); background: var(--cream-soft);
     transition: transform var(--t-med), border-color var(--t-med), box-shadow var(--t-med);
   }
   .ab-step:hover { transform: translateY(-4px); border-color: var(--hairline-gold-strong); box-shadow: var(--shadow-card); }
   .ab-step__num {
-    position: absolute; top: 18px; right: 22px; font-family: var(--font-serif);
-    font-size: 30px; color: var(--gold); opacity: 0.32; line-height: 1;
+    position: absolute; top: clamp(12px, 1.4vw, 18px); right: clamp(14px, 2vw, 22px); font-family: var(--font-serif);
+    font-size: clamp(20px, 3.5vw, 30px); color: var(--gold); opacity: 0.32; line-height: 1;
   }
   .ab-step__ic {
-    width: 50px; height: 50px; display: grid; place-items: center; border-radius: 50%;
+    width: clamp(40px, 5vw, 50px); height: clamp(40px, 5vw, 50px); display: grid; place-items: center; border-radius: 50%;
     color: var(--gold-deep); background: rgba(184, 153, 104, 0.1); border: 1px solid var(--hairline-gold);
   }
-  .ab-step__name { font-family: var(--font-serif); font-weight: 500; font-size: 21px; color: var(--ink); margin: 18px 0 0; }
-  .ab-step__text { margin: 10px 0 0; font-size: 14px; line-height: 1.6; color: var(--ink-60); }
+  .ab-step__name { font-family: var(--font-serif); font-weight: 500; font-size: clamp(16px, 2.2vw, 21px); color: var(--ink); margin: clamp(10px, 1.4vw, 18px) 0 0; }
+  .ab-step__text { margin: clamp(6px, 0.8vw, 10px) 0 0; font-size: clamp(12px, 1.2vw, 14px); line-height: 1.6; color: var(--ink-60); }
 
   /* S5 — Zonas */
   .ab-hood-grid {
@@ -329,6 +364,34 @@ const aboutTestimonials = testimonials.slice(0, 3);
   .ab-final__title { max-width: 16ch; margin: 0 auto; }
   .ab-final__sub { margin: 22px auto 36px; max-width: 52ch; }
   .ab-final__guar { margin: 28px 0 0; font-size: 12.5px; letter-spacing: 0.12em; text-transform: uppercase; color: var(--gold-light); }
+
+  /* S6 — Sobre Nós + Galeria */
+  .ab-about { background: var(--cream); }
+  .ab-about__header {
+    display: flex; align-items: flex-start; justify-content: space-between; gap: clamp(32px, 5vw, 64px);
+    margin-bottom: clamp(48px, 6vw, 80px); flex-wrap: wrap;
+  }
+  .ab-about__header > div { flex: 1; min-width: 300px; }
+  .ab-about__title { margin-top: 16px; font-size: clamp(42px, 5vw, 68px); }
+  .ab-about__desc { max-width: 52ch; margin-top: 18px; }
+  .ab-about__cta { align-self: flex-end; }
+
+  .ab-about__gallery {
+    display: grid; grid-template-columns: repeat(auto-fit, minmax(240px, 1fr)); gap: clamp(16px, 2vw, 24px);
+  }
+  .ab-gal__item {
+    position: relative; border-radius: var(--radius-lg); overflow: hidden;
+    box-shadow: var(--shadow-card); border: 1px solid var(--hairline-gold);
+    aspect-ratio: 1; background: var(--cream-soft);
+    transition: transform var(--t-med), box-shadow var(--t-med);
+  }
+  .ab-gal__item:hover { transform: translateY(-6px); box-shadow: 0 16px 40px -16px rgba(0,0,0,0.12); }
+  .ab-gal__item img { width: 100%; height: 100%; object-fit: cover; display: block; }
+  .ab-gal__cap {
+    position: absolute; bottom: 0; left: 0; right: 0; padding: 18px 16px 14px;
+    font-family: var(--font-serif); font-size: 14px; font-weight: 500; color: var(--cream);
+    background: linear-gradient(to top, rgba(11, 26, 46, 0.72), transparent);
+  }
 
   /* ---------- Responsive ---------- */
   @media (max-width: 920px) {
