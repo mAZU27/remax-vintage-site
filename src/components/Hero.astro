@@ -184,30 +184,37 @@ import { primaryCta } from '../data/site';
     }
     .hero__eyebrow {
       font-size: clamp(10px, 1vw, 11px);
-      letter-spacing: 0.08em;
+      letter-spacing: 0.1em;
+      color: var(--gold-light);
+      text-transform: uppercase;
+      font-weight: 500;
     }
     .hero__title {
-      margin-top: 12px;
-      font-size: clamp(28px, 6vw, 38px);
-      max-width: 18ch;
+      margin-top: clamp(14px, 2.2vw, 18px);
+      font-size: clamp(32px, 6.5vw, 42px);
+      line-height: 1.15;
+      letter-spacing: -0.015em;
+      max-width: 20ch;
     }
     .hero__rule {
-      margin-top: 16px;
-      width: 60px;
+      margin-top: clamp(16px, 2.4vw, 22px);
+      width: clamp(60px, 10vw, 80px);
     }
     .hero__lede {
-      margin-top: 14px;
-      font-size: clamp(14px, 1.2vw, 16px);
-      max-width: 38ch;
+      margin-top: clamp(14px, 2.2vw, 18px);
+      font-size: clamp(14px, 1.4vw, 16px);
+      line-height: 1.6;
+      letter-spacing: 0.01em;
+      max-width: 40ch;
     }
     .hero__ctas {
-      margin-top: 20px;
+      margin-top: clamp(18px, 3vw, 28px);
       flex-direction: column;
-      gap: 12px;
+      gap: clamp(12px, 2vw, 16px);
     }
     .hero__cue { display: none; }
     .hero__card {
-      display: flex;
+      display: flex; flex-direction: column;
       position: absolute;
       bottom: var(--gutter);
       left: var(--gutter);
@@ -216,6 +223,48 @@ import { primaryCta } from '../data/site';
       width: auto;
       margin-top: 0;
       z-index: 2;
+      padding: clamp(16px, 3vw, 24px) clamp(16px, 3vw, 24px);
+    }
+    .hero__card-eyebrow {
+      font-size: clamp(9px, 1.2vw, 10.5px);
+      letter-spacing: 0.2em;
+      text-transform: uppercase;
+      color: var(--gold-light);
+      font-weight: 500;
+    }
+    .hero__card-title {
+      margin-top: clamp(8px, 1.2vw, 12px);
+      color: var(--cream);
+      font-size: clamp(16px, 2.4vw, 22px);
+      line-height: 1.2;
+      letter-spacing: -0.01em;
+    }
+    .hero__card-text {
+      margin-top: clamp(6px, 1vw, 10px);
+      color: var(--white-70);
+      font-size: clamp(12px, 1.3vw, 13.5px);
+      line-height: 1.5;
+    }
+    :global(.hero__card-btn) {
+      margin-top: clamp(12px, 2vw, 18px);
+      width: 100%;
+    }
+    .hero__card-meta {
+      list-style: none;
+      margin: clamp(10px, 1.6vw, 16px) 0 0;
+      padding: clamp(10px, 1.6vw, 14px) 0 0;
+      display: flex;
+      flex-direction: column;
+      gap: clamp(8px, 1.4vw, 12px);
+      border-top: 1px solid var(--hairline-light);
+    }
+    .hero__card-meta li {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      font-size: clamp(11px, 1.2vw, 12px);
+      color: var(--white-70);
+      letter-spacing: 0.02em;
     }
   }
   @media (prefers-reduced-motion: reduce) {
