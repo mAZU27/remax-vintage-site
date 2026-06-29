@@ -47,6 +47,23 @@ const pill = p.status !== 'disponivel' ? statusLabel[p.status] : p.badge;
 ---
 <Base title={p.title} description={p.blurb} image={p.image}>
   <article class="pd">
+    <!-- Mobile navbar -->
+    <div class="pd__mobile-nav" data-mobile-nav>
+      <button class="pd__mobile-back" aria-label="Voltar">
+        <Icon name="arrow" size={20} stroke={1.8} />
+      </button>
+      <div class="pd__mobile-logo">
+        <img src={site.logo} alt={site.name} width="2587" height="386" />
+      </div>
+      <button class="pd__mobile-menu" aria-label="Menu">
+        <svg width="20" height="20" viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round">
+          <line x1="3" y1="6" x2="17" y2="6"></line>
+          <line x1="3" y1="10" x2="17" y2="10"></line>
+          <line x1="3" y1="14" x2="17" y2="14"></line>
+        </svg>
+      </button>
+    </div>
+
     <div class="container">
       <a class="pd__back" href="/imoveis"><span aria-hidden="true">←</span> Voltar aos imóveis</a>
     </div>
@@ -117,6 +134,24 @@ const pill = p.status !== 'disponivel' ? statusLabel[p.status] : p.badge;
         <!-- Description -->
         <div class="pd__desc" data-reveal>
           {p.description.map((para) => <p>{para}</p>)}
+        </div>
+
+        <!-- Mobile CTA buttons -->
+        <div class="pd__mobile-ctas" data-reveal>
+          <Button href={`/contacto?imovel=${p.ref}`} variant="gold" class="pd__cta-primary">
+            <Icon name="clock" size={16} stroke={1.6} />
+            Agendar visita
+          </Button>
+          <a href={site.phoneHref} class="pd__cta-secondary">
+            <Icon name="users" size={16} stroke={1.6} />
+            Falar com consultor
+          </a>
+        </div>
+
+        <!-- Tagline footer -->
+        <div class="pd__tagline" data-reveal>
+          <Icon name="shield" size={20} stroke={1.4} />
+          <span>Exclusividade que transforma heranças em oportunidades únicas.</span>
         </div>
 
         <!-- Highlights -->
@@ -347,13 +382,51 @@ const pill = p.status !== 'disponivel' ? statusLabel[p.status] : p.badge;
   .pd__lb-prev :global(.icon) { transform: rotate(180deg); }
 
   /* ---------- Responsive ---------- */
+  .pd__mobile-nav { display: none; }
+
   @media (max-width: 960px) {
     .pd__layout { grid-template-columns: 1fr; gap: clamp(28px, 4vw, 40px); }
     .pd__cta { position: static; }
     .pd__related-grid { grid-template-columns: repeat(2, 1fr); }
   }
   @media (max-width: 680px) {
-    .pd { padding-bottom: clamp(50px, 8vw, 80px); }
+    /* Mobile navbar */
+    .pd__mobile-nav {
+      display: flex; align-items: center; justify-content: space-between;
+      position: fixed; top: 0; left: 0; right: 0; z-index: 100; height: 60px;
+      background: linear-gradient(180deg, rgba(11, 26, 46, 0.92), rgba(11, 26, 46, 0.88));
+      -webkit-backdrop-filter: blur(12px); backdrop-filter: blur(12px);
+      border-bottom: 1px solid var(--hairline-gold);
+      padding: 0 16px; gap: 16px;
+    }
+    .pd__mobile-back {
+      width: 44px; height: 44px; display: grid; place-items: center; border-radius: 50%;
+      background: rgba(244, 237, 222, 0.95); border: none; cursor: pointer; color: var(--navy);
+      transition: all var(--t-fast);
+    }
+    .pd__mobile-back:active { transform: scale(0.95); }
+    .pd__mobile-back :global(.icon) { transform: rotate(180deg); }
+
+    .pd__mobile-logo {
+      flex: 1; display: flex; align-items: center; justify-content: center;
+      background: linear-gradient(180deg, rgba(16, 36, 61, 0.6), rgba(10, 23, 41, 0.6));
+      border: 1px solid rgba(184, 153, 104, 0.25);
+      border-radius: 999px;
+      padding: 8px 20px;
+      -webkit-backdrop-filter: blur(8px); backdrop-filter: blur(8px);
+    }
+    .pd__mobile-logo img { height: 22px; width: auto; }
+
+    .pd__mobile-menu {
+      width: 44px; height: 44px; display: grid; place-items: center; border-radius: 50%;
+      background: var(--navy-ink); border: 1px solid var(--hairline-gold); cursor: pointer;
+      color: var(--gold-light);
+      transition: all var(--t-fast);
+    }
+    .pd__mobile-menu:active { transform: scale(0.95); }
+
+    .pd { padding-top: 60px; padding-bottom: clamp(50px, 8vw, 80px); }
+    .pd__back { display: none; }
     .pd__gallery { margin-bottom: clamp(16px, 2.4vw, 24px); }
     .pd__stage { border-radius: clamp(16px, 2.2vw, 20px); }
     .pd__stage-btn img { border-radius: clamp(16px, 2.2vw, 20px); }
@@ -397,8 +470,8 @@ const pill = p.status !== 'disponivel' ? statusLabel[p.status] : p.badge;
     .pd__price { font-size: clamp(22px, 4.8vw, 28px); margin-top: clamp(8px, 1.4vw, 12px); }
 
     .pd__specs {
-      grid-template-columns: repeat(2, 1fr);
-      gap: clamp(10px, 1.6vw, 14px);
+      grid-template-columns: repeat(4, 1fr);
+      gap: clamp(8px, 1.2vw, 10px);
       margin-top: clamp(20px, 3vw, 24px);
       background: white;
       border-radius: clamp(12px, 1.8vw, 16px);
@@ -406,14 +479,15 @@ const pill = p.status !== 'disponivel' ? statusLabel[p.status] : p.badge;
       border: 1px solid var(--hairline-gold);
     }
     .pd__specs li {
-      padding: clamp(12px, 2vw, 16px);
+      padding: clamp(12px, 1.8vw, 14px);
       border-radius: clamp(8px, 1.2vw, 12px);
       background: var(--cream-soft);
       border: 1px solid var(--hairline-gold);
+      text-align: center;
     }
-    .pd__spec-ic { font-size: 13px; }
-    .pd__spec-lbl { font-size: 9.5px; margin-bottom: 2px; }
-    .pd__spec-val { font-size: clamp(15px, 2.8vw, 19px); }
+    .pd__spec-ic { font-size: 14px; }
+    .pd__spec-lbl { font-size: 8.5px; margin-bottom: 4px; letter-spacing: 0.04em; }
+    .pd__spec-val { font-size: clamp(13px, 2.4vw, 15px); }
 
     .pd__desc {
       margin-top: clamp(18px, 2.4vw, 22px);
@@ -425,6 +499,45 @@ const pill = p.status !== 'disponivel' ? statusLabel[p.status] : p.badge;
     .pd__desc p { font-size: 14px; line-height: 1.7; margin-bottom: 12px; color: var(--ink-60); }
     .pd__desc p:last-child { margin-bottom: 0; }
 
+    /* Mobile CTA buttons */
+    .pd__mobile-ctas {
+      display: flex; flex-direction: column; gap: 12px;
+      margin-top: clamp(18px, 2.4vw, 22px);
+      background: white;
+      border-radius: clamp(12px, 1.8vw, 16px);
+      padding: clamp(18px, 2.6vw, 22px);
+      border: 1px solid var(--hairline-gold);
+    }
+    .pd__cta-primary {
+      display: flex !important; align-items: center; justify-content: center; gap: 10px;
+      width: 100%; padding: clamp(14px, 2.4vw, 18px) !important; font-size: 14px; font-weight: 500;
+      border-radius: 999px; background: var(--navy-ink); color: var(--gold-light);
+      text-decoration: none; cursor: pointer; border: none;
+      transition: all var(--t-fast);
+    }
+    .pd__cta-primary:active { transform: scale(0.98); }
+    .pd__cta-primary span { display: flex; align-items: center; justify-content: center; gap: 10px; width: 100%; }
+    .pd__cta-primary :global(.icon) { color: var(--gold-light); }
+
+    .pd__cta-secondary {
+      display: flex !important; align-items: center; justify-content: center; gap: 10px;
+      width: 100%; padding: clamp(14px, 2.4vw, 18px) !important; font-size: 14px; font-weight: 500;
+      border-radius: 999px; background: white; color: var(--navy-ink);
+      border: 1.5px solid var(--navy-ink); text-decoration: none;
+      transition: all var(--t-fast);
+    }
+    .pd__cta-secondary:active { transform: scale(0.98); }
+    .pd__cta-secondary :global(.icon) { color: var(--navy-ink); }
+
+    /* Tagline footer */
+    .pd__tagline {
+      display: flex; align-items: center; justify-content: center; gap: 12px;
+      text-align: center; margin-top: clamp(24px, 3.2vw, 32px); padding: 0;
+      font-size: clamp(11px, 1.8vw, 13px); color: var(--ink-40);
+      letter-spacing: 0.06em; text-transform: uppercase;
+    }
+    .pd__tagline :global(.icon) { color: var(--gold-deep); flex-shrink: 0; }
+
     .pd__highlights {
       display: none;
     }
@@ -433,7 +546,9 @@ const pill = p.status !== 'disponivel' ? statusLabel[p.status] : p.badge;
     .pd__related-grid { grid-template-columns: 1fr; }
   }
   @media (max-width: 460px) {
-    .pd__specs { grid-template-columns: repeat(2, 1fr); }
+    .pd__specs { grid-template-columns: repeat(4, 1fr); }
+    .pd__spec-val { font-size: clamp(12px, 2.2vw, 14px); }
+    .pd__spec-lbl { font-size: 7.5px; }
     .pd__info { padding: clamp(16px, 2.4vw, 20px); }
     .pd__title { font-size: clamp(22px, 4.8vw, 28px); }
   }

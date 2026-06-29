@@ -92,7 +92,6 @@ const marqueeSeconds = Math.max(20, consultants.length * SECONDS_PER_CARD);
                 <span class="ts__mono" aria-hidden="true">{initials(c.name)}</span>
                 <div class="ts__scrim" aria-hidden="true"></div>
                 <div class="ts__info">
-                  <h3 class="ts__name">{c.name}</h3>
                   <span class="ts__role">{c.role}</span>
                   {c.zone && <span class="ts__zone">{c.zone}</span>}
                   <a class="ts__profile" href="#contacto" tabindex={c.clone ? -1 : undefined} aria-label={`Ver perfil de ${c.name}`}>
@@ -343,14 +342,6 @@ const marqueeSeconds = Math.max(20, consultants.length * SECONDS_PER_CARD);
     align-items: flex-start;
     gap: 4px;
     padding: clamp(13px, 1.2vw, 18px);
-  }
-  .ts__name {
-    margin: 0;
-    font-family: var(--font-serif);
-    font-weight: 500;
-    font-size: 18px;
-    line-height: 1.15;
-    color: var(--white-90);
   }
   .ts__role {
     font-family: var(--font-sans);

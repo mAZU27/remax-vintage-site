@@ -1,7 +1,6 @@
 ---
-import { site } from '../data/site';
+import { site, nav } from '../data/site';
 import Icon from './Icon.astro';
-import Crest from './Crest.astro';
 import FinalBrand from './FinalBrand.astro';
 
 const year = new Date().getFullYear();
@@ -9,14 +8,77 @@ const year = new Date().getFullYear();
 <FinalBrand />
 
 <footer class="foot" id="footer">
-  <div class="container foot__bar">
-    <a class="foot__brand" href="/" aria-label={`${site.name} — início`}>
-      <Crest size={40} />
-      <img class="foot__logo" src={site.logo} alt={site.name} width="2587" height="386" />
-    </a>
+  <div class="container foot__grid">
+    <!-- Sobre -->
+    <section class="foot__section">
+      <a class="foot__section-brand" href="/" aria-label={`${site.name} — início`}>
+        <img class="foot__section-logo" src={site.logo} alt={site.name} width="2587" height="386" />
+      </a>
+      <p class="foot__section-text">
+        A seleção mais exclusiva de imóveis no Porto. Especialistas em propriedades com carácter, história e potencial.
+      </p>
+      <span class="foot__place">
+        <Icon name="pin" size={14} stroke={1.6} />
+        {site.city}
+      </span>
+    </section>
 
-    <span class="foot__place">Porto <span class="foot__sep" aria-hidden="true">·</span> Portugal</span>
+    <!-- Navegação -->
+    <section class="foot__section">
+      <h3 class="foot__section-title">Explorar</h3>
+      <nav class="foot__section-nav" aria-label="Navegação principal">
+        {nav.slice(0, 5).map((item) => (
+          <a href={item.href} class="foot__section-link">
+            {item.label}
+          </a>
+        ))}
+      </nav>
+    </section>
 
+    <!-- Contactos -->
+    <section class="foot__section">
+      <h3 class="foot__section-title">Contactos</h3>
+      <div class="foot__section-contact">
+        <a href={site.phoneHref} class="foot__section-link">
+          <Icon name="phone" size={14} stroke={1.6} />
+          {site.phone}
+        </a>
+        <a href={`mailto:${site.email}`} class="foot__section-link">
+          <Icon name="mail" size={14} stroke={1.6} />
+          {site.email}
+        </a>
+        <div class="foot__section-address">
+          <Icon name="pin" size={14} stroke={1.6} />
+          <span>
+            {site.address[0]}<br />{site.address[1]}
+          </span>
+        </div>
+        <div class="foot__section-hours">
+          <Icon name="clock" size={14} stroke={1.6} />
+          <span>
+            {site.hours[0]}<br />{site.hours[1]}
+          </span>
+        </div>
+      </div>
+    </section>
+
+    <!-- Serviços -->
+    <section class="foot__section">
+      <h3 class="foot__section-title">Serviços</h3>
+      <nav class="foot__section-nav" aria-label="Serviços">
+        <a href="/imoveis" class="foot__section-link">Comprar imóvel</a>
+        <a href="/#vender" class="foot__section-link">Vender imóvel</a>
+        <a href="/alugar" class="foot__section-link">Arrendar</a>
+        <a href="/sobre-nos" class="foot__section-link">Sobre nós</a>
+        <a href="/insights" class="foot__section-link">Blog & Insights</a>
+      </nav>
+    </section>
+  </div>
+
+  <!-- Social + Legal bar -->
+  <div class="foot__divider"></div>
+
+  <div class="container foot__footer-bar">
     <div class="foot__social">
       {site.social.map((s) => (
         <a class="foot__social-link" href={s.href} aria-label={s.label} target="_blank" rel="noopener noreferrer">
@@ -24,15 +86,12 @@ const year = new Date().getFullYear();
         </a>
       ))}
     </div>
-  </div>
 
-  <div class="container foot__legal">
     <p class="foot__copy">
-      © {year} {site.brandLine}.
-      <!-- TODO(legal): inserir nº de licença AMI real antes do lançamento. -->
-      Licença AMI 0000 · Cada agência é juridicamente independente.
+      © {year} {site.brandLine}. Licença AMI 0000 · Cada agência é juridicamente independente.
     </p>
-    <nav class="foot__links" aria-label="Legal">
+
+    <nav class="foot__legal-links" aria-label="Legal">
       <a href="/privacidade">Política de Privacidade</a>
       <a href="/termos">Termos e Condições</a>
     </nav>
@@ -43,23 +102,77 @@ const year = new Date().getFullYear();
   .foot {
     position: relative; background: var(--navy-ink); color: var(--cream);
     border-top: 1px solid var(--hairline-gold);
-    padding: clamp(26px, 3vw, 40px) 0 clamp(24px, 3vw, 34px);
+    padding: clamp(40px, 5vw, 60px) 0 clamp(32px, 4vw, 48px);
   }
 
-  /* ---- Top bar: brand · place · social ---- */
-  .foot__bar {
-    display: flex; align-items: center; justify-content: space-between; gap: clamp(20px, 3vw, 48px);
+  /* ---- 4-column grid section ---- */
+  .foot__grid {
+    display: grid; grid-template-columns: repeat(4, 1fr); gap: clamp(28px, 4vw, 48px);
+    margin-bottom: clamp(32px, 4vw, 48px);
   }
-  .foot__brand { display: inline-flex; align-items: center; gap: 16px; text-decoration: none; flex-shrink: 0; }
-  .foot__logo { height: 30px; width: auto; }
+
+  .foot__section {
+    display: flex; flex-direction: column; gap: 16px;
+  }
+
+  .foot__section-brand {
+    display: inline-flex; align-items: center; text-decoration: none; width: fit-content;
+  }
+  .foot__section-logo { height: 32px; width: auto; }
+
+  .foot__section-text {
+    font-size: clamp(13px, 1.2vw, 15px); line-height: 1.6; color: var(--white-70);
+    margin: 0; max-width: 280px;
+  }
 
   .foot__place {
-    font-family: var(--font-sans); font-size: clamp(11px, 1vw, 13px); letter-spacing: 0.38em;
-    text-transform: uppercase; color: var(--gold-light); white-space: nowrap;
+    display: inline-flex; align-items: center; gap: 8px;
+    font-size: 12px; letter-spacing: 0.05em; text-transform: uppercase;
+    color: var(--gold-light); font-weight: 500;
   }
-  .foot__sep { color: var(--gold); margin: 0 0.5em; }
+  .foot__place :global(.icon) { color: var(--gold); }
 
-  .foot__social { display: flex; gap: 10px; flex-shrink: 0; }
+  .foot__section-title {
+    font-family: var(--font-serif); font-size: clamp(16px, 1.8vw, 18px);
+    color: var(--cream); margin: 0; font-weight: 500; letter-spacing: -0.01em;
+  }
+
+  .foot__section-nav {
+    display: flex; flex-direction: column; gap: 12px;
+  }
+  .foot__section-link {
+    display: inline-flex; align-items: center; gap: 8px;
+    font-size: 13px; color: var(--white-70); text-decoration: none;
+    transition: color var(--t-fast);
+  }
+  .foot__section-link:hover { color: var(--gold-light); }
+  .foot__section-link :global(.icon) { flex-shrink: 0; color: var(--gold); }
+
+  .foot__section-contact {
+    display: flex; flex-direction: column; gap: 14px;
+  }
+
+  .foot__section-address,
+  .foot__section-hours {
+    display: inline-flex; align-items: flex-start; gap: 8px;
+    font-size: 13px; color: var(--white-70);
+  }
+  .foot__section-address :global(.icon),
+  .foot__section-hours :global(.icon) {
+    flex-shrink: 0; margin-top: 2px; color: var(--gold);
+  }
+
+  /* ---- Divider ---- */
+  .foot__divider {
+    height: 1px; background: var(--hairline-light); margin-bottom: clamp(28px, 3vw, 40px);
+  }
+
+  /* ---- Footer bar: social, copy, legal ---- */
+  .foot__footer-bar {
+    display: flex; align-items: center; justify-content: space-between; gap: clamp(16px, 2vw, 32px); flex-wrap: wrap;
+  }
+
+  .foot__social { display: flex; gap: 12px; }
   .foot__social-link {
     display: inline-flex; align-items: center; justify-content: center; width: 38px; height: 38px;
     border-radius: 50%; color: var(--gold-light);
@@ -72,23 +185,29 @@ const year = new Date().getFullYear();
     transform: translateY(-2px);
   }
 
-  /* ---- Legal row ---- */
-  .foot__legal {
-    margin-top: clamp(22px, 2.4vw, 32px); padding-top: clamp(20px, 2.2vw, 28px);
-    border-top: 1px solid var(--hairline-light);
-    display: flex; align-items: center; justify-content: space-between; gap: 16px 32px; flex-wrap: wrap;
+  .foot__copy {
+    margin: 0; font-size: 12px; color: var(--white-30); letter-spacing: 0.02em; line-height: 1.6;
+    flex: 1; min-width: 200px;
   }
-  .foot__copy { margin: 0; font-size: 12px; color: var(--white-30); letter-spacing: 0.02em; line-height: 1.6; }
-  .foot__links { display: flex; gap: clamp(18px, 2vw, 30px); flex-shrink: 0; }
-  .foot__links a {
-    position: relative; font-size: 12px; letter-spacing: 0.03em; color: var(--white-50);
-    text-decoration: none; transition: color var(--t-fast);
+
+  .foot__legal-links { display: flex; gap: clamp(16px, 2vw, 24px); flex-shrink: 0; }
+  .foot__legal-links a {
+    font-size: 12px; color: var(--white-50); text-decoration: none;
+    transition: color var(--t-fast);
   }
-  .foot__links a:hover { color: var(--gold-light); }
+  .foot__legal-links a:hover { color: var(--gold-light); }
 
   /* ---- Responsive ---- */
-  @media (max-width: 760px) {
-    .foot__bar { flex-direction: column; align-items: center; text-align: center; gap: 22px; }
-    .foot__legal { flex-direction: column; align-items: center; text-align: center; gap: 14px; }
+  @media (max-width: 1024px) {
+    .foot__grid { grid-template-columns: repeat(2, 1fr); gap: clamp(24px, 3vw, 40px); }
+  }
+
+  @media (max-width: 640px) {
+    .foot { padding: clamp(32px, 4vw, 40px) 0 clamp(28px, 3vw, 36px); }
+    .foot__grid { grid-template-columns: 1fr; gap: clamp(28px, 4vw, 36px); }
+    .foot__footer-bar { flex-direction: column; align-items: flex-start; text-align: center; }
+    .foot__social { justify-content: flex-start; }
+    .foot__copy { min-width: auto; }
+    .foot__legal-links { width: 100%; justify-content: flex-start; }
   }
 </style>
