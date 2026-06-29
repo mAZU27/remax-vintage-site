@@ -1,0 +1,108 @@
+---
+import Button from './Button.astro';
+import Icon from './Icon.astro';
+import { careersHero as h } from '../data/carreiras';
+---
+<section class="chero" data-chero>
+  <div class="chero__media" aria-hidden="true">
+    <div class="chero__img" data-chero-img style={`background-image:url('${h.background}')`}></div>
+    <div class="chero__scrim"></div>
+    <div class="chero__grain"></div>
+  </div>
+
+  <div class="chero__inner container">
+    <span class="eyebrow eyebrow--bare chero__eyebrow" data-reveal>{h.eyebrow}</span>
+    <h1 class="display chero__title" data-reveal style="--reveal-delay:90ms">
+      {h.titleLead} <em class="em-gold serif-it">{h.titleEmphasis}</em>.
+    </h1>
+    <p class="lede lede--light chero__lede" data-reveal style="--reveal-delay:200ms">{h.lede}</p>
+    <div class="chero__ctas" data-reveal style="--reveal-delay:300ms">
+      <Button href={h.primary.href} variant="gold" arrow>{h.primary.label}</Button>
+      <Button href={h.secondary.href} variant="ghost">{h.secondary.label}</Button>
+    </div>
+
+    <ul class="chero__cards">
+      {h.cards.map((c, i) => (
+        <li class="chcard" data-reveal style={`--reveal-delay:${420 + i * 100}ms`}>
+          <span class="chcard__ic"><Icon name={c.icon} size={22} stroke={1.4} /></span>
+          <h2 class="chcard__title">{c.title}</h2>
+          <p class="chcard__text">{c.text}</p>
+        </li>
+      ))}
+    </ul>
+  </div>
+</section>
+
+<style>
+  .chero {
+    position: relative; isolation: isolate; overflow: hidden;
+    background: var(--navy-ink); color: var(--cream);
+    padding: calc(var(--nav-h) + clamp(60px, 10vh, 120px)) var(--gutter) clamp(64px, 8vw, 110px);
+  }
+  .chero__media { position: absolute; inset: 0; z-index: -2; }
+  .chero__img {
+    position: absolute; inset: -8% 0 0; background-size: cover; background-position: center 30%;
+    will-change: transform;
+  }
+  .chero__scrim {
+    position: absolute; inset: 0;
+    background:
+      linear-gradient(to top, rgba(8,17,30,0.96) 4%, rgba(8,17,30,0.62) 46%, rgba(8,17,30,0.5) 100%),
+      linear-gradient(to right, rgba(8,17,30,0.78), rgba(8,17,30,0.25) 70%);
+  }
+  .chero__grain {
+    position: absolute; inset: 0; opacity: 0.45; mix-blend-mode: overlay; pointer-events: none;
+    background-image: radial-gradient(circle at 1px 1px, rgba(255,255,255,0.12) 1px, transparent 0);
+    background-size: 3px 3px;
+  }
+
+  .chero__inner { max-width: var(--max); margin: 0 auto; position: relative; }
+  .chero__eyebrow { color: var(--gold-light); }
+  .chero__title { margin-top: 22px; max-width: 17ch; text-shadow: 0 2px 30px rgba(0,0,0,0.35); }
+  .chero__lede { margin-top: 24px; max-width: 56ch; }
+  .chero__ctas { margin-top: 36px; display: flex; flex-wrap: wrap; gap: 16px; }
+
+  .chero__cards {
+    list-style: none; margin: clamp(48px, 6vw, 84px) 0 0; padding: 0;
+    display: grid; grid-template-columns: repeat(3, 1fr); gap: clamp(16px, 1.6vw, 24px);
+  }
+  .chcard {
+    background: rgba(11, 26, 46, 0.5);
+    -webkit-backdrop-filter: blur(12px) saturate(140%); backdrop-filter: blur(12px) saturate(140%);
+    border: 1px solid var(--hairline-gold); border-radius: var(--radius-lg);
+    padding: clamp(22px, 2.2vw, 30px);
+    transition: transform var(--t-med), border-color var(--t-med), box-shadow var(--t-med);
+  }
+  .chcard:hover {
+    transform: translateY(-4px); border-color: var(--hairline-gold-strong);
+    box-shadow: var(--shadow-float);
+  }
+  .chcard__ic {
+    width: 46px; height: 46px; display: grid; place-items: center; border-radius: 50%;
+    color: var(--gold-light); border: 1px solid var(--hairline-gold-strong);
+  }
+  .chcard__title { font-family: var(--font-serif); font-weight: 500; font-size: 21px; margin: 16px 0 0; color: var(--cream); }
+  .chcard__text { margin: 10px 0 0; font-size: 14px; line-height: 1.6; color: var(--white-70); }
+
+  @media (max-width: 880px) { .chero__cards { grid-template-columns: 1fr; } }
+</style>
+
+<script>
+  // Very subtle background parallax (disabled under reduced motion).
+  const reduce = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+  const img = document.querySelector('[data-chero-img]') as HTMLElement | null;
+  if (img && !reduce) {
+    let ticking = false;
+    const onScroll = () => {
+      if (ticking) return;
+      ticking = true;
+      requestAnimationFrame(() => {
+        const y = Math.min(window.scrollY, 700);
+        img.style.transform = `translateY(${y * 0.12}px)`;
+        ticking = false;
+      });
+    };
+    window.addEventListener('scroll', onScroll, { passive: true });
+    onScroll();
+  }
+</script>

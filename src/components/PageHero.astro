@@ -1,0 +1,161 @@
+---
+// Reusable interior-page hero — full-bleed Porto photo, navy scrim + grain,
+// eyebrow / serif headline / lede / optional CTAs. `title` is rendered with
+// set:html so a word can be emphasised via <em class="em-gold serif-it">.
+// A <slot> after the CTAs lets a page inject extra controls (e.g. the /apoio
+// search bar). Clears the fixed nav itself. Subtle parallax, reduced-motion safe.
+import Button from './Button.astro';
+
+interface Cta {
+  label: string;
+  href: string;
+  variant?: 'gold' | 'ghost';
+  arrow?: boolean;
+}
+interface Props {
+  eyebrow?: string;
+  title: string;
+  subtitle?: string;
+  image?: string;
+  imagePosition?: string;
+  align?: 'left' | 'center';
+  ctas?: Cta[];
+  /**
+   * Optional background video. When set, it lazy-attaches over the poster
+   * (`image`) on capable desktops — muted, looping, playsinline — and falls
+   * back to the still poster on mobile / reduced-motion / data-saver.
+   */
+  video?: { webm?: string; mp4?: string };
+}
+const {
+  eyebrow,
+  title,
+  subtitle,
+  image = '/media/hero-poster.jpg',
+  imagePosition = 'center 35%',
+  align = 'left',
+  ctas = [],
+  video,
+} = Astro.props;
+---
+<section class:list={['phero', 'on-navy', { 'phero--center': align === 'center' }]} data-phero>
+  <div class="phero__media" aria-hidden="true">
+    <div class="phero__img" data-phero-img style={`background-image:url('${image}'); background-position:${imagePosition};`}></div>
+    {video && (
+      <video class="phero__video" poster={image} muted loop playsinline preload="none" data-phero-video>
+        {video.webm && <source data-src={video.webm} type="video/webm" />}
+        {video.mp4 && <source data-src={video.mp4} type="video/mp4" />}
+      </video>
+    )}
+    <div class="phero__scrim"></div>
+    <div class="phero__grain"></div>
+  </div>
+
+  <div class="phero__inner container">
+    {eyebrow && <span class="eyebrow eyebrow--bare phero__eyebrow" data-reveal>{eyebrow}</span>}
+    <h1 class="display phero__title" data-reveal style="--reveal-delay:90ms" set:html={title} />
+    {subtitle && <p class="lede lede--light phero__sub" data-reveal style="--reveal-delay:200ms">{subtitle}</p>}
+
+    {ctas.length > 0 && (
+      <div class="phero__ctas" data-reveal style="--reveal-delay:300ms">
+        {ctas.map((c) => (
+          <Button href={c.href} variant={c.variant ?? 'gold'} arrow={c.arrow ?? true}>{c.label}</Button>
+        ))}
+      </div>
+    )}
+
+    <div class="phero__extra" data-reveal style="--reveal-delay:360ms"><slot /></div>
+  </div>
+</section>
+
+<style>
+  .phero {
+    position: relative; isolation: isolate; overflow: hidden;
+    background: var(--navy-ink); color: var(--cream);
+    padding: calc(var(--nav-h) + clamp(64px, 11vh, 132px)) var(--gutter) clamp(64px, 8vw, 116px);
+  }
+  .phero__media { position: absolute; inset: 0; z-index: -2; }
+  .phero__img { position: absolute; inset: -8% 0 0; background-size: cover; will-change: transform; }
+  .phero__video { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; }
+  .phero__scrim {
+    position: absolute; inset: 0;
+    background:
+      linear-gradient(to top, rgba(8,17,30,0.96) 4%, rgba(8,17,30,0.6) 48%, rgba(8,17,30,0.5) 100%),
+      linear-gradient(to right, rgba(8,17,30,0.78), rgba(8,17,30,0.28) 72%);
+  }
+  .phero--center .phero__scrim {
+    background: linear-gradient(to top, rgba(8,17,30,0.96) 4%, rgba(8,17,30,0.66) 50%, rgba(8,17,30,0.6) 100%);
+  }
+  .phero__grain {
+    position: absolute; inset: 0; opacity: 0.4; mix-blend-mode: overlay; pointer-events: none;
+    background-image: radial-gradient(circle at 1px 1px, rgba(255,255,255,0.12) 1px, transparent 0);
+    background-size: 3px 3px;
+  }
+
+  .phero__inner { max-width: var(--max); margin: 0 auto; position: relative; }
+  .phero--center .phero__inner { text-align: center; max-width: 880px; }
+  .phero__eyebrow { color: var(--gold-light); }
+  .phero--center .phero__eyebrow { justify-content: center; }
+  .phero__title { margin-top: 22px; max-width: 20ch; text-shadow: 0 2px 30px rgba(0,0,0,0.35); }
+  .phero--center .phero__title { margin-inline: auto; }
+  .phero__sub { margin-top: 24px; max-width: 58ch; }
+  .phero--center .phero__sub { margin-inline: auto; }
+  .phero__ctas { margin-top: 36px; display: flex; flex-wrap: wrap; gap: 16px; }
+  .phero--center .phero__ctas { justify-content: center; }
+  .phero__extra:empty { display: none; }
+  .phero__extra { margin-top: 32px; }
+
+  @media (max-width: 560px) {
+    .phero__ctas :global(.btn) { width: 100%; }
+  }
+</style>
+
+<script>
+  // Subtle background parallax — disabled under reduced motion.
+  const reduce = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+  const img = document.querySelector('[data-phero-img]') as HTMLElement | null;
+  if (img && !reduce) {
+    let ticking = false;
+    const onScroll = () => {
+      if (ticking) return;
+      ticking = true;
+      requestAnimationFrame(() => {
+        const y = Math.min(window.scrollY, 700);
+        img.style.transform = `translateY(${y * 0.1}px)`;
+        ticking = false;
+      });
+    };
+    window.addEventListener('scroll', onScroll, { passive: true });
+    onScroll();
+  }
+
+  // Optional background video — attached only on capable devices, after idle,
+  // so the poster stays the LCP and mobile/data-saver never download it.
+  const pheroVideo = document.querySelector('[data-phero-video]') as HTMLVideoElement | null;
+  if (pheroVideo) {
+    const conn = (navigator as any).connection;
+    const allow =
+      window.matchMedia('(min-width: 768px)').matches &&
+      !window.matchMedia('(prefers-reduced-motion: reduce)').matches &&
+      !(conn && (conn.saveData || /2g/.test(conn.effectiveType || '')));
+
+    if (allow) {
+      const attach = () => {
+        pheroVideo.querySelectorAll('source[data-src]').forEach((s) => {
+          const el = s as HTMLSourceElement;
+          if (el.dataset.src) el.src = el.dataset.src;
+        });
+        pheroVideo.load();
+        pheroVideo.play().catch(() => {}); // autoplay may be blocked — poster remains
+      };
+      const ric = (window as any).requestIdleCallback as
+        | undefined
+        | ((cb: () => void, opts?: { timeout: number }) => void);
+      if (ric) {
+        ric(attach, { timeout: 2500 });
+      } else {
+        window.addEventListener('load', () => setTimeout(attach, 600));
+      }
+    }
+  }
+</script>

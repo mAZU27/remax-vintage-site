@@ -1,0 +1,348 @@
+---
+import Base from '../layouts/Base.astro';
+import PageHero from '../components/PageHero.astro';
+import SectionEyebrow from '../components/SectionEyebrow.astro';
+import Button from '../components/Button.astro';
+import Icon from '../components/Icon.astro';
+import TeamShowcase from '../components/TeamShowcase.astro';
+import AwardsGrid from '../components/AwardsGrid.astro';
+import TestimonialCard from '../components/TestimonialCard.astro';
+import { neighborhoods, testimonials, primaryCta } from '../data/site';
+
+// Section 2 — three real facts about the agency (no invented metrics).
+const facts = [
+  { value: 'Desde 2007', label: 'Presença no Porto' },
+  { value: '4 zonas', label: 'Foz · Boavista · Ribeira · Cedofeita' },
+  { value: 'RE/MAX Collection®', label: 'Sub-marca de luxo global' },
+];
+
+// Section 4 — the method (4 steps, real site copy).
+const methodSteps = [
+  { num: 'I', name: 'Avaliar', icon: 'target', text: 'Analisamos o imóvel, a zona, o contexto de mercado e o seu potencial real.' },
+  { num: 'II', name: 'Posicionar', icon: 'strategy', text: 'Definimos o ângulo certo para comunicar valor, diferenciação e procura.' },
+  { num: 'III', name: 'Apresentar', icon: 'camera', text: 'Criamos uma apresentação visual e comercial à altura do imóvel.' },
+  { num: 'IV', name: 'Negociar', icon: 'handshake', text: 'Acompanhamos o processo com método, critério e foco no melhor resultado possível.' },
+];
+
+// Section 7 — reuse the first three (flagged placeholder) testimonials from site.ts.
+const aboutTestimonials = testimonials.slice(0, 3);
+---
+<Base
+  title="Sobre nós"
+  description="A RE/MAX Collection Vintage — desde 2007 a apresentar o Porto ao mundo. Especialistas em imóveis premium e vintage em Foz do Douro, Boavista, Ribeira e Cedofeita."
+  image="/images/porto/editorial-entrada.webp"
+  overHeroNav
+>
+  <!-- S1 — Hero (background video moved here from the homepage hero) -->
+  <PageHero
+    eyebrow="Porto · Desde 2007"
+    title='Imóveis distintos merecem uma <em class="em-gold serif-it">apresentação distinta</em>.'
+    subtitle="Especialistas em imóveis premium e vintage em Foz do Douro, Boavista, Ribeira e Cedofeita."
+    image="/media/hero-poster.jpg"
+    video={{ webm: '/media/hero.webm', mp4: '/media/hero.mp4' }}
+    ctas={[
+      { label: 'Ver a coleção', href: '/imoveis', variant: 'gold' },
+      { label: 'Falar connosco', href: '/contacto', variant: 'ghost' },
+    ]}
+  />
+
+  <!-- S2 — Origem e missão -->
+  <section class="section section--cream ab-origin">
+    <div class="container">
+      <div class="ab-origin__grid">
+        <div class="ab-origin__text">
+          <SectionEyebrow text="A nossa história" />
+          <h2 class="h2 ab-origin__title" data-reveal style="--reveal-delay:80ms">Desde 2007 a apresentar o Porto ao mundo.</h2>
+          <span class="gold-rule ab-origin__rule" data-reveal="rule" style="--reveal-delay:140ms"></span>
+          <p class="lede ab-origin__body" data-reveal style="--reveal-delay:180ms">
+            A RE/MAX Collection Vintage nasceu em 2007 no Porto, com uma convicção simples: imóveis
+            distintos merecem uma abordagem distinta. Não se trata apenas de vender — trata-se de
+            interpretar, posicionar e apresentar cada imóvel com a estratégia e o critério que o seu
+            valor exige.
+          </p>
+        </div>
+        <!-- PLACEHOLDER: fotografia atmosférica real do Porto. Substituir por foto do escritório / equipa quando disponível. -->
+        <figure class="ab-origin__fig" data-reveal style="--reveal-delay:140ms">
+          <img src="/images/porto/porto-douro-retrato.webp" alt="O Porto, sobre o Douro" loading="lazy" decoding="async" width="1000" height="1200" />
+          <figcaption class="ab-origin__cap">O Porto, todos os dias.</figcaption>
+        </figure>
+      </div>
+
+      <ul class="ab-facts">
+        {facts.map((f, i) => (
+          <li class="ab-fact" data-reveal style={`--reveal-delay:${i * 90}ms`}>
+            <span class="ab-fact__value">{f.value}</span>
+            <span class="ab-fact__label">{f.label}</span>
+          </li>
+        ))}
+      </ul>
+    </div>
+  </section>
+
+  <!-- S2.5 — Reconhecimento (prémios RE/MAX Portugal, rede) -->
+  <AwardsGrid />
+
+  <!-- S3 — Filosofia -->
+  <section class="section section--ink on-navy ab-phil">
+    <div class="container">
+      <p class="ab-phil__quote" data-reveal>
+        <span class="ab-phil__mark" aria-hidden="true"><Icon name="quote" size={34} stroke={1.3} /></span>
+        Um imóvel distinto não deve entrar no mercado como <em class="em-gold serif-it">mais um anúncio</em>.
+      </p>
+      <div class="ab-phil__cols">
+        <p class="ab-phil__col" data-reveal style="--reveal-delay:120ms">
+          Antes de ser publicado, um imóvel precisa de ser interpretado, valorizado e apresentado com
+          critério. A forma como entra no mercado influencia a perceção, a procura e a negociação.
+        </p>
+        <p class="ab-phil__claim" data-reveal style="--reveal-delay:200ms">
+          Vendemos imóveis com estratégia, não apenas com anúncios.
+        </p>
+      </div>
+    </div>
+  </section>
+
+  <!-- S4 — O método -->
+  <section class="section section--cream ab-method">
+    <div class="container">
+      <header class="ab-head">
+        <SectionEyebrow text="O Método" />
+        <h2 class="h2 ab-head__title" data-reveal style="--reveal-delay:80ms">O método por trás de uma venda bem apresentada.</h2>
+        <p class="lede ab-head__sub" data-reveal style="--reveal-delay:150ms">
+          Quatro passos, executados com critério, para que cada imóvel chegue ao mercado da forma certa.
+        </p>
+      </header>
+
+      <ol class="ab-steps">
+        {methodSteps.map((s, i) => (
+          <li class="ab-step" data-reveal style={`--reveal-delay:${i * 90}ms`}>
+            <span class="ab-step__num" aria-hidden="true">{s.num}</span>
+            <span class="ab-step__ic"><Icon name={s.icon} size={22} stroke={1.5} /></span>
+            <h3 class="ab-step__name">{s.name}</h3>
+            <p class="ab-step__text">{s.text}</p>
+          </li>
+        ))}
+      </ol>
+    </div>
+  </section>
+
+  <!-- S5 — Os bairros -->
+  <section class="section section--navy on-navy ab-hoods">
+    <div class="container">
+      <header class="ab-head ab-head--split">
+        <div>
+          <SectionEyebrow text="O nosso território" />
+          <h2 class="h2 ab-head__title" data-reveal style="--reveal-delay:80ms">Bairros onde o valor não está apenas no metro quadrado.</h2>
+        </div>
+        <Button href="/#bairros" variant="ghost" arrow reveal>Ver os bairros</Button>
+      </header>
+
+      <ul class="ab-hood-grid">
+        {neighborhoods.map((n, i) => (
+          <li class="ab-hood" data-reveal style={`--reveal-delay:${i * 80}ms`}>
+            <div class="ab-hood__top">
+              <span class="ab-hood__num" aria-hidden="true">{n.num}</span>
+              <div>
+                <h3 class="ab-hood__name">{n.name}</h3>
+                <span class="ab-hood__ctx">{n.context}</span>
+              </div>
+            </div>
+            <p class="ab-hood__blurb">{n.blurb}</p>
+            <ul class="ab-hood__chips">
+              {n.features.map((f) => (
+                <li><Icon name={f.icon} size={14} stroke={1.5} /> {f.label}</li>
+              ))}
+            </ul>
+          </li>
+        ))}
+      </ul>
+    </div>
+  </section>
+
+  <!-- S6 — Equipa -->
+  <TeamShowcase />
+
+  <!-- S7 — Testemunhos -->
+  <section class="section section--cream-soft ab-tmt">
+    <div class="container">
+      <header class="ab-head ab-head--center">
+        <SectionEyebrow text="O que dizem os nossos clientes" center />
+        <h2 class="h2 ab-head__title" data-reveal style="--reveal-delay:80ms">A confiança constrói-se imóvel a imóvel.</h2>
+      </header>
+
+      <ul class="ab-tmt-grid">
+        {aboutTestimonials.map((t, i) => (
+          <li><TestimonialCard quote={t.quote} name={t.name} context={t.context} index={i} /></li>
+        ))}
+      </ul>
+    </div>
+  </section>
+
+  <!-- S8 — CTA final -->
+  <section class="ab-final on-navy">
+    <div class="ab-final__media" aria-hidden="true">
+      <div class="ab-final__img"></div>
+      <div class="ab-final__scrim"></div>
+    </div>
+    <div class="container ab-final__inner">
+      <h2 class="display ab-final__title" data-reveal>Está a pensar vender um imóvel distinto?</h2>
+      <p class="lede lede--light ab-final__sub" data-reveal style="--reveal-delay:120ms">
+        Comece pela forma certa — uma avaliação confidencial e sem compromisso.
+      </p>
+      <div data-reveal style="--reveal-delay:200ms">
+        <Button href={primaryCta.href} variant="gold" arrow>Pedir avaliação</Button>
+      </div>
+      <p class="ab-final__guar" data-reveal style="--reveal-delay:260ms">Confidencial · Sem compromisso · Resposta em 24h</p>
+    </div>
+  </section>
+</Base>
+
+<style>
+  .ab-head { max-width: 760px; margin-bottom: clamp(40px, 4.5vw, 64px); }
+  .ab-head__title { margin-top: 16px; }
+  .ab-head__sub { margin-top: 18px; }
+  .ab-head--center { max-width: 720px; margin-inline: auto; text-align: center; }
+  .ab-head--center .ab-head__sub { margin-inline: auto; }
+  .ab-head--split {
+    max-width: none; display: flex; align-items: flex-end; justify-content: space-between;
+    gap: 32px; flex-wrap: wrap;
+  }
+  .ab-head--split > div { max-width: 680px; }
+
+  /* S2 — Origem */
+  .ab-origin__grid {
+    display: grid; grid-template-columns: 1.05fr 0.95fr; gap: clamp(32px, 5vw, 72px); align-items: center;
+  }
+  .ab-origin__title { margin-top: 16px; }
+  .ab-origin__rule { margin: 22px 0; }
+  .ab-origin__body { max-width: 52ch; }
+  .ab-origin__fig {
+    position: relative; margin: 0; border-radius: var(--radius-lg); overflow: hidden;
+    box-shadow: var(--shadow-card); border: 1px solid var(--hairline-gold);
+  }
+  .ab-origin__fig img { width: 100%; aspect-ratio: 4 / 3; max-height: 480px; object-fit: cover; }
+  .ab-origin__cap {
+    position: absolute; left: 0; right: 0; bottom: 0; padding: 28px 22px 18px;
+    font-family: var(--font-serif); font-style: italic; font-size: 16px; color: var(--cream);
+    background: linear-gradient(to top, rgba(8,17,30,0.7), transparent);
+  }
+
+  .ab-facts {
+    list-style: none; margin: clamp(44px, 5vw, 72px) 0 0; padding: 0;
+    display: grid; grid-template-columns: repeat(3, 1fr); gap: clamp(16px, 2vw, 24px);
+  }
+  .ab-fact {
+    padding: clamp(24px, 2.4vw, 34px); border: 1px solid var(--ink-10); border-radius: var(--radius-lg);
+    background: var(--cream-soft); display: flex; flex-direction: column; gap: 10px;
+  }
+  .ab-fact__value { font-family: var(--font-serif); font-weight: 500; font-size: clamp(24px, 2.4vw, 32px); color: var(--gold-deep); letter-spacing: -0.01em; }
+  .ab-fact__label { font-size: 13.5px; color: var(--ink-60); letter-spacing: 0.02em; }
+
+  /* S3 — Filosofia */
+  .ab-phil { text-align: center; }
+  .ab-phil__mark { display: block; color: var(--gold-light); margin: 0 auto 18px; opacity: 0.8; }
+  .ab-phil__quote {
+    font-family: var(--font-serif); font-weight: 500; font-size: clamp(28px, 4.2vw, 54px);
+    line-height: 1.12; letter-spacing: -0.02em; color: var(--cream); max-width: 20ch; margin: 0 auto;
+  }
+  .ab-phil__cols {
+    display: grid; grid-template-columns: 1fr 1fr; gap: clamp(28px, 4vw, 64px);
+    max-width: 980px; margin: clamp(40px, 5vw, 64px) auto 0; text-align: left;
+  }
+  .ab-phil__col { margin: 0; font-size: 16px; line-height: 1.7; color: var(--white-70); }
+  .ab-phil__claim {
+    margin: 0; font-family: var(--font-serif); font-style: italic; font-weight: 400;
+    font-size: clamp(21px, 2vw, 27px); line-height: 1.35; color: var(--gold-light); letter-spacing: -0.01em;
+    align-self: center;
+  }
+
+  /* S4 — Método */
+  .ab-steps {
+    list-style: none; margin: 0; padding: 0;
+    display: grid; grid-template-columns: repeat(4, 1fr); gap: clamp(16px, 2vw, 24px); counter-reset: none;
+  }
+  .ab-step {
+    position: relative; padding: clamp(26px, 2.4vw, 34px) clamp(22px, 2vw, 28px);
+    border: 1px solid var(--ink-10); border-radius: var(--radius-lg); background: var(--cream-soft);
+    transition: transform var(--t-med), border-color var(--t-med), box-shadow var(--t-med);
+  }
+  .ab-step:hover { transform: translateY(-4px); border-color: var(--hairline-gold-strong); box-shadow: var(--shadow-card); }
+  .ab-step__num {
+    position: absolute; top: 18px; right: 22px; font-family: var(--font-serif);
+    font-size: 30px; color: var(--gold); opacity: 0.32; line-height: 1;
+  }
+  .ab-step__ic {
+    width: 50px; height: 50px; display: grid; place-items: center; border-radius: 50%;
+    color: var(--gold-deep); background: rgba(184, 153, 104, 0.1); border: 1px solid var(--hairline-gold);
+  }
+  .ab-step__name { font-family: var(--font-serif); font-weight: 500; font-size: 21px; color: var(--ink); margin: 18px 0 0; }
+  .ab-step__text { margin: 10px 0 0; font-size: 14px; line-height: 1.6; color: var(--ink-60); }
+
+  /* S5 — Bairros */
+  .ab-hood-grid {
+    list-style: none; margin: 0; padding: 0;
+    display: grid; grid-template-columns: repeat(4, 1fr); gap: clamp(16px, 1.8vw, 22px);
+  }
+  .ab-hood {
+    display: flex; flex-direction: column; padding: clamp(24px, 2.2vw, 30px);
+    border: 1px solid var(--hairline-gold); border-radius: var(--radius-lg);
+    background: rgba(255, 255, 255, 0.025);
+    transition: transform var(--t-med), border-color var(--t-med), box-shadow var(--t-med);
+  }
+  .ab-hood:hover { transform: translateY(-4px); border-color: var(--hairline-gold-strong); box-shadow: var(--shadow-float); }
+  .ab-hood__top { display: flex; align-items: center; gap: 14px; }
+  .ab-hood__num {
+    flex-shrink: 0; width: 44px; height: 44px; display: grid; place-items: center; border-radius: 50%;
+    font-family: var(--font-serif); font-size: 18px; color: var(--gold-light);
+    border: 1px solid var(--hairline-gold-strong);
+  }
+  .ab-hood__name { font-family: var(--font-serif); font-weight: 500; font-size: 21px; color: var(--cream); margin: 0; }
+  .ab-hood__ctx { font-size: 11.5px; letter-spacing: 0.12em; text-transform: uppercase; color: var(--gold-light); }
+  .ab-hood__blurb { margin: 18px 0 0; font-size: 14px; line-height: 1.6; color: var(--white-70); flex: 1; }
+  .ab-hood__chips { list-style: none; display: flex; flex-wrap: wrap; gap: 7px; margin: 18px 0 0; padding: 0; }
+  .ab-hood__chips li {
+    display: inline-flex; align-items: center; gap: 6px; font-size: 11.5px; color: var(--white-90);
+    padding: 5px 10px; border: 1px solid var(--hairline-gold); border-radius: 100px; background: rgba(184, 153, 104, 0.08);
+  }
+  .ab-hood__chips :global(.icon) { color: var(--gold-light); flex-shrink: 0; }
+
+  /* S7 — Testemunhos */
+  .ab-tmt-grid {
+    list-style: none; margin: 0; padding: 0;
+    display: grid; grid-template-columns: repeat(3, 1fr); gap: clamp(18px, 2vw, 26px);
+  }
+
+  /* S8 — CTA final */
+  .ab-final {
+    position: relative; isolation: isolate; overflow: hidden; text-align: center;
+    padding: clamp(80px, 10vw, 150px) var(--gutter); background: var(--navy-ink); color: var(--cream);
+  }
+  .ab-final__media { position: absolute; inset: 0; z-index: -2; }
+  .ab-final__img {
+    position: absolute; inset: 0; background: url('/images/porto/editorial-terraco.webp') center/cover;
+  }
+  .ab-final__scrim {
+    position: absolute; inset: 0;
+    background: linear-gradient(180deg, rgba(8,17,30,0.86), rgba(8,17,30,0.92)),
+      radial-gradient(80% 60% at 50% 30%, rgba(184,153,104,0.12), transparent 70%);
+  }
+  .ab-final__inner { position: relative; max-width: 760px; margin: 0 auto; }
+  .ab-final__title { max-width: 16ch; margin: 0 auto; }
+  .ab-final__sub { margin: 22px auto 36px; max-width: 52ch; }
+  .ab-final__guar { margin: 28px 0 0; font-size: 12.5px; letter-spacing: 0.12em; text-transform: uppercase; color: var(--gold-light); }
+
+  /* ---------- Responsive ---------- */
+  @media (max-width: 920px) {
+    .ab-origin__grid { grid-template-columns: 1fr; }
+    .ab-origin__fig { order: -1; }
+    .ab-origin__fig img { aspect-ratio: 16 / 10; }
+    .ab-steps { grid-template-columns: repeat(2, 1fr); }
+    .ab-hood-grid { grid-template-columns: repeat(2, 1fr); }
+    .ab-tmt-grid { grid-template-columns: 1fr; }
+    .ab-phil__cols { grid-template-columns: 1fr; }
+  }
+  @media (max-width: 560px) {
+    .ab-facts { grid-template-columns: 1fr; }
+    .ab-steps { grid-template-columns: 1fr; }
+    .ab-hood-grid { grid-template-columns: 1fr; }
+  }
+</style>

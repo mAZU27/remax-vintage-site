@@ -1,0 +1,509 @@
+---
+// "A Nossa Equipa" — premium team showcase.
+// Navy zone: editorial header + an infinite right-moving marquee of portrait
+// cards (overlay caption, desktop arc preserved, pauses on hover), then a soft
+// curve into the cream zone with stats + CTA.
+// Each card uses <picture> (webp 400w/600w + jpg fallback). When a portrait is
+// absent or fails to load, a dignified gold-monogram fallback takes over (the
+// small script at the bottom flags it). Reveal + hover are motion-safe.
+import Icon from './Icon.astro';
+import { consultants, teamStats, teamShowcase } from '../data/team';
+
+const initials = (name: string) =>
+  name
+    .trim()
+    .split(/\s+/)
+    .map((w) => w[0])
+    .slice(0, 2)
+    .join('')
+    .toUpperCase();
+
+// Infinite right-moving marquee: the consultant set is repeated so the track is
+// perfectly periodic and the loop has no visible seam. Only the first copy is
+// exposed to assistive tech; the rest are decorative duplicates (aria-hidden,
+// links pulled out of the tab order). MARQUEE_COPIES must match the 1/N travel
+// distance in the @keyframes below — keep them in sync (2 copies → -50%).
+// Desktop arc: a repeating 5-card arch (centre high, sides dip). Anchored to the
+// consultant's own index (not DOM position) so every copy carries an identical
+// arc — that keeps the loop seamless even when the list length isn't a multiple
+// of 5. Values match the original arch exactly.
+const ARC = [
+  { y: '16px', r: '-1.3deg' },
+  { y: '4px', r: '-0.6deg' },
+  { y: '-10px', r: '0deg' },
+  { y: '4px', r: '0.6deg' },
+  { y: '16px', r: '1.3deg' },
+];
+const MARQUEE_COPIES = 2;
+const marquee = Array.from({ length: MARQUEE_COPIES }, (_, copy) =>
+  consultants.map((c, j) => ({ ...c, clone: copy > 0, arc: ARC[j % ARC.length] }))
+).flat();
+
+// Keep a constant, premium glide speed regardless of how many consultants there
+// are: ~5s per card. More people → proportionally longer loop, same pace.
+const SECONDS_PER_CARD = 5;
+const marqueeSeconds = Math.max(20, consultants.length * SECONDS_PER_CARD);
+---
+
+<section class="ts on-navy" aria-labelledby="ts-title">
+  <div class="container">
+    <header class="ts__head">
+      <div class="ts__head-l">
+        <span class="ts__eyebrow" data-reveal>{teamShowcase.eyebrow}</span>
+        <h2 id="ts-title" class="ts__title" data-reveal style="--reveal-delay:90ms">{teamShowcase.titleLine1}</h2>
+        <p class="ts__title-2 serif-it" data-reveal style="--reveal-delay:160ms">{teamShowcase.titleLine2}</p>
+      </div>
+      <div class="ts__head-r">
+        <p class="ts__intro" data-reveal style="--reveal-delay:220ms">{teamShowcase.intro}</p>
+        <svg class="ts__bldg" viewBox="0 0 128 96" fill="none" aria-hidden="true">
+          <path
+            d="M6 42 L64 10 L122 42 M12 48 H116 M22 52 V82 M44 52 V82 M66 52 V82 M88 52 V82 M110 52 V82 M14 82 H114 M8 90 H120"
+          />
+        </svg>
+      </div>
+    </header>
+
+    <div class="ts__marquee" style={`--ts-speed:${marqueeSeconds}s`}>
+      <ul class="ts__track" role="list">
+        {marquee.map((c) => (
+          <li class="ts__cell" style={`--arc-y:${c.arc.y};--arc-rot:${c.arc.r}`} aria-hidden={c.clone ? 'true' : undefined}>
+            <article class="ts__card">
+              <div class:list={['ts__photo', { 'is-missing': !c.image }]}>
+                {c.image && (
+                  <picture>
+                    {c.hasWebp !== false && (
+                      <source
+                        type="image/webp"
+                        srcset={`${c.image}-400.webp 400w, ${c.image}-600.webp 600w`}
+                        sizes="(max-width: 700px) 240px, 268px"
+                      />
+                    )}
+                    <img
+                      src={`${c.image}.jpg`}
+                      alt={`${c.name}, ${c.role} — RE/MAX Collection Vintage, Porto`}
+                      loading="lazy"
+                      decoding="async"
+                      width="600"
+                      height="800"
+                      draggable={false}
+                    />
+                  </picture>
+                )}
+                <span class="ts__mono" aria-hidden="true">{initials(c.name)}</span>
+                <div class="ts__scrim" aria-hidden="true"></div>
+                <div class="ts__info">
+                  <h3 class="ts__name">{c.name}</h3>
+                  <span class="ts__role">{c.role}</span>
+                  {c.zone && <span class="ts__zone">{c.zone}</span>}
+                  <a class="ts__profile" href="#contacto" tabindex={c.clone ? -1 : undefined} aria-label={`Ver perfil de ${c.name}`}>
+                    <span>Ver perfil</span>
+                    <svg viewBox="0 0 24 24" fill="none" aria-hidden="true"><path d="M5 12h14M13 6l6 6-6 6" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" /></svg>
+                  </a>
+                </div>
+              </div>
+            </article>
+          </li>
+        ))}
+      </ul>
+    </div>
+  </div>
+
+  <div class="ts__divider" aria-hidden="true">
+    <svg viewBox="0 0 1440 120" preserveAspectRatio="none">
+      <path class="ts__curve-fill" d="M0 78 C 360 78 520 34 720 34 C 920 34 1080 78 1440 78 L 1440 120 L 0 120 Z" />
+      <path class="ts__curve-line" d="M0 78 C 360 78 520 34 720 34 C 920 34 1080 78 1440 78" />
+    </svg>
+  </div>
+</section>
+
+<section class="ts-stats">
+  <div class="container">
+    <ul class="ts-stats__grid">
+      {teamStats.map((s, i) => (
+        <li class="ts-stat" data-reveal style={`--reveal-delay:${i * 90}ms`}>
+          <span class="ts-stat__ic"><Icon name={s.icon} size={26} stroke={1.4} /></span>
+          <span class="ts-stat__val">{s.value}</span>
+          <span class="ts-stat__lab">{s.label}</span>
+        </li>
+      ))}
+    </ul>
+    <div class="ts-stats__cta" data-reveal style="--reveal-delay:120ms">
+      <a class="ts__cta" href={teamShowcase.cta.href}>
+        <span>{teamShowcase.cta.label}</span>
+        <Icon name="arrow" size={15} stroke={1.8} />
+      </a>
+    </div>
+  </div>
+</section>
+
+<style>
+  /* ---------- Navy zone ---------- */
+  .ts {
+    position: relative;
+    overflow: hidden;
+    background: var(--navy-ink);
+    color: var(--cream);
+    padding-top: clamp(64px, 8vw, 110px);
+  }
+
+  .ts__head {
+    display: grid;
+    grid-template-columns: 1.05fr 0.95fr;
+    gap: clamp(24px, 4vw, 64px);
+    align-items: start;
+    margin-bottom: clamp(28px, 3.4vw, 48px);
+  }
+
+  .ts__eyebrow {
+    display: inline-flex;
+    align-items: center;
+    gap: 14px;
+    font-family: var(--font-sans);
+    font-size: var(--fs-eyebrow);
+    font-weight: 500;
+    letter-spacing: 0.28em;
+    text-transform: uppercase;
+    color: var(--gold-light);
+  }
+  .ts__eyebrow::before,
+  .ts__eyebrow::after {
+    content: "";
+    width: 28px;
+    height: 1px;
+    background: var(--gold);
+  }
+
+  .ts__title {
+    margin: 18px 0 0;
+    font-family: var(--font-serif);
+    font-weight: 500;
+    font-size: clamp(30px, 4.2vw, 52px);
+    line-height: 1.08;
+    letter-spacing: -0.02em;
+    color: var(--cream);
+  }
+  .ts__title-2 {
+    margin: 6px 0 0;
+    font-size: clamp(22px, 2.8vw, 34px);
+    line-height: 1.1;
+    color: var(--gold-light);
+  }
+
+  .ts__head-r {
+    display: flex;
+    flex-direction: column;
+    padding-top: 6px;
+  }
+  .ts__intro {
+    margin: 0;
+    max-width: 46ch;
+    font-size: clamp(15px, 1.1vw, 16.5px);
+    line-height: 1.7;
+    color: var(--white-70);
+  }
+  .ts__bldg {
+    display: block;
+    width: clamp(120px, 13vw, 168px);
+    height: auto;
+    margin: 22px 0 0 auto;
+    color: var(--gold-light);
+    opacity: 0.22;
+  }
+  .ts__bldg path {
+    stroke: currentColor;
+    stroke-width: 1;
+    stroke-linecap: round;
+    stroke-linejoin: round;
+  }
+
+  /* ---------- Team marquee (infinite right-moving carousel) ---------- */
+  .ts__marquee {
+    --ts-card-w: clamp(232px, 21vw, 268px);
+    --ts-gap: clamp(14px, 1.5vw, 22px);
+    --ts-speed: 30s;
+    position: relative;
+    overflow: hidden;
+    /* Vertical room so the arc lift + hover float-shadow are not clipped. */
+    padding-block: clamp(24px, 3vw, 40px);
+    /* Soft edges so cards dissolve in/out instead of hard-cutting at the seam. */
+    -webkit-mask-image: linear-gradient(to right, transparent 0, #000 5%, #000 95%, transparent 100%);
+            mask-image: linear-gradient(to right, transparent 0, #000 5%, #000 95%, transparent 100%);
+  }
+
+  .ts__track {
+    list-style: none;
+    margin: 0;
+    padding: 0;
+    display: flex;
+    width: max-content;
+    will-change: transform;
+    animation: ts-marquee var(--ts-speed) linear infinite;
+  }
+  /* Pause gently while the visitor is reading a card. */
+  .ts__marquee:hover .ts__track { animation-play-state: paused; }
+
+  @keyframes ts-marquee {
+    /* The track holds 2 identical copies, so one copy is exactly 1/2 of its
+       width. Travelling from -1/2 back to 0 slides the cards to the RIGHT, then
+       loops onto the identical neighbouring copy — no visible seam. Keep the
+       -50% in sync with MARQUEE_COPIES in the frontmatter. */
+    from { transform: translate3d(-50%, 0, 0); }
+    to   { transform: translate3d(0, 0, 0); }
+  }
+
+  /* Fixed card width + uniform right margin keeps the track perfectly periodic
+     (margin, not flex `gap`, so 1/3 of the track is exactly one copy). */
+  .ts__cell {
+    flex: 0 0 var(--ts-card-w);
+    width: var(--ts-card-w);
+    min-width: 0;
+    margin-right: var(--ts-gap);
+  }
+
+  /* Arc — desktop only: centre card sits highest, sides dip, a whisper of
+     rotation. Per-cell --arc-y / --arc-rot (set inline from the consultant's
+     index) drive it, so every copy is identical and the loop stays seamless.
+     Uses the independent `translate`/`rotate` properties, so it composes with
+     the track's `transform` without fighting. */
+  @media (min-width: 1025px) {
+    .ts__cell {
+      translate: 0 var(--arc-y, 0);
+      rotate: var(--arc-rot, 0deg);
+    }
+  }
+
+  .ts__card {
+    position: relative;
+    border-radius: 2px;
+    overflow: hidden;
+    border: 1px solid var(--hairline-gold);
+    background: var(--navy);
+    transition: transform var(--t-med) var(--t-ease-emph),
+      box-shadow var(--t-med) var(--t-ease-emph), border-color var(--t-med);
+  }
+  .ts__card:hover {
+    transform: translateY(-6px);
+    border-color: var(--hairline-gold-strong);
+    box-shadow: var(--shadow-float);
+  }
+
+  .ts__photo {
+    position: relative;
+    aspect-ratio: 3 / 4;
+    background: var(--navy);
+    overflow: hidden;
+  }
+  .ts__photo picture { display: block; width: 100%; height: 100%; }
+  .ts__photo img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    object-position: center top;
+    transition: transform 0.7s var(--t-ease-emph);
+  }
+  .ts__card:hover .ts__photo img { transform: scale(1.045); }
+
+  /* Gold-monogram fallback — shown when a portrait is absent or fails to load */
+  .ts__mono {
+    position: absolute;
+    inset: 0;
+    display: none;
+    place-items: center;
+    font-family: var(--font-serif);
+    font-size: clamp(44px, 5vw, 64px);
+    font-weight: 500;
+    letter-spacing: 0.04em;
+    color: var(--gold);
+    opacity: 0.5;
+    transition: opacity var(--t-med) var(--t-ease-emph), transform var(--t-med) var(--t-ease-emph);
+  }
+  .ts__card:hover .ts__mono { opacity: 0.7; transform: scale(1.04); }
+  .ts__photo.is-missing picture { display: none; }
+  .ts__photo.is-missing .ts__mono { display: grid; }
+
+  /* Bottom scrim keeps the caption legible over any portrait (transparent -> navy) */
+  .ts__scrim {
+    position: absolute;
+    inset: auto 0 0;
+    height: 62%;
+    background: linear-gradient(
+      to top,
+      color-mix(in srgb, var(--navy-ink) 90%, transparent) 0%,
+      color-mix(in srgb, var(--navy-ink) 60%, transparent) 34%,
+      transparent 100%
+    );
+    pointer-events: none;
+  }
+
+  .ts__info {
+    position: absolute;
+    inset: auto 0 0;
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 4px;
+    padding: clamp(13px, 1.2vw, 18px);
+  }
+  .ts__name {
+    margin: 0;
+    font-family: var(--font-serif);
+    font-weight: 500;
+    font-size: 18px;
+    line-height: 1.15;
+    color: var(--white-90);
+  }
+  .ts__role {
+    font-family: var(--font-sans);
+    font-weight: 500;
+    font-size: 11px;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    color: var(--gold);
+  }
+  .ts__zone {
+    font-family: var(--font-sans);
+    font-size: 13px;
+    line-height: 1.3;
+    color: var(--white-70);
+  }
+  .ts__profile {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    margin-top: 8px;
+    font-family: var(--font-sans);
+    font-size: 12px;
+    letter-spacing: 0.04em;
+    color: var(--gold-light);
+    text-decoration: none;
+    transition: color var(--t-fast);
+  }
+  .ts__profile svg { width: 14px; height: 14px; transition: transform var(--t-med); }
+  .ts__card:hover .ts__profile { color: var(--white-90); }
+  .ts__card:hover .ts__profile svg { transform: translateX(4px); }
+  .ts__profile:focus-visible { outline: 2px solid var(--gold-light); outline-offset: 3px; border-radius: 2px; }
+
+  /* ---------- Curve divider (navy -> cream) ---------- */
+  .ts__divider {
+    position: relative;
+    margin-top: clamp(38px, 5vw, 68px);
+    line-height: 0;
+  }
+  .ts__divider svg { display: block; width: 100%; height: clamp(54px, 7vw, 102px); }
+  .ts__curve-fill { fill: var(--cream-soft); }
+  .ts__curve-line {
+    fill: none;
+    stroke: var(--hairline-gold-strong);
+    stroke-width: 1.2;
+    vector-effect: non-scaling-stroke;
+  }
+
+  /* ---------- Cream zone — stats + CTA ---------- */
+  .ts-stats {
+    background: var(--cream-soft);
+    padding: clamp(44px, 6vw, 78px) 0 clamp(56px, 7vw, 96px);
+  }
+  .ts-stats__grid {
+    list-style: none;
+    margin: 0;
+    padding: 0;
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+  }
+  .ts-stat {
+    position: relative;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    text-align: center;
+    gap: 10px;
+    padding: clamp(8px, 1.4vw, 16px) clamp(12px, 2vw, 26px);
+  }
+  .ts-stat + .ts-stat::before {
+    content: "";
+    position: absolute;
+    left: 0;
+    top: 16%;
+    bottom: 16%;
+    width: 1px;
+    background: var(--ink-10);
+  }
+  .ts-stat__ic { color: var(--gold-deep); }
+  .ts-stat__val {
+    font-family: var(--font-serif);
+    font-weight: 500;
+    font-size: clamp(34px, 4vw, 52px);
+    line-height: 1;
+    letter-spacing: -0.01em;
+    color: var(--navy);
+  }
+  .ts-stat__lab {
+    font-size: 11.5px;
+    letter-spacing: 0.16em;
+    text-transform: uppercase;
+    color: var(--ink-60);
+  }
+
+  .ts-stats__cta { text-align: center; margin-top: clamp(38px, 5vw, 62px); }
+  .ts__cta {
+    display: inline-flex;
+    align-items: center;
+    gap: 12px;
+    padding: 16px 30px;
+    border-radius: var(--radius);
+    background: var(--gold);
+    color: var(--navy-ink);
+    font-family: var(--font-sans);
+    font-weight: 600;
+    font-size: 12.5px;
+    letter-spacing: 0.16em;
+    text-transform: uppercase;
+    text-decoration: none;
+    transition: background var(--t-med), box-shadow var(--t-med), transform var(--t-med);
+  }
+  .ts__cta:hover { background: var(--gold-deep); box-shadow: var(--shadow-float); transform: translateY(-2px); }
+  .ts__cta :global(.icon) { transition: transform var(--t-med); }
+  .ts__cta:hover :global(.icon) { transform: translateX(4px); }
+  .ts__cta:focus-visible { outline: 2px solid var(--gold-deep); outline-offset: 3px; }
+
+  /* ---------- Responsive ---------- */
+  @media (max-width: 760px) {
+    .ts__head { grid-template-columns: 1fr; gap: 18px; }
+    .ts__bldg { display: none; }
+    .ts-stats__grid { grid-template-columns: repeat(2, 1fr); row-gap: clamp(22px, 5vw, 32px); }
+    .ts-stat::before { display: none; }
+    .ts-stat:nth-child(even)::before { display: block; }
+  }
+
+  /* Mobile keeps the same auto marquee; only the CTA goes full-width. */
+  @media (max-width: 640px) {
+    .ts__cta { width: 100%; justify-content: center; }
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    /* No auto-scroll: rest on the first copy (the full set of consultants). */
+    .ts__track { animation: none; transform: none; }
+    .ts__card,
+    .ts__mono,
+    .ts__photo img,
+    .ts__profile,
+    .ts__profile svg,
+    .ts__cta,
+    .ts__cta :global(.icon) { transition: none !important; }
+    .ts__card:hover { transform: none; }
+    .ts__card:hover .ts__photo img { transform: none; }
+    .ts__card:hover .ts__mono { transform: none; }
+  }
+</style>
+
+<script>
+  // Swap to the gold-monogram fallback when a portrait is missing or fails to load.
+  const photos = document.querySelectorAll<HTMLImageElement>('.ts__photo img');
+  photos.forEach((img) => {
+    const photo = img.closest<HTMLElement>('.ts__photo');
+    if (!photo) return;
+    const fail = () => photo.classList.add('is-missing');
+    img.addEventListener('error', fail);
+    if (img.complete && img.naturalWidth === 0) fail();
+  });
+</script>

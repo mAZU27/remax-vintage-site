@@ -1,0 +1,53 @@
+---
+// Quick-contact card (icon + channel + detail + CTA). Channel data is driven
+// by data/faqs.ts → site.ts, so the real number/email/address update in one place.
+import Icon from './Icon.astro';
+import type { ContactChannel } from '../data/faqs';
+
+interface Props {
+  channel: ContactChannel;
+  index?: number;
+  /** Compact variant used inside the concierge split (no border card chrome). */
+  bare?: boolean;
+}
+const { channel: c, index = 0, bare = false } = Astro.props;
+const ext = c.external;
+---
+<article class:list={['ccc', { 'ccc--bare': bare }]} data-reveal style={`--reveal-delay:${index * 80}ms`}>
+  <span class="ccc__ic" aria-hidden="true"><Icon name={c.icon} size={20} stroke={1.5} /></span>
+  <h3 class="ccc__label">{c.label}</h3>
+  <p class="ccc__detail">{c.detail}</p>
+  {c.sub && <p class="ccc__sub">{c.sub}</p>}
+  <a
+    class="btn-link ccc__cta"
+    href={c.cta.href}
+    rel={ext ? 'noopener' : undefined}
+    target={ext ? '_blank' : undefined}
+  >{c.cta.label} <Icon name="arrow" size={14} stroke={1.8} /></a>
+</article>
+
+<style>
+  .ccc {
+    display: flex; flex-direction: column; height: 100%;
+    padding: clamp(24px, 2.4vw, 32px);
+    background: var(--cream-soft); border: 1px solid var(--ink-10); border-radius: var(--radius-lg);
+    transition: transform var(--t-med), border-color var(--t-med), box-shadow var(--t-med);
+  }
+  .ccc:hover { transform: translateY(-4px); border-color: var(--hairline-gold-strong); box-shadow: var(--shadow-card); }
+  .ccc__ic {
+    width: 46px; height: 46px; display: grid; place-items: center; border-radius: 50%;
+    color: var(--gold-deep); background: rgba(184, 153, 104, 0.1); border: 1px solid var(--hairline-gold);
+  }
+  .ccc__label { margin: 18px 0 0; font-size: 12px; letter-spacing: 0.16em; text-transform: uppercase; color: var(--gold-deep); font-weight: 500; }
+  .ccc__detail { margin: 8px 0 0; font-family: var(--font-serif); font-size: clamp(18px, 1.5vw, 21px); color: var(--ink); line-height: 1.25; letter-spacing: -0.01em; }
+  .ccc__sub { margin: 6px 0 0; font-size: 13px; color: var(--ink-60); flex: 1; }
+  .ccc__cta { margin-top: 20px; font-size: 12.5px; }
+
+  /* Bare variant — sits on a navy panel (concierge), no card chrome. */
+  .ccc--bare { background: none; border: none; padding: 0; box-shadow: none; }
+  .ccc--bare:hover { transform: none; box-shadow: none; }
+  .ccc--bare .ccc__ic { color: var(--gold-light); border-color: var(--hairline-gold-strong); background: rgba(184, 153, 104, 0.12); }
+  .ccc--bare .ccc__label { color: var(--gold-light); }
+  .ccc--bare .ccc__detail { color: var(--cream); }
+  .ccc--bare .ccc__sub { color: var(--white-70); }
+</style>

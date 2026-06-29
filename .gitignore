@@ -1,0 +1,21 @@
+# OS
+.DS_Store
+Thumbs.db
+
+# Editor
+.vscode/
+.idea/
+
+# Astro / Node
+node_modules/
+dist/
+.astro/
+.cache/
+
+# image-slot runtime sidecar (builder-only, legacy)
+.image-slots.state.json
+
+# env
+.env
+.env.*
+!.env.example

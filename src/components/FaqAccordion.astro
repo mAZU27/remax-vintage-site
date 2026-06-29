@@ -1,0 +1,109 @@
+---
+// Accessible FAQ accordion — one panel open at a time, smooth height
+// animation (max-height). Buttons carry aria-expanded / aria-controls;
+// panels are labelled regions. Progressive enhancement: without JS every
+// panel is open and readable. Reduced motion: instant, no transition.
+import Icon from './Icon.astro';
+import type { Faq } from '../data/faqs';
+
+interface Props {
+  items: Faq[];
+}
+const { items } = Astro.props;
+---
+<ul class="faq" data-faq>
+  {items.map((f, i) => (
+    <li class="faq__item">
+      <h3 class="faq__h">
+        <button
+          type="button"
+          class="faq__trigger"
+          aria-expanded="false"
+          aria-controls={`faq-panel-${i}`}
+          id={`faq-trigger-${i}`}
+        >
+          <span class="faq__q">{f.q}</span>
+          <span class="faq__ic" aria-hidden="true"><Icon name="chevron" size={18} stroke={1.8} /></span>
+        </button>
+      </h3>
+      <div class="faq__panel" id={`faq-panel-${i}`} role="region" aria-labelledby={`faq-trigger-${i}`}>
+        <p class="faq__a">{f.a}</p>
+      </div>
+    </li>
+  ))}
+</ul>
+
+<style>
+  .faq { list-style: none; margin: 0; padding: 0; max-width: 880px; }
+  .faq__item { border-bottom: 1px solid var(--ink-10); }
+  .faq__item:first-child { border-top: 1px solid var(--ink-10); }
+  .faq__h { margin: 0; font: inherit; }
+  .faq__trigger {
+    width: 100%; display: flex; align-items: center; justify-content: space-between; gap: 24px;
+    padding: clamp(20px, 2.2vw, 28px) 4px; text-align: left; background: none; border: none;
+    font-family: var(--font-serif); font-weight: 500; font-size: clamp(18px, 1.7vw, 23px);
+    color: var(--ink); letter-spacing: -0.01em; line-height: 1.25;
+    transition: color var(--t-fast);
+  }
+  .faq__trigger:hover { color: var(--gold-deep); }
+  .faq__ic {
+    flex-shrink: 0; width: 40px; height: 40px; display: grid; place-items: center; border-radius: 50%;
+    color: var(--gold-deep); border: 1px solid var(--hairline-gold);
+    transition: transform var(--t-med) var(--t-ease-emph), background var(--t-fast), color var(--t-fast);
+  }
+  .faq__trigger[aria-expanded="true"] .faq__ic { transform: rotate(180deg); background: var(--gold); color: var(--navy-ink); border-color: var(--gold); }
+
+  /* No JS: panels stay open & readable. JS adds .faq--js to collapse them. */
+  .faq__panel { overflow: hidden; transition: max-height var(--t-med) var(--t-ease-emph); }
+  .faq--js .faq__panel { max-height: 0; }
+  .faq__a {
+    margin: 0; padding: 0 56px clamp(22px, 2.2vw, 28px) 4px;
+    font-size: 15.5px; line-height: 1.7; color: var(--ink-60); max-width: 64ch; text-wrap: pretty;
+  }
+
+  @media (max-width: 560px) {
+    .faq__a { padding-right: 4px; }
+  }
+
+  /* No JS / reduced motion: show everything, kill the animation. */
+  @media (prefers-reduced-motion: reduce) {
+    .faq__panel { transition: none; }
+  }
+</style>
+
+<script>
+  const root = document.querySelector<HTMLElement>('[data-faq]');
+  if (root) {
+    // Enhance: collapse panels (CSS .faq--js) now that JS can drive them.
+    root.classList.add('faq--js');
+    const items = Array.from(root.querySelectorAll<HTMLElement>('.faq__item'));
+
+    const panelOf = (item: HTMLElement) => item.querySelector<HTMLElement>('.faq__panel');
+    const triggerOf = (item: HTMLElement) => item.querySelector<HTMLButtonElement>('.faq__trigger');
+
+    const setOpen = (item: HTMLElement, open: boolean) => {
+      const panel = panelOf(item);
+      const trigger = triggerOf(item);
+      if (!panel || !trigger) return;
+      trigger.setAttribute('aria-expanded', String(open));
+      item.classList.toggle('is-open', open);
+      panel.style.maxHeight = open ? `${panel.scrollHeight}px` : '0px';
+    };
+
+    items.forEach((item) => {
+      const trigger = triggerOf(item);
+      trigger?.addEventListener('click', () => {
+        const isOpen = item.classList.contains('is-open');
+        items.forEach((other) => { if (other !== item) setOpen(other, false); });
+        setOpen(item, !isOpen);
+      });
+    });
+
+    // Keep the open panel sized correctly when the viewport reflows.
+    window.addEventListener('resize', () => {
+      const open = items.find((i) => i.classList.contains('is-open'));
+      const panel = open ? panelOf(open) : null;
+      if (panel) panel.style.maxHeight = `${panel.scrollHeight}px`;
+    });
+  }
+</script>

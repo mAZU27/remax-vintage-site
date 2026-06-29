@@ -1,0 +1,134 @@
+---
+// Compact, stylized night-map of Porto for the FeaturedPropertiesExperience.
+// Decorative inline SVG (coastline + Douro + abstract street web) drawn with
+// CSS-styled strokes; interactive pins are HTML buttons overlaid by %, so they
+// stay accessible and crisp. The viewBox is 2:1 and the panel is locked to the
+// same aspect-ratio, so the % overlay coordinates map linearly onto the art.
+// Pins expose data-zona; the parent section wires them to the filter state.
+import { neighborhoods } from '../data/site';
+
+// Pin positions as % of the 720×360 map box, geographically plausible:
+// Foz (river-mouth, SW), Ribeira (on the river), Boavista (N), Cedofeita (centre).
+const pinPos: Record<string, { x: number; y: number }> = {
+  'foz-do-douro': { x: 13, y: 69 },
+  boavista: { x: 35, y: 31 },
+  cedofeita: { x: 56, y: 42 },
+  ribeira: { x: 65, y: 69 },
+};
+const pins = neighborhoods.map((n) => ({ slug: n.slug, name: n.name, ...(pinPos[n.slug] ?? { x: 50, y: 50 }) }));
+---
+<figure class="cmap" data-map aria-label="Mapa do Porto com os bairros da coleção">
+  <svg class="cmap__art" viewBox="0 0 720 360" fill="none" preserveAspectRatio="none" aria-hidden="true">
+    <!-- Atlantic coastline (west) -->
+    <path class="cmap-coast" d="M52 8 C40 58 64 96 50 150 C40 196 66 232 80 286 C86 312 78 336 70 356" />
+    <!-- Douro river -->
+    <path class="cmap-river-glow" d="M70 300 C160 268 250 300 330 276 C430 246 520 268 620 240 C660 231 692 232 716 226" />
+    <path class="cmap-river" d="M70 300 C160 268 250 300 330 276 C430 246 520 268 620 240 C660 231 692 232 716 226" />
+    <!-- Abstract street web -->
+    <g class="cmap-streets">
+      <path class="cmap-ave" d="M252 112 L470 248" />
+      <path class="cmap-ave" d="M252 112 L95 250" />
+      <path class="cmap-ave" d="M252 112 L404 152" />
+      <path class="cmap-ave" d="M404 152 L470 248" />
+      <path class="cmap-ave" d="M404 152 L624 120" />
+      <path class="cmap-ave" d="M252 112 L486 70" />
+      <path class="cmap-st" d="M150 88 L368 58" />
+      <path class="cmap-st" d="M182 162 L424 130" />
+      <path class="cmap-st" d="M120 212 L344 202" />
+      <path class="cmap-st" d="M306 92 L362 232" />
+      <path class="cmap-st" d="M430 100 L520 222" />
+      <path class="cmap-st" d="M524 100 L606 200" />
+      <path class="cmap-st" d="M150 150 L120 250" />
+      <path class="cmap-st" d="M560 150 L640 280" />
+    </g>
+  </svg>
+
+  <span class="cmap__place cmap__place--porto" aria-hidden="true">Porto</span>
+  <span class="cmap__place cmap__place--river" aria-hidden="true">Rio Douro</span>
+
+  {pins.map((pin) => (
+    <button
+      type="button"
+      class="cmap__pin"
+      data-map-pin
+      data-zona={pin.slug}
+      aria-pressed="false"
+      aria-label={`Ver imóveis em ${pin.name}`}
+      style={`left:${pin.x}%;top:${pin.y}%`}
+    >
+      <span class="cmap__pulse" aria-hidden="true"></span>
+      <span class="cmap__dot" aria-hidden="true"></span>
+      <span class="cmap__label">{pin.name}</span>
+    </button>
+  ))}
+</figure>
+
+<style>
+  .cmap {
+    position: relative; margin: 0; width: 100%; height: 100%; min-height: clamp(240px, 26vw, 330px);
+    border: 1px solid var(--hairline-gold); border-radius: var(--radius-lg); overflow: hidden;
+    background:
+      radial-gradient(120% 90% at 18% 78%, rgba(26, 54, 86, 0.5), transparent 60%),
+      linear-gradient(160deg, #0c2138, var(--navy-ink) 78%);
+    box-shadow: inset 0 1px 0 rgba(244, 237, 222, 0.05);
+  }
+  .cmap__art { position: absolute; inset: 0; width: 100%; height: 100%; }
+  /* non-scaling-stroke keeps line weights uniform while the art stretches to fill */
+  .cmap-coast, .cmap-river, .cmap-river-glow, .cmap-ave, .cmap-st { vector-effect: non-scaling-stroke; }
+  .cmap-coast { stroke: var(--gold-light); stroke-width: 1.4; opacity: 0.4; stroke-linecap: round; }
+  .cmap-river { stroke: var(--gold-light); stroke-width: 2.4; opacity: 0.7; stroke-linecap: round; }
+  .cmap-river-glow { stroke: var(--gold-light); stroke-width: 8; opacity: 0.14; filter: blur(3px); stroke-linecap: round; }
+  .cmap-ave { stroke: var(--gold); stroke-width: 1; opacity: 0.34; stroke-linecap: round; }
+  .cmap-st { stroke: var(--gold-light); stroke-width: 0.8; opacity: 0.2; stroke-linecap: round; }
+
+  .cmap__place {
+    position: absolute; transform: translate(-50%, -50%); pointer-events: none; user-select: none;
+    text-transform: uppercase; color: var(--white-50); font-weight: 500;
+  }
+  .cmap__place--porto { left: 50%; top: 55%; font-size: clamp(13px, 1.6vw, 19px); letter-spacing: 0.42em; color: rgba(244, 237, 222, 0.42); }
+  .cmap__place--river { left: 26%; top: 88%; font-size: clamp(8px, 1vw, 11px); letter-spacing: 0.3em; color: var(--gold-light); opacity: 0.6; transform: translate(-50%, -50%) rotate(-7deg); }
+
+  /* Interactive pins (overlaid by %) */
+  .cmap__pin {
+    position: absolute; transform: translate(-50%, -50%);
+    display: inline-flex; align-items: center; gap: 9px;
+    padding: 6px; background: none; border: 0; cursor: pointer; white-space: nowrap;
+  }
+  .cmap__dot {
+    position: relative; width: 13px; height: 13px; border-radius: 50%; flex-shrink: 0;
+    background: var(--gold-light); box-shadow: 0 0 0 4px rgba(184, 153, 104, 0.18), 0 0 12px 2px rgba(212, 187, 133, 0.6);
+    transition: transform var(--t-fast), box-shadow var(--t-fast), background var(--t-fast);
+  }
+  .cmap__pulse {
+    position: absolute; left: 6px; top: 50%; width: 13px; height: 13px; border-radius: 50%;
+    transform: translate(-50%, -50%); border: 1px solid var(--gold-light);
+    animation: cmapPulse 2.8s ease-out infinite; pointer-events: none;
+  }
+  @keyframes cmapPulse {
+    0% { opacity: 0.7; transform: translate(-50%, -50%) scale(0.7); }
+    70%, 100% { opacity: 0; transform: translate(-50%, -50%) scale(3.4); }
+  }
+  .cmap__label {
+    font-size: 11px; letter-spacing: 0.13em; text-transform: uppercase; color: var(--white-70);
+    font-weight: 500; transition: color var(--t-fast); text-shadow: 0 1px 6px rgba(11, 26, 46, 0.9);
+  }
+  .cmap__pin:hover .cmap__dot, .cmap__pin:focus-visible .cmap__dot { transform: scale(1.25); }
+  .cmap__pin:hover .cmap__label, .cmap__pin:focus-visible .cmap__label { color: var(--cream); }
+  .cmap__pin:focus-visible { outline: 2px solid var(--gold-light); outline-offset: 3px; border-radius: 8px; }
+
+  .cmap__pin.is-active .cmap__dot {
+    background: var(--cream); transform: scale(1.3);
+    box-shadow: 0 0 0 5px rgba(184, 153, 104, 0.28), 0 0 18px 4px rgba(212, 187, 133, 0.85);
+  }
+  .cmap__pin.is-active .cmap__label { color: var(--gold-light); }
+
+  @media (max-width: 560px) {
+    .cmap__label { font-size: 9.5px; letter-spacing: 0.1em; }
+    .cmap__dot { width: 11px; height: 11px; }
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    .cmap__pulse { animation: none; opacity: 0; }
+    .cmap__dot, .cmap__label { transition: none; }
+  }
+</style>

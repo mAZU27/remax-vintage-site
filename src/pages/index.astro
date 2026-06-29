@@ -1,0 +1,231 @@
+---
+import Base from '../layouts/Base.astro';
+import Hero from '../components/Hero.astro';
+import AwardsBelt from '../components/AwardsBelt.astro';
+import SectionEyebrow from '../components/SectionEyebrow.astro';
+import FeaturedPropertiesExperience from '../components/FeaturedPropertiesExperience.astro';
+import Neighborhoods from '../components/Neighborhoods.astro';
+import DualJourney from '../components/DualJourney.astro';
+import Method from '../components/Method.astro';
+import Stats from '../components/Stats.astro';
+import Testimonials from '../components/Testimonials.astro';
+import ValuationForm from '../components/ValuationForm.astro';
+import Crest from '../components/Crest.astro';
+import Icon from '../components/Icon.astro';
+import FaqAccordion from '../components/FaqAccordion.astro';
+import { about } from '../data/site';
+import type { Faq } from '../data/faqs';
+
+const sellerPoints = [
+  'Avaliação fundamentada no valor real do mercado do Porto.',
+  'Discrição total — sem exposição desnecessária do seu imóvel.',
+  'Resposta em 24 horas, sem qualquer compromisso.',
+];
+const homeFaqs: Faq[] = [
+  {
+    q: 'Como funciona a avaliação de um imóvel?',
+    a: 'A avaliação é feita de forma confidencial, considerando localização, características do imóvel, estado de conservação, procura atual e referências reais do mercado.',
+  },
+  {
+    q: 'A avaliação tem algum custo?',
+    a: 'A avaliação inicial pode ser solicitada sem compromisso. Depois, a equipa acompanha o processo com total discrição.',
+  },
+  {
+    q: 'Que tipo de imóveis fazem parte da Collection Vintage?',
+    a: 'Imóveis distintos, bem localizados e com características raras, pensados para clientes que valorizam exclusividade, história e qualidade.',
+  },
+  {
+    q: 'A RE/MAX Collection Vintage trabalha com compradores internacionais?',
+    a: 'Sim. A equipa acompanha clientes nacionais e internacionais com um processo claro, discreto e personalizado.',
+  },
+  {
+    q: 'Como posso vender o meu imóvel com a Collection Vintage?',
+    a: 'Pode pedir uma avaliação inicial. Depois, a equipa analisa o imóvel, define o posicionamento e prepara uma estratégia de apresentação adequada ao mercado premium.',
+  },
+];
+---
+<Base
+  overHeroNav
+  heroPreload={{
+    href: '/media/hero-collection-1280.jpg',
+    srcset: '/media/hero-collection-768.jpg 768w, /media/hero-collection-1280.jpg 1280w, /media/hero-collection-1672.jpg 1672w',
+    sizes: '100vw',
+  }}
+>
+  <Hero />
+
+  <!-- Faixa de trust — prémios RE/MAX Portugal (rede) -->
+  <AwardsBelt />
+
+  <!-- Posicionamento -->
+  <section class="section section--cream" id="sobre">
+    <div class="container container--narrow" style="text-align:center">
+      <SectionEyebrow text="A casa RE/MAX Collection" center />
+      <h2 class="h2" data-reveal style="margin-top:18px">
+        Uma curadoria de imóveis com <em class="em-gold serif-it">carácter</em>.
+      </h2>
+      <p class="lede" data-reveal style="--reveal-delay:120ms;margin:20px auto 0">
+        Trabalhamos um número limitado de propriedades distintas no Porto — para as
+        apresentar, posicionar e negociar com o cuidado que cada uma exige.
+      </p>
+    </div>
+  </section>
+
+  <!-- Coleção — experiência completa: carrossel + mapa interativo + filtros -->
+  <FeaturedPropertiesExperience />
+
+  <!-- Bairros (self-contained interactive section, owns its own #bairros anchor) -->
+  <Neighborhoods />
+
+  <!-- Método -->
+  <section class="section section--cream" id="metodo">
+    <div class="container">
+      <header class="shead">
+        <SectionEyebrow text="Como trabalhamos" />
+        <h2 class="h2 shead__title" data-reveal style="--reveal-delay:80ms">
+          Um método, do primeiro contacto à <em class="em-gold serif-it">escritura</em>.
+        </h2>
+        <p class="lede shead__lede" data-reveal style="--reveal-delay:160ms">
+          Cinco passos pensados para um só objetivo: defender o valor do seu imóvel
+          com rigor, discrição e uma apresentação à altura.
+        </p>
+      </header>
+      <Method />
+    </div>
+  </section>
+
+  <!-- Sobre + números -->
+  <section class="section section--ink on-navy">
+    <div class="container container--narrow about">
+      <Crest size={54} class="about__crest" />
+      <SectionEyebrow text={about.eyebrow} center />
+      <h2 class="h2 about__title" data-reveal style="--reveal-delay:80ms">{about.title}</h2>
+      {about.paragraphs.map((para, i) => (
+        <p class="lede about__para" data-reveal style={`--reveal-delay:${140 + i * 80}ms`}>{para}</p>
+      ))}
+      <p class="about__sign" data-reveal style="--reveal-delay:320ms">{about.signature}</p>
+    </div>
+    <div class="container about__stats">
+      <Stats />
+    </div>
+  </section>
+
+  <!-- Testemunhos (self-contained premium section: owns its eyebrow, header + carousel) -->
+  <Testimonials />
+
+  <!-- Escolha o seu caminho (orientation gateway: vender vs comprar) -->
+  <DualJourney />
+
+  <!-- Vender -->
+  <section class="section section--navy on-navy" id="vender">
+    <div class="container vender">
+      <div class="vender__pitch">
+        <SectionEyebrow text="Para quem vende" />
+        <h2 class="h2 vender__title" data-reveal style="--reveal-delay:80ms">
+          Quanto vale, hoje, o <em class="em-gold serif-it">seu imóvel</em>?
+        </h2>
+        <p class="lede shead__lede" data-reveal style="--reveal-delay:160ms">
+          Peça uma avaliação confidencial e fundamentada. Sem compromisso — apenas
+          uma leitura honesta do valor real do seu imóvel no mercado do Porto.
+        </p>
+        <ul class="vender__points" data-reveal style="--reveal-delay:240ms">
+          {sellerPoints.map((point) => (
+            <li><span class="vender__check"><Icon name="check" size={15} stroke={2} /></span>{point}</li>
+          ))}
+        </ul>
+        <button type="button" class="btn-link vender__sim" data-reveal data-open-simulator style="--reveal-delay:300ms">
+          <span>Simular o valor agora</span><Icon name="arrow" size={14} stroke={1.8} />
+        </button>
+      </div>
+      <div class="vender__form" data-reveal style="--reveal-delay:200ms">
+        <ValuationForm />
+      </div>
+    </div>
+  </section>
+
+  <!-- Perguntas frequentes -->
+  <section class="section section--cream" id="faq">
+    <div class="container container--narrow" style="text-align:center">
+      <h2 class="h2" data-reveal>Perguntas <em class="em-gold serif-it">frequentes</em></h2>
+      <p class="lede" data-reveal style="--reveal-delay:120ms;margin:20px auto 0">
+        Respostas claras para quem procura comprar, vender ou avaliar imóveis exclusivos no Porto.
+      </p>
+      <div class="faq-wrap" data-reveal style="--reveal-delay:200ms">
+        <FaqAccordion items={homeFaqs} />
+      </div>
+    </div>
+  </section>
+</Base>
+
+<style>
+  /* Section header */
+  .shead { margin-bottom: clamp(36px, 4vw, 60px); }
+  .shead__title { margin-top: 16px; max-width: 18ch; }
+  .shead__lede { margin-top: 18px; }
+  .shead--center { text-align: center; }
+  .shead--center .shead__title { margin-inline: auto; }
+  .shead--between {
+    display: flex; align-items: flex-end; justify-content: space-between; gap: 24px; flex-wrap: wrap;
+  }
+  .shead--between .shead__title { margin-top: 16px; }
+  :global(.shead__link) { flex-shrink: 0; margin-bottom: 6px; }
+
+  /* FAQ — centre the accordion under the centred header */
+  .faq-wrap { display: flex; justify-content: center; text-align: left; margin-top: clamp(40px, 5vw, 64px); }
+
+  /* Sobre + números */
+  .about { text-align: center; display: flex; flex-direction: column; align-items: center; }
+  :global(.about__crest) { margin-bottom: 24px; }
+  .about__title { margin-top: 16px; }
+  .about__para { margin: 16px auto 0; }
+  .about__sign {
+    margin-top: 26px; font-family: var(--font-serif); font-style: italic; font-size: 19px;
+    color: var(--gold-light); letter-spacing: -0.01em;
+  }
+  .about__stats { margin-top: clamp(48px, 6vw, 80px); }
+
+  /* Vender */
+  .vender { display: grid; grid-template-columns: 1fr 1fr; gap: clamp(36px, 5vw, 80px); align-items: center; }
+  .vender__title { margin-top: 16px; }
+  .vender__sim { margin-top: 26px; }
+  .vender__points { list-style: none; margin: 28px 0 0; padding: 0; display: flex; flex-direction: column; gap: 14px; }
+  .vender__points li { display: flex; align-items: flex-start; gap: 13px; font-size: 15px; color: var(--white-90); }
+  .vender__check {
+    flex-shrink: 0; width: 24px; height: 24px; display: grid; place-items: center; border-radius: 50%;
+    background: rgba(184, 153, 104, 0.16); color: var(--gold-light); margin-top: 1px;
+  }
+  @media (max-width: 920px) { .vender { grid-template-columns: 1fr; } }
+</style>
+
+<script>
+  // "Pedir avaliação" lands the visitor on the valuation form, centred in the
+  // viewport — not just snapped to the top of the (tall) #vender section, which
+  // left the form sitting awkwardly below the fold.
+  const centerValuation = () => {
+    const form = document.querySelector<HTMLElement>('#vender .vender__form');
+    if (!form) return;
+    const navH =
+      parseInt(getComputedStyle(document.documentElement).getPropertyValue('--nav-h'), 10) || 84;
+    const rect = form.getBoundingClientRect();
+    const absTop = window.scrollY + rect.top;
+    const vh = window.innerHeight;
+    // Form taller than the usable viewport → align its top just under the nav;
+    // otherwise centre it vertically.
+    const top =
+      rect.height + navH + 32 >= vh ? absTop - navH - 16 : absTop - (vh - rect.height) / 2;
+    window.scrollTo({ top: Math.max(0, top), behavior: 'smooth' });
+  };
+
+  document.querySelectorAll<HTMLAnchorElement>('a[href$="#vender"]').forEach((a) => {
+    a.addEventListener('click', (e) => {
+      e.preventDefault();
+      history.replaceState(null, '', '#vender');
+      centerValuation();
+    });
+  });
+
+  // Arriving from another page with #vender already in the URL.
+  if (location.hash === '#vender') {
+    window.addEventListener('load', () => requestAnimationFrame(centerValuation));
+  }
+</script>

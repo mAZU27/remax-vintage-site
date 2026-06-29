@@ -1,0 +1,742 @@
+---
+// Value simulator — accessible multi-step modal mounted ONCE (in Base.astro).
+// Opens via event delegation on any [data-open-simulator] trigger anywhere on
+// the page. Gives an instant indicative range (client-side, see
+// data/valuation-config.ts) then captures the lead. No backend yet — the submit
+// reveals a success state and leaves a clear TODO for the email/CRM endpoint.
+import Icon from './Icon.astro';
+import { neighborhoods } from '../data/site';
+import {
+  typeOptions,
+  typologyOptions,
+  conditionOptions,
+  extraOptions,
+} from '../data/valuation-config';
+
+const zoneOptions = [
+  ...neighborhoods.map((n) => ({ value: n.slug, label: n.name, note: n.context })),
+  { value: 'outra', label: 'Outra zona do Porto', note: 'Porto' },
+];
+const typeSub: Record<string, string> = {
+  apartamento: 'Andar ou duplex',
+  moradia: 'Casa independente ou geminada',
+  outro: 'Loft, loja, terreno…',
+};
+const condSub: Record<string, string> = {
+  'a-renovar': 'Precisa de obras',
+  bom: 'Habitável, sem obras',
+  renovado: 'Recentemente intervencionado',
+  novo: 'Construção nova',
+};
+const TOTAL = 6;
+---
+<div class="vsim" data-vsim hidden>
+  <div class="vsim__overlay" data-vsim-close aria-hidden="true"></div>
+
+  <div
+    class="vsim__dialog"
+    role="dialog"
+    aria-modal="true"
+    aria-labelledby="vsim-title"
+    aria-describedby="vsim-sub"
+    tabindex="-1"
+    data-vsim-dialog
+  >
+    <button type="button" class="vsim__x" data-vsim-close aria-label="Fechar simulador">
+      <Icon name="close" size={20} stroke={1.7} />
+    </button>
+
+    <header class="vsim__head">
+      <span class="vsim__eyebrow">Simulador de valor</span>
+      <h2 id="vsim-title" class="vsim__title">Quanto vale, hoje, o seu imóvel?</h2>
+      <p id="vsim-sub" class="vsim__sub">
+        Em menos de um minuto, uma estimativa indicativa para o mercado do Porto.
+      </p>
+      <div
+        class="vsim__progress"
+        role="progressbar"
+        aria-label="Progresso do simulador"
+        aria-valuemin="1"
+        aria-valuemax={TOTAL}
+        aria-valuenow="1"
+        data-vsim-progressbar
+      >
+        <span class="vsim__progress-fill" data-vsim-bar></span>
+      </div>
+      <p class="vsim__count">Passo <b data-vsim-cur>1</b> de {TOTAL}</p>
+    </header>
+
+    <div class="vsim__body" data-vsim-body>
+      <!-- 0 · Tipo -->
+      <section class="vsim__panel" data-panel="0">
+        <h3 class="vsim__q">Que tipo de imóvel tem?</h3>
+        <div class="vsim__opts vsim__opts--cards">
+          {typeOptions.map((o) => (
+            <label class="vsim-opt">
+              <input type="radio" name="vsim-type" value={o.value} />
+              <span class="vsim-opt__box">
+                <span class="vsim-opt__label">{o.label}</span>
+                <span class="vsim-opt__sub">{typeSub[o.value]}</span>
+              </span>
+            </label>
+          ))}
+        </div>
+        <p class="vsim-err" data-err hidden>Selecione o tipo de imóvel.</p>
+      </section>
+
+      <!-- 1 · Localização -->
+      <section class="vsim__panel" data-panel="1" hidden>
+        <h3 class="vsim__q">Onde fica o imóvel?</h3>
+        <div class="vsim__opts vsim__opts--cards vsim__opts--zones">
+          {zoneOptions.map((o) => (
+            <label class="vsim-opt">
+              <input type="radio" name="vsim-zone" value={o.value} />
+              <span class="vsim-opt__box">
+                <span class="vsim-opt__label">{o.label}</span>
+                {o.note && <span class="vsim-opt__sub">{o.note}</span>}
+              </span>
+            </label>
+          ))}
+        </div>
+        <p class="vsim-err" data-err hidden>Selecione a localização.</p>
+      </section>
+
+      <!-- 2 · Área + tipologia -->
+      <section class="vsim__panel" data-panel="2" hidden>
+        <h3 class="vsim__q">Qual a área e a tipologia?</h3>
+        <p class="vsim-field">
+          <label for="vsim-area">Área bruta (m²)</label>
+          <input
+            id="vsim-area"
+            name="vsim-area"
+            type="number"
+            inputmode="numeric"
+            min="10"
+            step="1"
+            placeholder="ex.: 120"
+            class="vsim-input"
+          />
+        </p>
+        <span class="vsim-sublabel">Tipologia</span>
+        <div class="vsim__opts vsim__opts--pills">
+          {typologyOptions.map((o) => (
+            <label class="vsim-pill">
+              <input type="radio" name="vsim-typology" value={o.value} />
+              <span>{o.label}</span>
+            </label>
+          ))}
+        </div>
+        <p class="vsim-err" data-err hidden>Indique a área e selecione a tipologia.</p>
+      </section>
+
+      <!-- 3 · Estado + extras -->
+      <section class="vsim__panel" data-panel="3" hidden>
+        <h3 class="vsim__q">Em que estado se encontra?</h3>
+        <div class="vsim__opts vsim__opts--cards">
+          {conditionOptions.map((o) => (
+            <label class="vsim-opt">
+              <input type="radio" name="vsim-condition" value={o.value} />
+              <span class="vsim-opt__box">
+                <span class="vsim-opt__label">{o.label}</span>
+                <span class="vsim-opt__sub">{condSub[o.value]}</span>
+              </span>
+            </label>
+          ))}
+        </div>
+        <span class="vsim-sublabel">Extras <span class="vsim-opt__opt">(opcional)</span></span>
+        <div class="vsim__opts vsim__opts--chips">
+          {extraOptions.map((o) => (
+            <label class="vsim-chip">
+              <input type="checkbox" name="vsim-extra" value={o.value} />
+              <span>{o.label}</span>
+            </label>
+          ))}
+        </div>
+        <p class="vsim-err" data-err hidden>Selecione o estado do imóvel.</p>
+      </section>
+
+      <!-- 5 · Resultado -->
+      <section class="vsim__panel vsim__panel--result" data-panel="5" hidden>
+        <span class="vsim-result__eyebrow">Estimativa indicativa de valor</span>
+        <p class="vsim-result__range">
+          <span data-vsim-low>—</span>
+          <span class="vsim-result__sep">–</span>
+          <span data-vsim-high>—</span>
+        </p>
+        <p class="vsim-result__summary" data-vsim-summary></p>
+        <p class="vsim-result__disclaimer">
+          <Icon name="shield-check" size={16} stroke={1.6} />
+          <span>Estimativa indicativa — não substitui uma avaliação profissional.</span>
+        </p>
+        <ul class="vsim-result__next">
+          <li><Icon name="check" size={15} stroke={2} /> Avaliação detalhada e fundamentada por um consultor.</li>
+          <li><Icon name="check" size={15} stroke={2} /> Análise do valor real no mercado atual do Porto.</li>
+          <li><Icon name="check" size={15} stroke={2} /> Confidencial, gratuita e sem qualquer compromisso.</li>
+        </ul>
+      </section>
+
+      <!-- 4 · Captação -->
+      <section class="vsim__panel" data-panel="4" hidden>
+        <h3 class="vsim__q">Para onde enviamos a sua estimativa?</h3>
+        <p class="vsim__hint">
+          Deixe o seu contacto e revelamos já a estimativa indicativa. Um consultor analisa o
+          seu imóvel e contacta-o em 24h com a avaliação detalhada — confidencial e sem compromisso.
+        </p>
+        <div class="vsim-grid2">
+          <p class="vsim-field vsim-field--full">
+            <label for="vsim-nome">Nome</label>
+            <input id="vsim-nome" name="nome" type="text" autocomplete="name" class="vsim-input" />
+            <span class="vsim-err" data-err hidden>Indique o seu nome.</span>
+          </p>
+          <p class="vsim-field">
+            <label for="vsim-email">Email</label>
+            <input id="vsim-email" name="email" type="email" autocomplete="email" class="vsim-input" />
+            <span class="vsim-err" data-err hidden>Indique um email válido.</span>
+          </p>
+          <p class="vsim-field">
+            <label for="vsim-tel">Telefone <span class="vsim-opt__opt">(opcional)</span></label>
+            <input id="vsim-tel" name="telefone" type="tel" autocomplete="tel" inputmode="tel" class="vsim-input" />
+          </p>
+        </div>
+        <label class="vsim-consent">
+          <input type="checkbox" name="consent" />
+          <span>Autorizo o contacto da Collection Vintage sobre este pedido. Os meus dados são tratados de forma confidencial.</span>
+        </label>
+        <p class="vsim__micro"><Icon name="lock" size={14} stroke={1.6} /> Confidencial · Sem compromisso</p>
+      </section>
+
+      <!-- done · Sucesso -->
+      <section class="vsim__panel vsim__panel--done" data-panel="done" hidden>
+        <span class="vsim-done__icon"><Icon name="check" size={28} stroke={2} /></span>
+        <h3 class="vsim__q">Pedido recebido.</h3>
+        <p class="vsim__hint">
+          Obrigado. Um consultor entra em contacto dentro de 24 horas com a avaliação
+          detalhada — com total confidencialidade.
+        </p>
+        <button type="button" class="btn btn--gold" data-vsim-close><span>Fechar</span></button>
+      </section>
+    </div>
+
+    <footer class="vsim__foot" data-vsim-foot>
+      <button type="button" class="vsim__back" data-vsim-back hidden>
+        <Icon name="chevron" size={16} stroke={1.7} /> <span>Voltar</span>
+      </button>
+      <button type="button" class="vsim__next btn btn--gold" data-vsim-next>
+        <span>Continuar</span><Icon name="arrow" size={14} stroke={1.8} />
+      </button>
+    </footer>
+  </div>
+</div>
+
+<style>
+  .vsim {
+    position: fixed; inset: 0; z-index: 1500;
+    display: grid; place-items: center; padding: clamp(16px, 4vw, 40px);
+  }
+  .vsim[hidden] { display: none; }
+
+  .vsim__overlay {
+    position: absolute; inset: 0; background: rgba(6, 14, 26, 0.72);
+    -webkit-backdrop-filter: blur(6px); backdrop-filter: blur(6px);
+    opacity: 0; transition: opacity var(--t-med);
+  }
+  .vsim.is-open .vsim__overlay { opacity: 1; }
+
+  .vsim__dialog {
+    position: relative; width: min(640px, 100%); max-height: min(88vh, 780px);
+    display: flex; flex-direction: column; overflow: hidden; color: var(--cream);
+    background: linear-gradient(180deg, #122c49 0%, var(--navy-ink) 88%);
+    border: 1px solid var(--hairline-gold); border-radius: var(--radius-lg);
+    box-shadow: var(--shadow-float);
+    opacity: 0; transform: translateY(16px) scale(0.985);
+    transition: opacity var(--t-med), transform var(--t-med) var(--t-ease-emph);
+  }
+  .vsim.is-open .vsim__dialog { opacity: 1; transform: none; }
+  .vsim__dialog::before {
+    content: ''; position: absolute; inset: 0; pointer-events: none;
+    background: radial-gradient(80% 50% at 50% 0%, rgba(184, 153, 104, 0.14), transparent 70%);
+  }
+
+  .vsim__x {
+    position: absolute; top: 14px; right: 14px; z-index: 2;
+    width: 40px; height: 40px; display: grid; place-items: center; border-radius: 50%;
+    background: rgba(11, 26, 46, 0.5); color: var(--cream);
+    border: 1px solid var(--hairline-gold);
+    transition: background var(--t-fast), color var(--t-fast), border-color var(--t-fast);
+  }
+  .vsim__x:hover { background: rgba(11, 26, 46, 0.8); border-color: var(--gold); color: var(--gold-light); }
+
+  .vsim__head {
+    position: relative; flex-shrink: 0; padding: clamp(26px, 3vw, 36px) clamp(24px, 3vw, 40px) 20px;
+    border-bottom: 1px solid var(--hairline-light);
+  }
+  .vsim__eyebrow {
+    font-size: 11px; letter-spacing: 0.28em; text-transform: uppercase;
+    color: var(--gold-light); font-weight: 500;
+  }
+  .vsim__title {
+    font-family: var(--font-serif); font-weight: 500; font-size: clamp(24px, 3vw, 32px);
+    line-height: 1.1; letter-spacing: -0.01em; color: var(--cream); margin: 10px 0 0; max-width: 22ch;
+  }
+  .vsim__sub { margin: 10px 0 0; font-size: 14px; color: var(--white-70); line-height: 1.5; }
+  .vsim__progress {
+    margin-top: 22px; height: 3px; border-radius: 3px; background: var(--white-15); overflow: hidden;
+  }
+  .vsim__progress-fill {
+    display: block; height: 100%; width: 16.66%; border-radius: 3px;
+    background: linear-gradient(90deg, var(--gold), var(--gold-light));
+    transition: width var(--t-med) var(--t-ease-emph);
+  }
+  .vsim__count { margin: 12px 0 0; font-size: 12px; letter-spacing: 0.12em; text-transform: uppercase; color: var(--white-50); }
+  .vsim__count b { color: var(--gold-light); font-weight: 500; }
+
+  .vsim__body {
+    flex: 1; overflow-y: auto; padding: clamp(22px, 3vw, 34px) clamp(24px, 3vw, 40px);
+  }
+  .vsim__panel[hidden] { display: none; }
+  .vsim__panel.is-active { animation: vsimIn var(--t-med) var(--t-ease-emph) both; }
+  @keyframes vsimIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: none; } }
+
+  .vsim__q {
+    font-family: var(--font-serif); font-weight: 500; font-size: clamp(19px, 2.2vw, 24px);
+    line-height: 1.2; color: var(--cream); margin: 0 0 18px;
+  }
+  .vsim__hint { margin: -8px 0 18px; font-size: 14px; color: var(--white-70); line-height: 1.55; }
+  .vsim-sublabel {
+    display: block; margin: 22px 0 12px; font-size: 11px; letter-spacing: 0.16em;
+    text-transform: uppercase; color: var(--gold-light); font-weight: 500;
+  }
+  .vsim-opt__opt { color: var(--white-50); letter-spacing: 0.04em; text-transform: none; font-weight: 400; }
+
+  /* Selectable cards / pills / chips share the visually-hidden input pattern */
+  .vsim__opts { display: grid; gap: 12px; }
+  .vsim__opts--cards { grid-template-columns: 1fr; }
+  .vsim__opts--zones { grid-template-columns: 1fr 1fr; }
+  .vsim__opts--pills { display: flex; flex-wrap: wrap; gap: 10px; }
+  .vsim__opts--chips { display: flex; flex-wrap: wrap; gap: 10px; }
+
+  .vsim-opt, .vsim-pill, .vsim-chip { position: relative; margin: 0; cursor: pointer; }
+  .vsim-opt input, .vsim-pill input, .vsim-chip input {
+    position: absolute; opacity: 0; width: 1px; height: 1px; margin: 0;
+  }
+  .vsim-opt__box {
+    display: flex; flex-direction: column; gap: 3px;
+    padding: 15px 18px; border: 1px solid var(--hairline-light); border-radius: var(--radius);
+    background: rgba(244, 237, 222, 0.03);
+    transition: border-color var(--t-fast), background var(--t-fast), box-shadow var(--t-fast);
+  }
+  .vsim-opt__label { font-size: 15px; font-weight: 500; color: var(--cream); }
+  .vsim-opt__sub { font-size: 12.5px; color: var(--white-50); }
+  .vsim-opt:hover .vsim-opt__box { border-color: var(--hairline-gold-strong); }
+  .vsim-opt input:checked + .vsim-opt__box {
+    border-color: var(--gold); background: rgba(184, 153, 104, 0.12);
+    box-shadow: inset 0 0 0 1px var(--gold);
+  }
+  .vsim-opt input:focus-visible + .vsim-opt__box { box-shadow: var(--ring); }
+
+  .vsim-pill span, .vsim-chip span {
+    display: inline-flex; align-items: center; gap: 8px;
+    padding: 10px 18px; border: 1px solid var(--hairline-light); border-radius: 100px;
+    font-size: 14px; color: var(--white-90); white-space: nowrap;
+    transition: border-color var(--t-fast), background var(--t-fast), color var(--t-fast);
+  }
+  .vsim-pill:hover span, .vsim-chip:hover span { border-color: var(--hairline-gold-strong); }
+  .vsim-pill input:checked + span, .vsim-chip input:checked + span {
+    border-color: var(--gold); background: var(--gold); color: var(--navy-ink); font-weight: 500;
+  }
+  .vsim-pill input:focus-visible + span, .vsim-chip input:focus-visible + span { box-shadow: var(--ring); }
+
+  /* Inputs */
+  .vsim-grid2 { display: grid; grid-template-columns: 1fr 1fr; gap: 14px 16px; }
+  .vsim-field { display: flex; flex-direction: column; gap: 7px; margin: 0; }
+  .vsim-field--full { grid-column: 1 / -1; }
+  .vsim-field label { font-size: 12.5px; letter-spacing: 0.04em; font-weight: 500; color: var(--white-70); }
+  .vsim-input {
+    width: 100%; padding: 13px 14px; font-size: 15px; color: var(--cream);
+    background: rgba(244, 237, 222, 0.06); border: 1px solid var(--hairline-light);
+    border-radius: var(--radius-sm); transition: border-color var(--t-fast), box-shadow var(--t-fast);
+  }
+  .vsim-input::placeholder { color: var(--white-50); }
+  .vsim-input:focus { outline: none; border-color: var(--gold); box-shadow: var(--ring); }
+  .vsim-input[aria-invalid='true'] { border-color: var(--error); }
+
+  .vsim-consent {
+    display: flex; gap: 11px; align-items: flex-start; margin-top: 18px;
+    font-size: 13px; line-height: 1.5; color: var(--white-70);
+  }
+  .vsim-consent input { width: 18px; height: 18px; margin-top: 1px; flex-shrink: 0; accent-color: var(--gold); }
+  .vsim__micro {
+    display: flex; align-items: center; gap: 8px; margin: 14px 0 0;
+    font-size: 12.5px; color: var(--white-50); letter-spacing: 0.02em;
+  }
+  .vsim__micro :global(.icon) { color: var(--gold-light); }
+
+  .vsim-err { font-size: 12.5px; color: #E8A99B; margin: 14px 0 0; }
+  .vsim-field .vsim-err { margin: 2px 0 0; }
+
+  /* Result */
+  .vsim__panel--result { text-align: center; }
+  .vsim-result__eyebrow {
+    font-size: 11px; letter-spacing: 0.22em; text-transform: uppercase; color: var(--gold-light); font-weight: 500;
+  }
+  .vsim-result__range {
+    font-family: var(--font-serif); font-weight: 500; font-size: clamp(30px, 6vw, 50px);
+    line-height: 1.05; color: var(--gold-light); margin: 14px 0 0; letter-spacing: -0.01em;
+  }
+  .vsim-result__sep { margin: 0 6px; color: var(--white-50); }
+  .vsim-result__summary { margin: 14px 0 0; font-size: 13.5px; color: var(--white-70); letter-spacing: 0.02em; }
+  .vsim-result__disclaimer {
+    display: inline-flex; align-items: center; gap: 9px; margin: 22px auto 0; max-width: 44ch;
+    padding: 12px 18px; border: 1px solid var(--hairline-gold); border-radius: var(--radius);
+    background: rgba(184, 153, 104, 0.08); font-size: 12.5px; color: var(--white-90); line-height: 1.45; text-align: left;
+  }
+  .vsim-result__disclaimer :global(.icon) { color: var(--gold-light); flex-shrink: 0; }
+  .vsim-result__next {
+    list-style: none; margin: 24px 0 0; padding: 20px 0 0; border-top: 1px solid var(--hairline-light);
+    display: flex; flex-direction: column; gap: 11px; text-align: left;
+  }
+  .vsim-result__next li { display: flex; align-items: flex-start; gap: 11px; font-size: 14px; color: var(--white-90); }
+  .vsim-result__next :global(.icon) { color: var(--gold-light); flex-shrink: 0; margin-top: 2px; }
+
+  /* Done */
+  .vsim__panel--done { text-align: center; padding: clamp(14px, 3vw, 30px) 0; }
+  .vsim-done__icon {
+    display: inline-grid; place-items: center; width: 60px; height: 60px; border-radius: 50%;
+    background: var(--gold); color: var(--navy-ink); margin-bottom: 18px;
+  }
+  .vsim__panel--done .btn { margin-top: 22px; }
+
+  /* Footer */
+  .vsim__foot {
+    flex-shrink: 0; display: flex; align-items: center; gap: 12px;
+    padding: 18px clamp(24px, 3vw, 40px); border-top: 1px solid var(--hairline-light);
+  }
+  .vsim__back {
+    display: inline-flex; align-items: center; gap: 7px; padding: 10px 6px;
+    color: var(--white-70); font-size: 12px; letter-spacing: 0.1em; text-transform: uppercase;
+    transition: color var(--t-fast);
+  }
+  .vsim__back :global(.icon) { transform: rotate(90deg); }
+  .vsim__back:hover { color: var(--gold-light); }
+  .vsim__next { margin-left: auto; padding: 15px 28px; }
+
+  .vsim.is-done .vsim__head, .vsim.is-done .vsim__foot { display: none; }
+
+  /* Mobile → bottom sheet */
+  @media (max-width: 560px) {
+    .vsim { padding: 0; place-items: end stretch; }
+    .vsim__dialog {
+      width: 100%; max-height: 94vh; border-radius: var(--radius-lg) var(--radius-lg) 0 0;
+      transform: translateY(100%);
+    }
+    .vsim.is-open .vsim__dialog { transform: none; }
+    .vsim__opts--zones { grid-template-columns: 1fr; }
+    .vsim-grid2 { grid-template-columns: 1fr; }
+    .vsim__foot { flex-wrap: wrap; }
+    .vsim__next { width: 100%; margin-left: 0; white-space: normal; text-align: center; }
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    .vsim__overlay, .vsim__dialog, .vsim__progress-fill { transition: none; }
+    .vsim__panel.is-active { animation: none; }
+    .vsim.is-open .vsim__dialog { transform: none; }
+  }
+</style>
+
+<script>
+  import { estimateRange, formatEUR, typeOptions, conditionOptions } from '../data/valuation-config';
+  import { neighborhoods } from '../data/site';
+
+  const root = document.querySelector<HTMLElement>('[data-vsim]');
+  if (root) {
+    const dialog = root.querySelector<HTMLElement>('[data-vsim-dialog]')!;
+    const panels = Array.from(root.querySelectorAll<HTMLElement>('.vsim__panel'));
+    const bar = root.querySelector<HTMLElement>('[data-vsim-bar]')!;
+    const progressbar = root.querySelector<HTMLElement>('[data-vsim-progressbar]')!;
+    const curEl = root.querySelector<HTMLElement>('[data-vsim-cur]')!;
+    const backBtn = root.querySelector<HTMLButtonElement>('[data-vsim-back]')!;
+    const nextBtn = root.querySelector<HTMLButtonElement>('[data-vsim-next]')!;
+    const nextLabel = nextBtn.querySelector<HTMLElement>('span')!;
+    const lowEl = root.querySelector<HTMLElement>('[data-vsim-low]')!;
+    const highEl = root.querySelector<HTMLElement>('[data-vsim-high]')!;
+    const summaryEl = root.querySelector<HTMLElement>('[data-vsim-summary]')!;
+
+    const reduce = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+    const emailRe = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+    const TOTAL = 6;
+
+    const zoneLabels: Record<string, string> = {
+      ...Object.fromEntries(neighborhoods.map((n) => [n.slug, n.name])),
+      outra: 'Outra zona do Porto',
+    };
+    const typeLabels: Record<string, string> = Object.fromEntries(typeOptions.map((o) => [o.value, o.label]));
+    const condLabels: Record<string, string> = Object.fromEntries(conditionOptions.map((o) => [o.value, o.label]));
+
+    let step = 0;
+    let lastFocused: HTMLElement | null = null;
+
+    const panelByName = (name: string) => panels.find((p) => p.dataset.panel === name)!;
+    const labelFor = (i: number) =>
+      i <= 3 ? 'Continuar' : i === 4 ? 'Ver a minha estimativa' : 'Receber avaliação detalhada';
+
+    const focusFirst = (panel: HTMLElement) => {
+      const el = panel.querySelector<HTMLElement>('input, button, [tabindex]:not([tabindex="-1"])');
+      (el ?? dialog).focus();
+    };
+
+    const show = (i: number, focus = true) => {
+      step = i;
+      panels.forEach((p) => {
+        p.hidden = true;
+        p.classList.remove('is-active');
+      });
+      const panel = panelByName(String(i));
+      panel.hidden = false;
+      requestAnimationFrame(() => panel.classList.add('is-active'));
+
+      bar.style.width = `${((i + 1) / TOTAL) * 100}%`;
+      progressbar.setAttribute('aria-valuenow', String(i + 1));
+      curEl.textContent = String(i + 1);
+      backBtn.hidden = i === 0;
+      nextLabel.textContent = labelFor(i);
+
+      if (i === 5) renderResult();
+      if (focus) focusFirst(panel);
+    };
+
+    // ---- state readers ----
+    const getRadio = (name: string) => root.querySelector<HTMLInputElement>(`input[name="${name}"]:checked`)?.value ?? '';
+    const getArea = () => Number(root.querySelector<HTMLInputElement>('input[name="vsim-area"]')!.value) || 0;
+    const getExtras = () =>
+      Array.from(root.querySelectorAll<HTMLInputElement>('input[name="vsim-extra"]:checked')).map((i) => i.value);
+
+    const setErr = (panel: HTMLElement, on: boolean) => {
+      const err = panel.querySelector<HTMLElement>(':scope > [data-err]');
+      if (err) err.hidden = !on;
+    };
+
+    const validateStep = (i: number): boolean => {
+      const panel = panelByName(String(i));
+      let ok = true;
+      if (i === 0) ok = !!getRadio('vsim-type');
+      else if (i === 1) ok = !!getRadio('vsim-zone');
+      else if (i === 2) ok = getArea() > 0 && !!getRadio('vsim-typology');
+      else if (i === 3) ok = !!getRadio('vsim-condition');
+      setErr(panel, !ok);
+      if (!ok) focusFirst(panel);
+      return ok;
+    };
+
+    // ---- result ----
+    const countUp = (el: HTMLElement, target: number) => {
+      if (reduce) {
+        el.textContent = formatEUR(target);
+        return;
+      }
+      const dur = 900;
+      const start = performance.now();
+      const tick = (now: number) => {
+        const t = Math.min(1, (now - start) / dur);
+        const eased = 1 - Math.pow(1 - t, 3);
+        el.textContent = formatEUR(Math.round((target * eased) / 1000) * 1000);
+        if (t < 1) requestAnimationFrame(tick);
+        else el.textContent = formatEUR(target);
+      };
+      requestAnimationFrame(tick);
+    };
+
+    const renderResult = () => {
+      const input = {
+        zone: getRadio('vsim-zone'),
+        type: getRadio('vsim-type'),
+        area: getArea(),
+        typology: getRadio('vsim-typology'),
+        condition: getRadio('vsim-condition'),
+        extras: getExtras(),
+      };
+      const r = estimateRange(input);
+      countUp(lowEl, r.low);
+      countUp(highEl, r.high);
+      summaryEl.textContent = [
+        typeLabels[input.type],
+        zoneLabels[input.zone],
+        `${input.area} m²`,
+        input.typology,
+        condLabels[input.condition],
+      ]
+        .filter(Boolean)
+        .join(' · ');
+    };
+
+    // ---- lead capture (front-end only) ----
+    const fieldErr = (input: HTMLInputElement, on: boolean) => {
+      input.setAttribute('aria-invalid', String(on));
+      const err = input.parentElement?.querySelector<HTMLElement>('[data-err]');
+      if (err) err.hidden = !on;
+    };
+
+    // Contact gate — runs at step 4, before the estimate is revealed.
+    const validateCapture = (): boolean => {
+      const panel = panelByName('4');
+      const nome = panel.querySelector<HTMLInputElement>('input[name="nome"]')!;
+      const email = panel.querySelector<HTMLInputElement>('input[name="email"]')!;
+      const consent = panel.querySelector<HTMLInputElement>('input[name="consent"]')!;
+      let firstInvalid: HTMLElement | null = null;
+
+      const nomeBad = !nome.value.trim();
+      fieldErr(nome, nomeBad);
+      if (nomeBad) firstInvalid = nome;
+
+      const emailBad = !emailRe.test(email.value.trim());
+      fieldErr(email, emailBad);
+      if (emailBad && !firstInvalid) firstInvalid = email;
+
+      const consentLabel = consent.closest('.vsim-consent') as HTMLElement | null;
+      if (!consent.checked) {
+        consentLabel?.style.setProperty('color', 'var(--error)');
+        if (!firstInvalid) firstInvalid = consent;
+      } else {
+        consentLabel?.style.removeProperty('color');
+      }
+
+      if (firstInvalid) {
+        firstInvalid.focus();
+        return false;
+      }
+      return true;
+    };
+
+    const submit = () => {
+      // Contact was already captured + validated at step 4; guard against tampering.
+      if (!validateCapture()) {
+        show(4);
+        return;
+      }
+
+      // TODO(backend): enviar o lead para o serviço de email/CRM.
+      // Payload disponível = { ...lead fields, estimativa: estimateRange(input) }.
+      // Definir o ENDPOINT/handler real e tratar resposta/erros antes do lançamento.
+      showDone();
+    };
+
+    const showDone = () => {
+      root.classList.add('is-done');
+      panels.forEach((p) => {
+        p.hidden = true;
+        p.classList.remove('is-active');
+      });
+      const d = panelByName('done');
+      d.hidden = false;
+      requestAnimationFrame(() => d.classList.add('is-active'));
+      d.querySelector<HTMLButtonElement>('[data-vsim-close]')?.focus();
+    };
+
+    // ---- navigation ----
+    const next = () => {
+      if (step <= 3) {
+        if (validateStep(step)) show(step + 1);
+      } else if (step === 4) {
+        if (validateCapture()) show(5);
+      } else if (step === 5) {
+        submit();
+      }
+    };
+    const back = () => {
+      if (step > 0) show(step - 1);
+    };
+
+    // ---- open / close ----
+    const lockScroll = (on: boolean) => {
+      if (on) {
+        const sw = window.innerWidth - document.documentElement.clientWidth;
+        document.body.style.overflow = 'hidden';
+        if (sw > 0) document.body.style.paddingRight = `${sw}px`;
+      } else {
+        document.body.style.overflow = '';
+        document.body.style.paddingRight = '';
+      }
+    };
+
+    const resetForm = () => {
+      root.classList.remove('is-done');
+      root.querySelectorAll<HTMLInputElement>('input').forEach((i) => {
+        if (i.type === 'radio' || i.type === 'checkbox') i.checked = false;
+        else i.value = '';
+        i.removeAttribute('aria-invalid');
+      });
+      root.querySelectorAll<HTMLElement>('[data-err]').forEach((e) => (e.hidden = true));
+      (root.querySelector('.vsim-consent') as HTMLElement | null)?.style.removeProperty('color');
+    };
+
+    const open = () => {
+      lastFocused = document.activeElement as HTMLElement;
+      resetForm();
+      root.hidden = false;
+      lockScroll(true);
+      requestAnimationFrame(() => root.classList.add('is-open'));
+      show(0, false);
+      dialog.focus();
+    };
+
+    const close = () => {
+      root.classList.remove('is-open');
+      lockScroll(false);
+      if (reduce) root.hidden = true;
+      else window.setTimeout(() => { if (!root.classList.contains('is-open')) root.hidden = true; }, 360);
+      lastFocused?.focus();
+    };
+
+    // ---- focus trap ----
+    const trapTab = (e: KeyboardEvent) => {
+      const list = Array.from(
+        dialog.querySelectorAll<HTMLElement>('button, [href], input, select, textarea, [tabindex]:not([tabindex="-1"])')
+      ).filter((el) => !el.hasAttribute('disabled') && el.offsetParent !== null);
+      if (!list.length) return;
+      const first = list[0];
+      const last = list[list.length - 1];
+      if (e.shiftKey && document.activeElement === first) {
+        e.preventDefault();
+        last.focus();
+      } else if (!e.shiftKey && document.activeElement === last) {
+        e.preventDefault();
+        first.focus();
+      }
+    };
+
+    // ---- wiring ----
+    document.addEventListener('click', (e) => {
+      const trigger = (e.target as HTMLElement).closest('[data-open-simulator]');
+      if (trigger) {
+        e.preventDefault();
+        open();
+      }
+    });
+    root.querySelectorAll<HTMLElement>('[data-vsim-close]').forEach((b) => b.addEventListener('click', close));
+    nextBtn.addEventListener('click', next);
+    backBtn.addEventListener('click', back);
+
+    root.addEventListener('keydown', (e) => {
+      if (e.key === 'Escape') {
+        e.preventDefault();
+        close();
+      } else if (e.key === 'Tab') {
+        trapTab(e);
+      } else if (e.key === 'Enter') {
+        const t = e.target as HTMLElement;
+        if (t.tagName === 'INPUT' && ['text', 'number', 'email', 'tel'].includes((t as HTMLInputElement).type)) {
+          e.preventDefault();
+          next();
+        }
+      }
+    });
+
+    // Auto-advance selection steps shouldn't fight the user — clear a visible
+    // step error as soon as they pick something.
+    root.querySelectorAll<HTMLInputElement>('input[type="radio"], input[name="vsim-area"]').forEach((input) => {
+      input.addEventListener('input', () => {
+        const panel = input.closest<HTMLElement>('.vsim__panel');
+        if (panel) setErr(panel, false);
+      });
+    });
+  }
+</script>

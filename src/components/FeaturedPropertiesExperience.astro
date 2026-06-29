@@ -1,0 +1,486 @@
+---
+// FeaturedPropertiesExperience — the homepage "Imóveis" section.
+// Combines: a centred scroll-snap property carousel, a compact interactive
+// Porto map, native-select filters, and a trust/CTA strip. The filters + map
+// compose a live destination URL into /imoveis (whose existing filter logic is
+// extended additively to read bairro/tipo/preco/quartos), so nothing here
+// duplicates or breaks the listing page. CSS-first; all motion is guarded by
+// prefers-reduced-motion. Favourites mirror the shared cv:favorites store.
+import { properties, propertyTypes } from '../data/properties';
+import { neighborhoods } from '../data/site';
+import PropertyShowcaseCard from './PropertyShowcaseCard.astro';
+import CompactPortoMap from './CompactPortoMap.astro';
+import SectionEyebrow from './SectionEyebrow.astro';
+import Button from './Button.astro';
+import Icon from './Icon.astro';
+
+// The carousel showcases the whole collection (same set the listing shows), so
+// the live match-count stays honest against real inventory.
+const items = properties;
+const tipos = propertyTypes.filter((t) => t !== 'Todos');
+const precos = [
+  { value: 'all', label: 'Qualquer preço' },
+  { value: '0-1000000', label: 'Até 1 M€' },
+  { value: '1000000-2000000', label: '1 M€ – 2 M€' },
+  { value: '2000000-', label: 'Mais de 2 M€' },
+];
+const quartosOpts = [
+  { value: 'all', label: 'Qualquer' },
+  { value: '1', label: '1+' },
+  { value: '2', label: '2+' },
+  { value: '3', label: '3+' },
+  { value: '4', label: '4+' },
+];
+---
+<section class="fpe section on-navy" id="imoveis" data-fpe aria-labelledby="fpe-title">
+  <div class="fpe__bg" aria-hidden="true">
+    <span class="fpe__glow fpe__glow--a"></span>
+    <span class="fpe__glow fpe__glow--b"></span>
+    <span class="fpe__grain"></span>
+  </div>
+
+  <div class="container fpe__inner">
+    <header class="fpe__head">
+      <SectionEyebrow text="RE/MAX Collection Vintage" center />
+      <h2 class="h2 fpe__title" id="fpe-title" data-reveal style="--reveal-delay:80ms">
+        Descubra o <em class="em-gold serif-it">extraordinário.</em>
+      </h2>
+      <p class="lede fpe__sub" data-reveal style="--reveal-delay:160ms">
+        Imóveis únicos, localizações privilegiadas e um padrão de excelência.
+      </p>
+    </header>
+
+    <!-- Carousel -->
+    <div class="fpe__carousel" data-reveal style="--reveal-delay:220ms">
+      <button class="fpe__arrow fpe__arrow--prev" type="button" data-carousel-prev aria-label="Imóvel anterior">
+        <Icon name="chevron" size={22} stroke={1.8} />
+      </button>
+
+      <div
+        class="fpe__track"
+        data-track
+        role="group"
+        aria-roledescription="carrossel"
+        aria-label="Imóveis em destaque — use as setas ou deslize"
+        tabindex="0"
+      >
+        {items.map((p, i) => (
+          <div class="fpe__slide" data-slide-wrap>
+            <PropertyShowcaseCard property={p} index={i} />
+          </div>
+        ))}
+      </div>
+
+      <button class="fpe__arrow fpe__arrow--next" type="button" data-carousel-next aria-label="Próximo imóvel">
+        <Icon name="chevron" size={22} stroke={1.8} />
+      </button>
+    </div>
+
+    <!-- Pagination + hint -->
+    <div class="fpe__bar" data-reveal style="--reveal-delay:260ms">
+      <span class="fpe__count"><b data-count-cur>01</b><span class="fpe__count-sep">/</span><span data-count-total>06</span></span>
+      <span class="fpe__progress" aria-hidden="true"><span class="fpe__progress-fill" data-progress></span></span>
+      <span class="fpe__hint">Deslize para explorar <Icon name="arrow" size={15} stroke={1.7} /></span>
+    </div>
+
+    <!-- Map + filters -->
+    <div class="fpe__lower" data-reveal style="--reveal-delay:120ms">
+      <CompactPortoMap />
+
+      <div class="fpe__panel">
+        <div class="fpe__filters">
+          <label class="fpe-filter">
+            <span class="fpe-filter__ic"><Icon name="pin" size={18} stroke={1.6} /></span>
+            <span class="fpe-filter__label">Zona</span>
+            <select class="fpe-filter__sel" data-filter="zona" aria-label="Filtrar por zona">
+              <option value="all">Todas as zonas</option>
+              {neighborhoods.map((n) => <option value={n.slug}>{n.name}</option>)}
+            </select>
+            <span class="fpe-filter__chev" aria-hidden="true"><Icon name="chevron" size={16} stroke={1.6} /></span>
+          </label>
+
+          <label class="fpe-filter">
+            <span class="fpe-filter__ic"><Icon name="building" size={18} stroke={1.6} /></span>
+            <span class="fpe-filter__label">Tipo</span>
+            <select class="fpe-filter__sel" data-filter="tipo" aria-label="Filtrar por tipo">
+              <option value="all">Todos os tipos</option>
+              {tipos.map((t) => <option value={t}>{t}</option>)}
+            </select>
+            <span class="fpe-filter__chev" aria-hidden="true"><Icon name="chevron" size={16} stroke={1.6} /></span>
+          </label>
+
+          <label class="fpe-filter">
+            <span class="fpe-filter__ic"><Icon name="bookmark" size={18} stroke={1.6} /></span>
+            <span class="fpe-filter__label">Preço</span>
+            <select class="fpe-filter__sel" data-filter="preco" aria-label="Filtrar por preço">
+              {precos.map((o) => <option value={o.value}>{o.label}</option>)}
+            </select>
+            <span class="fpe-filter__chev" aria-hidden="true"><Icon name="chevron" size={16} stroke={1.6} /></span>
+          </label>
+
+          <label class="fpe-filter">
+            <span class="fpe-filter__ic"><Icon name="bed" size={18} stroke={1.6} /></span>
+            <span class="fpe-filter__label">Quartos</span>
+            <select class="fpe-filter__sel" data-filter="quartos" aria-label="Filtrar por número de quartos">
+              {quartosOpts.map((o) => <option value={o.value}>{o.label}</option>)}
+            </select>
+            <span class="fpe-filter__chev" aria-hidden="true"><Icon name="chevron" size={16} stroke={1.6} /></span>
+          </label>
+
+          <!-- TODO(filters): swap for a dedicated advanced-filter modal when designed.
+               For now it routes to the full listing, where every filter lives. -->
+          <a class="fpe-adv" href="/imoveis">
+            <Icon name="sliders" size={18} stroke={1.6} />
+            <span>Filtros avançados</span>
+          </a>
+        </div>
+
+        <div class="fpe__trust">
+          <div class="fpe-trust__item">
+            <span class="fpe-trust__ic"><Icon name="award" size={22} stroke={1.5} /></span>
+            <span class="fpe-trust__t">
+              <b>Exclusividade e discrição</b>
+              <small>Acesso a imóveis exclusivos e um serviço à altura das suas exigências.</small>
+            </span>
+          </div>
+          <div class="fpe-trust__item">
+            <span class="fpe-trust__ic"><Icon name="diamond" size={22} stroke={1.5} /></span>
+            <span class="fpe-trust__t">
+              <b>Conhecimento local</b>
+              <small>Especialistas no mercado premium do Porto, com resultados comprovados.</small>
+            </span>
+          </div>
+          <Button href="/imoveis" variant="gold" arrow class="fpe__see-all">
+            <span data-see-all-label>Ver todos os imóveis</span>
+          </Button>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<style>
+  .fpe {
+    position: relative; isolation: isolate; overflow: hidden;
+    background: linear-gradient(180deg, var(--navy-ink), #0c2138 50%, var(--navy-ink));
+    color: var(--cream);
+  }
+  .fpe__inner { position: relative; z-index: 1; }
+
+  .fpe__bg { position: absolute; inset: 0; z-index: 0; pointer-events: none; }
+  .fpe__glow { position: absolute; border-radius: 50%; filter: blur(110px); }
+  .fpe__glow--a { width: 640px; height: 640px; top: -200px; left: 50%; transform: translateX(-50%); background: radial-gradient(circle, rgba(184, 153, 104, 0.14), transparent 70%); }
+  .fpe__glow--b { width: 520px; height: 520px; bottom: -160px; left: -140px; background: radial-gradient(circle, rgba(26, 54, 86, 0.5), transparent 70%); }
+  .fpe__grain { position: absolute; inset: 0; opacity: 0.35; mix-blend-mode: overlay; background-image: radial-gradient(circle at 1px 1px, rgba(255, 255, 255, 0.1) 1px, transparent 0); background-size: 3px 3px; }
+
+  /* Header */
+  .fpe__head { text-align: center; max-width: 720px; margin: 0 auto; }
+  .fpe__title { margin-top: 16px; margin-inline: auto; max-width: 16ch; }
+  .fpe__sub { margin: 16px auto 0; max-width: 50ch; }
+
+  /* Carousel */
+  .fpe__carousel { position: relative; margin-top: clamp(32px, 4vw, 52px); }
+  .fpe__track {
+    display: flex; align-items: center; gap: clamp(16px, 2vw, 28px);
+    overflow-x: auto; scroll-snap-type: x mandatory; scroll-behavior: smooth;
+    padding: 10px 21% 26px; scrollbar-width: none; -ms-overflow-style: none;
+  }
+  .fpe__track::-webkit-scrollbar { display: none; }
+  .fpe__track:focus-visible { outline: 2px solid var(--gold-light); outline-offset: 4px; border-radius: var(--radius-lg); }
+  .fpe__slide { flex: 0 0 58%; min-width: 0; scroll-snap-align: center; }
+
+  /* Active / dimmed states (only once JS marks the track .is-live) */
+  .fpe__slide :global(.pscard) {
+    transition: transform var(--t-med) var(--t-ease-emph), opacity var(--t-med), border-color var(--t-med), box-shadow var(--t-med), filter var(--t-med);
+  }
+  .fpe__track.is-live .fpe__slide:not(.is-active) :global(.pscard) { opacity: 0.5; transform: scale(0.9); filter: saturate(0.85); }
+  .fpe__track.is-live .fpe__slide.is-active :global(.pscard) {
+    border-color: var(--gold);
+    box-shadow: 0 34px 80px -38px rgba(0, 0, 0, 0.8), 0 0 54px -10px rgba(184, 153, 104, 0.42);
+  }
+  .fpe__track.is-live .fpe__slide:not(.is-active) :global(.psmeta--energy),
+  .fpe__track.is-live .fpe__slide:not(.is-active) :global(.pscard__cta) { display: none; }
+
+  .fpe__arrow {
+    position: absolute; top: 39%; transform: translateY(-50%); z-index: 3;
+    width: clamp(46px, 4vw, 58px); height: clamp(46px, 4vw, 58px); border-radius: 50%;
+    display: grid; place-items: center; cursor: pointer;
+    background: rgba(11, 26, 46, 0.66); color: var(--gold-light);
+    border: 1px solid var(--hairline-gold-strong); backdrop-filter: blur(8px); -webkit-backdrop-filter: blur(8px);
+    transition: background var(--t-fast), color var(--t-fast), border-color var(--t-fast), transform var(--t-fast), opacity var(--t-fast);
+  }
+  .fpe__arrow--prev { left: clamp(0px, 3vw, 40px); }
+  .fpe__arrow--next { right: clamp(0px, 3vw, 40px); }
+  .fpe__arrow--prev :global(.icon) { transform: rotate(90deg); }
+  .fpe__arrow--next :global(.icon) { transform: rotate(-90deg); }
+  .fpe__arrow:hover { background: var(--gold); color: var(--navy-ink); border-color: var(--gold); }
+  .fpe__arrow:focus-visible { outline: 2px solid var(--gold-light); outline-offset: 3px; }
+  .fpe__arrow:disabled { opacity: 0.32; cursor: default; pointer-events: none; }
+
+  /* Pagination bar */
+  .fpe__bar { margin-top: 22px; display: flex; align-items: center; justify-content: center; gap: clamp(16px, 3vw, 36px); flex-wrap: wrap; }
+  .fpe__count { font-family: var(--font-serif); font-size: 18px; color: var(--white-70); letter-spacing: 0.04em; }
+  .fpe__count b { color: var(--gold-light); font-weight: 500; }
+  .fpe__count-sep { margin: 0 8px; color: var(--white-50); }
+  .fpe__progress { position: relative; width: clamp(80px, 16vw, 200px); height: 2px; background: var(--hairline-gold); overflow: hidden; }
+  .fpe__progress-fill { position: absolute; inset: 0 auto 0 0; width: 33%; background: var(--gold-light); transition: width var(--t-med) var(--t-ease-emph); }
+  .fpe__hint { display: inline-flex; align-items: center; gap: 9px; font-size: 11px; letter-spacing: 0.16em; text-transform: uppercase; color: var(--white-50); }
+  .fpe__hint :global(.icon) { color: var(--gold-light); }
+
+  /* Lower: map + panel */
+  .fpe__lower { margin-top: clamp(40px, 5vw, 64px); display: grid; grid-template-columns: 0.82fr 1.18fr; gap: clamp(20px, 2.4vw, 32px); align-items: stretch; }
+  .fpe__panel { display: flex; flex-direction: column; gap: clamp(16px, 2vw, 22px); }
+
+  .fpe__filters { display: grid; grid-template-columns: repeat(3, 1fr); gap: 14px; }
+
+  .fpe-filter { position: relative; display: block; }
+  .fpe-filter__ic { position: absolute; left: 16px; top: 50%; transform: translateY(-50%); color: var(--gold-light); pointer-events: none; display: grid; }
+  .fpe-filter__label { position: absolute; left: 48px; top: 12px; font-size: 9.5px; letter-spacing: 0.18em; text-transform: uppercase; color: var(--gold-light); pointer-events: none; }
+  .fpe-filter__chev { position: absolute; right: 14px; top: 50%; transform: translateY(-50%); color: var(--white-50); pointer-events: none; display: grid; }
+  .fpe-filter__sel {
+    width: 100%; appearance: none; -webkit-appearance: none; cursor: pointer;
+    font-family: var(--font-sans); font-size: 14px; color: var(--cream);
+    background: rgba(11, 26, 46, 0.5); border: 1px solid var(--hairline-gold); border-radius: var(--radius);
+    padding: 29px 40px 13px 48px;
+    transition: border-color var(--t-fast), background var(--t-fast);
+  }
+  .fpe-filter__sel:hover { border-color: var(--gold); background: rgba(16, 39, 66, 0.62); }
+  .fpe-filter__sel:focus-visible { outline: 2px solid var(--gold-light); outline-offset: 2px; }
+  .fpe-filter__sel option { color: var(--cream); background: var(--navy-ink); }
+
+  .fpe-adv {
+    grid-column: span 2; display: inline-flex; align-items: center; justify-content: center; gap: 11px;
+    text-decoration: none; cursor: pointer;
+    font-size: 11px; letter-spacing: 0.18em; text-transform: uppercase; font-weight: 500; color: var(--gold-light);
+    background: rgba(184, 153, 104, 0.07); border: 1px dashed var(--hairline-gold-strong); border-radius: var(--radius);
+    transition: background var(--t-fast), border-color var(--t-fast), color var(--t-fast);
+  }
+  .fpe-adv:hover { background: rgba(184, 153, 104, 0.14); border-color: var(--gold); color: var(--cream); }
+
+  /* Trust strip */
+  .fpe__trust {
+    margin-top: auto; display: grid; grid-template-columns: 1fr 1fr auto; align-items: center; gap: clamp(16px, 2.4vw, 30px);
+    padding: clamp(18px, 2vw, 26px); border: 1px solid var(--hairline-gold); border-radius: var(--radius-lg);
+    background: rgba(13, 31, 53, 0.5);
+  }
+  .fpe-trust__item { display: flex; gap: 14px; align-items: flex-start; }
+  .fpe-trust__ic { flex-shrink: 0; color: var(--gold-light); margin-top: 1px; }
+  .fpe-trust__t { display: flex; flex-direction: column; gap: 5px; }
+  .fpe-trust__t b { font-size: 11px; letter-spacing: 0.16em; text-transform: uppercase; color: var(--cream); font-weight: 500; }
+  .fpe-trust__t small { font-size: 12.5px; line-height: 1.5; color: var(--white-70); }
+  :global(.fpe__see-all) { white-space: nowrap; }
+
+  /* ---- Responsive ---- */
+  @media (max-width: 1080px) {
+    .fpe__slide { flex-basis: 70%; }
+    .fpe__track { padding-inline: 15%; }
+  }
+  @media (max-width: 920px) {
+    .fpe__lower { grid-template-columns: 1fr; }
+    .fpe__trust { grid-template-columns: 1fr 1fr; }
+    :global(.fpe__see-all) { grid-column: 1 / -1; justify-content: center; }
+  }
+  @media (max-width: 760px) {
+    .fpe__slide { flex-basis: 84%; }
+    .fpe__track { padding-inline: 8%; }
+    .fpe__arrow { display: none; }
+  }
+  @media (max-width: 640px) {
+    .fpe__filters { grid-template-columns: repeat(2, 1fr); }
+    .fpe-adv { grid-column: span 2; }
+    .fpe__trust { grid-template-columns: 1fr; text-align: left; }
+  }
+  @media (max-width: 460px) {
+    .fpe__slide { flex-basis: 90%; }
+    .fpe__track { padding-inline: 5%; }
+    .fpe__filters { grid-template-columns: 1fr; }
+    .fpe-adv { grid-column: auto; }
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    .fpe__track { scroll-behavior: auto; }
+    .fpe__slide :global(.pscard), .fpe__progress-fill, .fpe__arrow { transition: none; }
+  }
+</style>
+
+<script>
+  const section = document.querySelector<HTMLElement>('[data-fpe]');
+  if (section) {
+    const track = section.querySelector<HTMLElement>('[data-track]');
+    const slides = Array.from(section.querySelectorAll<HTMLElement>('[data-slide-wrap]'));
+    const cards = slides.map((s) => s.querySelector<HTMLElement>('[data-slide]'));
+    const prevBtn = section.querySelector<HTMLButtonElement>('[data-carousel-prev]');
+    const nextBtn = section.querySelector<HTMLButtonElement>('[data-carousel-next]');
+    const curEl = section.querySelector<HTMLElement>('[data-count-cur]');
+    const totalEl = section.querySelector<HTMLElement>('[data-count-total]');
+    const progress = section.querySelector<HTMLElement>('[data-progress]');
+    const pins = Array.from(section.querySelectorAll<HTMLElement>('[data-map-pin]'));
+    const seeAll = section.querySelector<HTMLAnchorElement>('.fpe__see-all');
+    const seeAllLabel = section.querySelector<HTMLElement>('[data-see-all-label]');
+    const reduce = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+
+    const selects: Record<string, HTMLSelectElement> = {};
+    section.querySelectorAll<HTMLSelectElement>('[data-filter]').forEach((el) => {
+      selects[el.dataset.filter || ''] = el;
+    });
+
+    const count = slides.length;
+    const pad2 = (n: number) => String(n).padStart(2, '0');
+
+    // ---------- Carousel ----------
+    if (track && count) {
+      if (totalEl) totalEl.textContent = pad2(count);
+      let active = -1;
+
+      const setActive = (i: number) => {
+        i = Math.max(0, Math.min(count - 1, i));
+        if (i === active) return;
+        active = i;
+        slides.forEach((s, idx) => s.classList.toggle('is-active', idx === i));
+        if (curEl) curEl.textContent = pad2(i + 1);
+        if (progress) progress.style.width = `${((i + 1) / count) * 100}%`;
+        if (prevBtn) prevBtn.disabled = i === 0;
+        if (nextBtn) nextBtn.disabled = i === count - 1;
+      };
+
+      const centerSlide = (i: number, smooth: boolean) => {
+        const s = slides[Math.max(0, Math.min(count - 1, i))];
+        if (!s) return;
+        const left = s.offsetLeft - (track.clientWidth - s.clientWidth) / 2;
+        track.scrollTo({ left, behavior: smooth && !reduce ? 'smooth' : 'auto' });
+      };
+
+      const nearestIndex = () => {
+        const mid = track.scrollLeft + track.clientWidth / 2;
+        let best = 0;
+        let bestD = Infinity;
+        slides.forEach((s, idx) => {
+          const c = s.offsetLeft + s.clientWidth / 2;
+          const d = Math.abs(c - mid);
+          if (d < bestD) { bestD = d; best = idx; }
+        });
+        return best;
+      };
+
+      let raf = 0;
+      track.addEventListener('scroll', () => {
+        if (raf) return;
+        raf = requestAnimationFrame(() => { raf = 0; setActive(nearestIndex()); });
+      }, { passive: true });
+
+      prevBtn?.addEventListener('click', () => centerSlide(active - 1, true));
+      nextBtn?.addEventListener('click', () => centerSlide(active + 1, true));
+      track.addEventListener('keydown', (e) => {
+        if (e.key === 'ArrowRight') { e.preventDefault(); centerSlide(active + 1, true); }
+        else if (e.key === 'ArrowLeft') { e.preventDefault(); centerSlide(active - 1, true); }
+      });
+
+      track.classList.add('is-live');
+      const initIdx = Math.min(1, count - 1);
+      requestAnimationFrame(() => { centerSlide(initIdx, false); setActive(initIdx); });
+
+      let rz: number;
+      window.addEventListener('resize', () => {
+        window.clearTimeout(rz);
+        rz = window.setTimeout(() => centerSlide(active, false), 150);
+      });
+
+      // ---------- Filters → /imoveis destination ----------
+      const state: Record<string, string> = { zona: 'all', tipo: 'all', preco: 'all', quartos: 'all' };
+
+      const matchesCard = (c: HTMLElement | null) => {
+        if (!c) return false;
+        if (state.zona !== 'all' && c.dataset.zona !== state.zona) return false;
+        if (state.tipo !== 'all' && c.dataset.cat !== state.tipo) return false;
+        if (state.quartos !== 'all' && Number(c.dataset.beds || 0) < Number(state.quartos)) return false;
+        if (state.preco !== 'all') {
+          if (!c.dataset.price) return false; // "Sob consulta" → excluded from price bounds
+          const price = Number(c.dataset.price);
+          const [lo, hi] = state.preco.split('-');
+          if (lo && price < Number(lo)) return false;
+          if (hi && price > Number(hi)) return false;
+        }
+        return true;
+      };
+
+      const buildHref = () => {
+        const q = new URLSearchParams();
+        if (state.zona !== 'all') q.set('bairro', state.zona);
+        if (state.tipo !== 'all') q.set('tipo', state.tipo);
+        if (state.preco !== 'all') q.set('preco', state.preco);
+        if (state.quartos !== 'all') q.set('quartos', state.quartos);
+        const s = q.toString();
+        return `/imoveis${s ? `?${s}` : ''}`;
+      };
+
+      const refresh = () => {
+        const n = cards.filter(matchesCard).length;
+        if (seeAll) seeAll.href = buildHref();
+        if (seeAllLabel) {
+          seeAllLabel.textContent = n === count ? 'Ver todos os imóveis' : `Ver ${n} ${n === 1 ? 'imóvel' : 'imóveis'}`;
+        }
+      };
+
+      const syncPins = () => {
+        pins.forEach((p) => {
+          const on = p.dataset.zona === state.zona;
+          p.classList.toggle('is-active', on);
+          p.setAttribute('aria-pressed', String(on));
+        });
+      };
+
+      const setZona = (slug: string) => {
+        state.zona = slug;
+        if (selects.zona) selects.zona.value = slug;
+        syncPins();
+        if (slug !== 'all') {
+          const idx = cards.findIndex((c) => c?.dataset.zona === slug);
+          if (idx >= 0) centerSlide(idx, true);
+        }
+        refresh();
+      };
+
+      selects.zona?.addEventListener('change', () => setZona(selects.zona.value));
+      ['tipo', 'preco', 'quartos'].forEach((k) => {
+        selects[k]?.addEventListener('change', () => { state[k] = selects[k].value; refresh(); });
+      });
+      pins.forEach((p) => {
+        p.addEventListener('click', () => {
+          const slug = p.dataset.zona || 'all';
+          setZona(state.zona === slug ? 'all' : slug);
+        });
+      });
+
+      refresh();
+    }
+
+    // ---------- Favourites (mirrors PropertyCard's shared store) ----------
+    const FAV = 'cv:favorites';
+    const readFav = (): string[] => {
+      try { return JSON.parse(localStorage.getItem(FAV) || '[]'); } catch { return []; }
+    };
+    const writeFav = (list: string[]) => {
+      localStorage.setItem(FAV, JSON.stringify(list));
+      document.dispatchEvent(new CustomEvent('favorites:change', { detail: list }));
+    };
+    const syncFav = () => {
+      const favs = readFav();
+      section.querySelectorAll<HTMLElement>('[data-fav-toggle]').forEach((btn) => {
+        btn.setAttribute('aria-pressed', String(favs.includes(btn.dataset.slug || '')));
+      });
+    };
+    section.addEventListener('click', (e) => {
+      const btn = (e.target as HTMLElement).closest<HTMLElement>('[data-fav-toggle]');
+      if (!btn) return;
+      e.preventDefault();
+      const slug = btn.dataset.slug || '';
+      const favs = readFav();
+      const i = favs.indexOf(slug);
+      if (i >= 0) favs.splice(i, 1); else favs.push(slug);
+      writeFav(favs);
+      syncFav();
+    });
+    document.addEventListener('favorites:change', syncFav);
+    syncFav();
+  }
+</script>

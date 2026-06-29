@@ -1,0 +1,80 @@
+---
+import SectionEyebrow from './SectionEyebrow.astro';
+import Icon from './Icon.astro';
+import CareersMetrics from './CareersMetrics.astro';
+import { careersCulture as c } from '../data/carreiras';
+---
+<section class="section section--cream cculture">
+  <div class="container">
+    <div class="cculture__top">
+      <div class="cculture__intro">
+        <SectionEyebrow text={c.eyebrow} />
+        <h2 class="h2 cculture__title" data-reveal style="--reveal-delay:80ms">
+          {c.titleLead} <em class="em-gold serif-it">{c.titleEmphasis}</em>.
+        </h2>
+        <p class="lede cculture__lede" data-reveal style="--reveal-delay:160ms">{c.text}</p>
+        <ul class="cculture__cards">
+          {c.cards.map((card, i) => (
+            <li class="cucard" data-reveal style={`--reveal-delay:${200 + i * 80}ms`}>
+              <span class="cucard__ic"><Icon name={card.icon} size={20} stroke={1.4} /></span>
+              <div>
+                <h3 class="cucard__title">{card.title}</h3>
+                <p class="cucard__text">{card.text}</p>
+              </div>
+            </li>
+          ))}
+        </ul>
+      </div>
+
+      <div class="cculture__media" data-reveal style="--reveal-delay:200ms">
+        {c.images.map((src, i) => (
+          <div class:list={['cculture__tile', `cculture__tile--${i}`]}>
+            <img src={src} alt="" loading="lazy" decoding="async" />
+          </div>
+        ))}
+      </div>
+    </div>
+
+    <div class="cculture__metrics" data-reveal>
+      <CareersMetrics metrics={c.metrics} tone="cream" />
+    </div>
+  </div>
+</section>
+
+<style>
+  .cculture__top {
+    display: grid; grid-template-columns: 1.05fr 0.95fr; gap: clamp(36px, 5vw, 80px); align-items: center;
+  }
+  .cculture__title { margin-top: 16px; max-width: 18ch; }
+  .cculture__lede { margin-top: 18px; }
+  .cculture__cards { list-style: none; margin: 30px 0 0; padding: 0; display: grid; grid-template-columns: 1fr 1fr; gap: 22px 28px; }
+  .cucard { display: flex; gap: 14px; align-items: flex-start; }
+  .cucard__ic {
+    flex-shrink: 0; width: 44px; height: 44px; display: grid; place-items: center; border-radius: 50%;
+    color: var(--gold-deep); border: 1px solid var(--hairline-gold-strong); transition: background var(--t-med), color var(--t-med);
+  }
+  .cucard:hover .cucard__ic { background: var(--gold); color: var(--navy-ink); }
+  .cucard__title { font-family: var(--font-serif); font-weight: 500; font-size: 19px; margin: 2px 0 0; }
+  .cucard__text { margin: 6px 0 0; font-size: 14px; line-height: 1.55; color: var(--ink-60); }
+
+  .cculture__media {
+    display: grid; grid-template-columns: 1fr 1fr; grid-template-rows: 1fr 1fr; gap: 14px;
+    height: clamp(360px, 40vw, 520px);
+  }
+  .cculture__tile { overflow: hidden; border-radius: var(--radius-lg); border: 1px solid var(--hairline-gold); }
+  .cculture__tile img { width: 100%; height: 100%; object-fit: cover; transition: transform var(--t-slow); }
+  .cculture__tile:hover img { transform: scale(1.05); }
+  /* Two images styled into a 2x2 frame: first spans the tall left column. */
+  .cculture__tile--0 { grid-row: 1 / span 2; }
+  .cculture__tile--1 { grid-column: 2; grid-row: 1 / span 2; }
+
+  .cculture__metrics { margin-top: clamp(48px, 6vw, 80px); }
+
+  @media (max-width: 900px) {
+    .cculture__top { grid-template-columns: 1fr; }
+    .cculture__media { order: -1; height: clamp(280px, 60vw, 380px); }
+  }
+  @media (max-width: 520px) {
+    .cculture__cards { grid-template-columns: 1fr; }
+  }
+</style>

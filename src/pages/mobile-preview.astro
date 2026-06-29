@@ -1,0 +1,199 @@
+---
+// QA-ONLY mobile preview. Renders the REAL site inside a phone-width <iframe>
+// so genuine mobile breakpoints fire: CSS media queries track the iframe's own
+// viewport, not a wrapper <div>. Same code, same components, same images — no
+// separate mobile build, no duplicated markup. Not linked anywhere and marked
+// noindex; just open /mobile-preview locally. Safe to delete before launch.
+const PAGES = [
+  { label: 'Homepage', path: '/' },
+  { label: 'Imóveis', path: '/imoveis' },
+  { label: 'Alugar', path: '/alugar' },
+  { label: 'Sobre nós', path: '/sobre-nos' },
+  { label: 'Blog / Insights', path: '/insights' },
+  { label: 'Carreiras', path: '/carreiras' },
+  { label: 'Contacto', path: '/contacto' },
+  { label: 'Apoio', path: '/apoio' },
+];
+const WIDTHS = [390, 414, 430];
+const DEFAULT_WIDTH = 390;
+const DEFAULT_PATH = '/';
+---
+<!DOCTYPE html>
+<html lang="pt-PT">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <meta name="robots" content="noindex, nofollow" />
+    <title>Mobile Preview (QA) — RE/MAX Collection Vintage</title>
+    <style is:global>
+      *, *::before, *::after { box-sizing: border-box; }
+      html, body { margin: 0; height: 100%; }
+      body {
+        min-height: 100dvh;
+        font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+        color: #e7eaf0;
+        background:
+          radial-gradient(1200px 600px at 50% -10%, #1b2230 0%, transparent 60%),
+          #0b0d11;
+        display: flex;
+        flex-direction: column;
+      }
+
+      /* ---- Control bar ---- */
+      .mp__bar {
+        position: sticky; top: 0; z-index: 10;
+        display: flex; align-items: center; flex-wrap: wrap; gap: 10px 18px;
+        padding: 11px clamp(14px, 3vw, 28px);
+        background: rgba(17, 20, 26, 0.92);
+        -webkit-backdrop-filter: blur(10px); backdrop-filter: blur(10px);
+        border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+      }
+      .mp__brand { display: flex; flex-direction: column; line-height: 1.2; margin-right: 6px; }
+      .mp__brand b { font-size: 13px; font-weight: 600; letter-spacing: 0.02em; }
+      .mp__brand small { font-size: 10.5px; color: #8b93a3; letter-spacing: 0.06em; text-transform: uppercase; }
+
+      .mp__group { display: inline-flex; align-items: center; gap: 8px; }
+      .mp__label { font-size: 11px; color: #8b93a3; letter-spacing: 0.08em; text-transform: uppercase; }
+
+      .mp__select {
+        appearance: none;
+        background: #1e242e url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' viewBox='0 0 24 24' fill='none' stroke='%238b93a3' stroke-width='2'%3E%3Cpath d='M6 9l6 6 6-6'/%3E%3C/svg%3E") no-repeat right 10px center;
+        color: #e7eaf0; border: 1px solid rgba(255, 255, 255, 0.12);
+        border-radius: 8px; padding: 7px 30px 7px 12px; font-size: 13px; cursor: pointer;
+      }
+      .mp__select:focus-visible { outline: 2px solid #5b8cff; outline-offset: 1px; }
+
+      .mp__segs { display: inline-flex; padding: 3px; gap: 2px; background: #1e242e; border: 1px solid rgba(255, 255, 255, 0.12); border-radius: 10px; }
+      .mp__seg {
+        border: 0; background: transparent; color: #b7bECA; cursor: pointer;
+        font-size: 12.5px; font-variant-numeric: tabular-nums; padding: 6px 11px; border-radius: 7px;
+        transition: background 0.15s, color 0.15s;
+      }
+      .mp__seg:hover { color: #fff; }
+      .mp__seg[aria-pressed="true"] { background: #3a6df0; color: #fff; }
+
+      .mp__btn {
+        border: 1px solid rgba(255, 255, 255, 0.12); background: #1e242e; color: #b7becA;
+        border-radius: 8px; padding: 7px 12px; font-size: 13px; cursor: pointer;
+        display: inline-flex; align-items: center; gap: 6px; transition: background 0.15s, color 0.15s;
+      }
+      .mp__btn:hover { background: #283041; color: #fff; }
+
+      .mp__readout { margin-left: auto; font-size: 12px; color: #8b93a3; font-variant-numeric: tabular-nums; letter-spacing: 0.03em; }
+
+      /* ---- Stage + device frame ---- */
+      .mp__stage {
+        flex: 1; display: flex; align-items: flex-start; justify-content: center;
+        padding: clamp(20px, 4vh, 44px) 16px clamp(28px, 5vh, 56px);
+        overflow: auto;
+      }
+      .mp__device {
+        --w: 390px;
+        --h: min(880px, calc(100dvh - 150px));
+        position: relative;
+        padding: 14px;
+        background: #05070b;
+        border-radius: 46px;
+        box-shadow:
+          0 0 0 2px rgba(255, 255, 255, 0.05),
+          0 40px 90px -30px rgba(0, 0, 0, 0.9),
+          inset 0 1px 0 rgba(255, 255, 255, 0.06);
+      }
+      /* Subtle speaker/notch bar — device hint without overdoing it. */
+      .mp__notch {
+        position: absolute; top: 22px; left: 50%; transform: translateX(-50%);
+        width: 116px; height: 26px; background: #05070b; border-radius: 0 0 16px 16px; z-index: 2;
+        pointer-events: none;
+      }
+      .mp__notch::after {
+        content: ""; position: absolute; top: 9px; left: 50%; transform: translateX(-50%);
+        width: 46px; height: 5px; border-radius: 4px; background: #20262f;
+      }
+      .mp__frame {
+        display: block; width: var(--w); height: var(--h);
+        border: 0; border-radius: 32px; background: #fff;
+      }
+
+      @media (max-width: 720px) {
+        .mp__readout { width: 100%; margin-left: 0; }
+      }
+    </style>
+  </head>
+  <body>
+    <header class="mp__bar">
+      <span class="mp__brand"><b>Mobile Preview</b><small>QA local</small></span>
+
+      <div class="mp__group">
+        <span class="mp__label">Página</span>
+        <select class="mp__select" id="mp-page" aria-label="Escolher página">
+          {PAGES.map((p) => (
+            <option value={p.path} selected={p.path === DEFAULT_PATH}>{p.label}</option>
+          ))}
+        </select>
+      </div>
+
+      <div class="mp__group">
+        <span class="mp__label">Largura</span>
+        <div class="mp__segs" id="mp-widths" role="group" aria-label="Largura do ecrã">
+          {WIDTHS.map((w) => (
+            <button class="mp__seg" type="button" data-w={w} aria-pressed={w === DEFAULT_WIDTH ? 'true' : 'false'}>{w}</button>
+          ))}
+        </div>
+      </div>
+
+      <button class="mp__btn" id="mp-reload" type="button" aria-label="Recarregar">↻ Recarregar</button>
+
+      <span class="mp__readout" id="mp-readout"></span>
+    </header>
+
+    <main class="mp__stage">
+      <div class="mp__device" id="mp-device" style={`--w:${DEFAULT_WIDTH}px`}>
+        <span class="mp__notch" aria-hidden="true"></span>
+        <iframe class="mp__frame" id="mp-frame" src={DEFAULT_PATH} title="Pré-visualização mobile do website"></iframe>
+      </div>
+    </main>
+
+    <script is:inline>
+      (function () {
+        const device = document.getElementById('mp-device');
+        const frame = document.getElementById('mp-frame');
+        const pageSel = document.getElementById('mp-page');
+        const widthGroup = document.getElementById('mp-widths');
+        const reload = document.getElementById('mp-reload');
+        const readout = document.getElementById('mp-readout');
+
+        function currentWidth() {
+          return parseInt(getComputedStyle(device).getPropertyValue('--w'), 10) || 390;
+        }
+        function updateReadout() {
+          let path = '/';
+          try { path = new URL(frame.src).pathname || '/'; } catch (e) {}
+          readout.textContent = currentWidth() + ' px  ·  ' + path;
+        }
+
+        widthGroup.addEventListener('click', function (e) {
+          const btn = e.target.closest('[data-w]');
+          if (!btn) return;
+          device.style.setProperty('--w', btn.dataset.w + 'px');
+          widthGroup.querySelectorAll('[data-w]').forEach(function (b) {
+            b.setAttribute('aria-pressed', b === btn ? 'true' : 'false');
+          });
+          updateReadout();
+        });
+
+        pageSel.addEventListener('change', function () {
+          frame.src = pageSel.value;
+        });
+
+        reload.addEventListener('click', function () {
+          // Same-origin reload; fall back to re-assigning src.
+          try { frame.contentWindow.location.reload(); }
+          catch (e) { frame.src = frame.src; }
+        });
+
+        frame.addEventListener('load', updateReadout);
+        updateReadout();
+      })();
+    </script>
+  </body>
+</html>

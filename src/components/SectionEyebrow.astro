@@ -1,0 +1,15 @@
+---
+interface Props {
+  text: string;
+  center?: boolean;
+  bare?: boolean;
+  class?: string;
+}
+const { text, center = false, bare = false, class: cls = '' } = Astro.props;
+---
+<span
+  class:list={['eyebrow', { 'eyebrow--center': center, 'eyebrow--bare': bare }, cls]}
+  data-reveal
+>
+  {text}
+</span>

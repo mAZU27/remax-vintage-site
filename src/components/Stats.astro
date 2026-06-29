@@ -1,0 +1,40 @@
+---
+// Trust strip — illustrative figures live in site.ts (stats).
+import { stats } from '../data/site';
+---
+<ul class="stats">
+  {stats.map((s, i) => (
+    <li class="stats__item" data-reveal style={`--reveal-delay:${i * 90}ms`}>
+      <span class="stats__value">{s.value}</span>
+      <span class="stats__label">{s.label}</span>
+      <span class="stats__note">{s.note}</span>
+    </li>
+  ))}
+</ul>
+
+<style>
+  .stats {
+    list-style: none; margin: 0; padding: 0;
+    display: grid; grid-template-columns: repeat(4, 1fr);
+    gap: 1px; background: var(--hairline-gold);
+    border: 1px solid var(--hairline-gold); border-radius: var(--radius);
+    overflow: hidden;
+  }
+  .stats__item {
+    display: flex; flex-direction: column; align-items: center; text-align: center;
+    gap: 8px; padding: clamp(28px, 4vw, 44px) clamp(16px, 2vw, 28px);
+    background: transparent;
+  }
+  .stats__value {
+    font-family: var(--font-serif); font-weight: 500; letter-spacing: -0.02em;
+    font-size: clamp(36px, 4.6vw, 60px); line-height: 1; color: var(--gold-light);
+  }
+  .stats__label {
+    font-size: 13px; letter-spacing: 0.04em; font-weight: 500; margin-top: 4px;
+  }
+  .stats__note { font-size: 12.5px; opacity: 0.6; }
+
+  @media (max-width: 720px) {
+    .stats { grid-template-columns: repeat(2, 1fr); }
+  }
+</style>

@@ -1,0 +1,130 @@
+---
+import Icon from './Icon.astro';
+import { type Property, formatPrice, statusLabel } from '../data/properties';
+interface Props {
+  property: Property;
+  reveal?: boolean;
+}
+const { property: p, reveal = true } = Astro.props;
+const href = `/imoveis/${p.slug}`;
+---
+<article class="pcard" data-reveal={reveal ? '' : undefined} data-property={p.slug}>
+  <a class="pcard__media" href={href} tabindex="-1" aria-hidden="true">
+    <img src={p.image} alt={`${p.title} — ${p.neighborhoodName}`} loading="lazy" decoding="async" width="1600" height="1067" />
+    <span class:list={['pcard__status', `is-${p.status}`]}>{statusLabel[p.status]}</span>
+    {p.badge && p.status === 'disponivel' && <span class="pcard__badge">{p.badge}</span>}
+  </a>
+  <button
+    class="pcard__fav"
+    type="button"
+    aria-pressed="false"
+    aria-label={`Guardar ${p.title} nos favoritos`}
+    data-fav-toggle
+    data-slug={p.slug}
+  >
+    <Icon name="heart" size={18} stroke={1.7} />
+  </button>
+
+  <div class="pcard__body">
+    <div class="pcard__top">
+      <span class="pcard__hood">{p.neighborhoodName}</span>
+      <span class="pcard__ref">{p.ref}</span>
+    </div>
+    <h3 class="pcard__title"><a href={href}>{p.title}</a></h3>
+    <p class="pcard__price">{formatPrice(p.price)}</p>
+    <ul class="pcard__meta">
+      <li><Icon name="bed" size={16} stroke={1.5} /> {p.beds}</li>
+      <li><Icon name="bath" size={16} stroke={1.5} /> {p.baths}</li>
+      <li><Icon name="ruler" size={16} stroke={1.5} /> {p.area} m²</li>
+      <li><Icon name="bolt" size={16} stroke={1.5} /> {p.energy}</li>
+    </ul>
+  </div>
+</article>
+
+<style>
+  .pcard {
+    position: relative; display: flex; flex-direction: column;
+    background: var(--cream-soft); border: 1px solid var(--ink-10); border-radius: var(--radius);
+    overflow: hidden; transition: transform var(--t-med), box-shadow var(--t-med), border-color var(--t-med);
+  }
+  .pcard:hover { transform: translateY(-6px); box-shadow: var(--shadow-card); border-color: var(--hairline-gold); }
+  .pcard__media { display: block; position: relative; aspect-ratio: 3 / 2; overflow: hidden; background: var(--navy-soft); }
+  .pcard__media img { width: 100%; height: 100%; object-fit: cover; transition: transform var(--t-slow); }
+  .pcard:hover .pcard__media img { transform: scale(1.06); }
+
+  .pcard__status, .pcard__badge {
+    position: absolute; top: 14px; font-size: 10.5px; letter-spacing: 0.16em; text-transform: uppercase;
+    font-weight: 500; padding: 6px 12px; border-radius: 2px; backdrop-filter: blur(6px);
+  }
+  .pcard__status { left: 14px; color: var(--cream); background: rgba(11, 26, 46, 0.7); }
+  .pcard__status.is-reservado { background: rgba(154, 126, 80, 0.92); color: var(--navy-ink); }
+  .pcard__status.is-vendido { background: rgba(11, 26, 46, 0.85); color: var(--white-70); }
+  .pcard__badge { right: 14px; color: var(--navy-ink); background: var(--gold-light); }
+
+  .pcard__fav {
+    position: absolute; top: 12px; right: 12px; width: 38px; height: 38px; display: grid; place-items: center;
+    border-radius: 50%; background: rgba(244, 237, 222, 0.9); color: var(--navy); backdrop-filter: blur(6px);
+    transition: background var(--t-fast), color var(--t-fast), transform var(--t-fast); z-index: 2;
+  }
+  /* When a badge occupies the top-right, nudge the fav button down */
+  .pcard__body { padding: 22px 22px 24px; display: flex; flex-direction: column; flex: 1; }
+  .pcard:has(.pcard__badge) .pcard__fav { top: auto; bottom: calc(100% - 52px); }
+  .pcard__fav:hover { background: var(--cream); transform: scale(1.08); }
+  .pcard__fav[aria-pressed="true"] { background: var(--gold); color: var(--navy-ink); }
+  .pcard__fav[aria-pressed="true"] :global(.icon) { fill: var(--navy-ink); }
+
+  .pcard__top { display: flex; align-items: center; justify-content: space-between; gap: 12px; }
+  .pcard__hood { font-size: 11px; letter-spacing: 0.18em; text-transform: uppercase; color: var(--gold-deep); font-weight: 500; }
+  .pcard__ref { font-size: 11px; letter-spacing: 0.1em; color: var(--ink-40); }
+  .pcard__title { font-family: var(--font-serif); font-weight: 500; font-size: 22px; line-height: 1.15; margin: 12px 0 0; letter-spacing: -0.01em; }
+  .pcard__title a { text-decoration: none; color: var(--ink); transition: color var(--t-fast); }
+  .pcard__title a::after { content: ""; position: absolute; inset: 0; } /* full-card click */
+  .pcard:hover .pcard__title a { color: var(--gold-deep); }
+  .pcard__price { font-family: var(--font-serif); font-size: 24px; color: var(--navy); margin: 10px 0 0; font-weight: 500; }
+
+  .pcard__meta {
+    list-style: none; display: flex; flex-wrap: wrap; gap: 8px 18px; margin: 16px 0 0; padding: 16px 0 0;
+    border-top: 1px solid var(--ink-10); margin-top: auto;
+  }
+  .pcard__meta li { display: inline-flex; align-items: center; gap: 7px; font-size: 13.5px; color: var(--ink-60); }
+  .pcard__meta :global(.icon) { color: var(--gold-deep); }
+
+  /* Favorite button must sit above the full-card link */
+  .pcard__fav { position: absolute; }
+</style>
+
+<script>
+  // Favorites — persisted in localStorage; shared across every PropertyCard.
+  const KEY = 'cv:favorites';
+  const read = (): string[] => {
+    try { return JSON.parse(localStorage.getItem(KEY) || '[]'); } catch { return []; }
+  };
+  const write = (list: string[]) => {
+    localStorage.setItem(KEY, JSON.stringify(list));
+    document.dispatchEvent(new CustomEvent('favorites:change', { detail: list }));
+  };
+
+  const sync = () => {
+    const favs = read();
+    document.querySelectorAll('[data-fav-toggle]').forEach((btn) => {
+      const slug = (btn as HTMLElement).dataset.slug || '';
+      const on = favs.includes(slug);
+      btn.setAttribute('aria-pressed', String(on));
+    });
+  };
+
+  document.addEventListener('click', (e) => {
+    const btn = (e.target as HTMLElement).closest('[data-fav-toggle]') as HTMLElement | null;
+    if (!btn) return;
+    e.preventDefault();
+    const slug = btn.dataset.slug || '';
+    const favs = read();
+    const i = favs.indexOf(slug);
+    if (i >= 0) favs.splice(i, 1); else favs.push(slug);
+    write(favs);
+    sync();
+  });
+
+  document.addEventListener('favorites:change', sync);
+  sync();
+</script>

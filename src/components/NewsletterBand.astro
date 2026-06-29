@@ -1,0 +1,111 @@
+---
+import Button from './Button.astro';
+import Icon from './Icon.astro';
+import SectionEyebrow from './SectionEyebrow.astro';
+interface Props {
+  class?: string;
+}
+const { class: cls = '' } = Astro.props;
+---
+<section class:list={['news', cls]} aria-labelledby="news-title">
+  <div class="container news__inner">
+    <div class="news__copy">
+      <SectionEyebrow text="Insights do Porto" />
+      <h2 class="h2 news__title" id="news-title" data-reveal>
+        O mercado premium, <em class="em-gold serif-it">decifrado</em>.
+      </h2>
+      <p class="lede news__lede" data-reveal style="--reveal-delay: 120ms">
+        Análises de bairro, tendências de valor e leituras de mercado — uma vez por mês,
+        sem ruído. Para quem decide com informação.
+      </p>
+    </div>
+
+    <form class="news__form" data-newsletter novalidate data-reveal style="--reveal-delay: 200ms">
+      <label class="sr-only" for="news-email">O seu email</label>
+      <div class="news__field">
+        <Icon name="mail" size={18} stroke={1.6} />
+        <input
+          id="news-email"
+          type="email"
+          name="email"
+          inputmode="email"
+          autocomplete="email"
+          required
+          placeholder="o.seu@email.pt"
+        />
+      </div>
+      <Button type="submit" variant="gold" arrow class="news__btn">Subscrever</Button>
+      <p class="news__note" data-news-note>
+        Sem spam. Cancela quando quiser. Ao subscrever aceita a nossa política de privacidade.
+      </p>
+      <p class="news__success" data-news-success hidden>
+        <Icon name="shield-check" size={16} stroke={1.7} /> Subscrição confirmada — bem-vindo à coleção.
+      </p>
+    </form>
+  </div>
+</section>
+
+<style>
+  .news { background: var(--navy-ink); color: var(--cream); padding: clamp(64px, 8vw, 110px) var(--gutter); position: relative; overflow: hidden; }
+  .news::before {
+    content: ""; position: absolute; inset: 0; pointer-events: none; opacity: 0.5;
+    background: radial-gradient(60% 120% at 85% 0%, rgba(184, 153, 104, 0.16), transparent 60%);
+  }
+  .news__inner { position: relative; display: grid; grid-template-columns: 1.1fr 0.9fr; gap: clamp(36px, 5vw, 80px); align-items: center; }
+  .news__title { margin-top: 18px; }
+  .news__lede { margin-top: 18px; }
+
+  .news__form { display: grid; grid-template-columns: 1fr auto; gap: 14px; align-items: stretch; }
+  .news__field {
+    display: flex; align-items: center; gap: 12px; padding: 0 18px;
+    background: rgba(244, 237, 222, 0.06); border: 1px solid var(--hairline-gold);
+    border-radius: 2px; transition: border-color var(--t-fast), background var(--t-fast);
+  }
+  .news__field:focus-within {
+    border-color: var(--gold-light); background: rgba(244, 237, 222, 0.1);
+    box-shadow: 0 0 0 4px rgba(184, 153, 104, 0.16), 0 0 22px -6px rgba(212, 187, 133, 0.4);
+  }
+  .news__field :global(.icon) { color: var(--gold-light); flex-shrink: 0; }
+  .news__field input {
+    flex: 1; background: none; border: none; color: var(--cream); font-size: 15px;
+    padding: 17px 0; letter-spacing: 0.02em; outline: none;
+  }
+  .news__field input::placeholder { color: var(--white-50); }
+  :global(.news__btn) { white-space: nowrap; }
+  .news__note { grid-column: 1 / -1; margin: 4px 0 0; font-size: 12px; color: var(--white-50); line-height: 1.5; }
+  .news__success {
+    grid-column: 1 / -1; margin: 4px 0 0; display: inline-flex; align-items: center; gap: 9px;
+    font-size: 14px; color: var(--gold-light); letter-spacing: 0.02em;
+  }
+  .news__field.is-invalid { border-color: #C98A6A; }
+
+  @media (max-width: 860px) {
+    .news__inner { grid-template-columns: 1fr; }
+    .news__form { grid-template-columns: 1fr; }
+  }
+</style>
+
+<script>
+  document.querySelectorAll('[data-newsletter]').forEach((formEl) => {
+    const form = formEl as HTMLFormElement;
+    const field = form.querySelector('.news__field') as HTMLElement | null;
+    const input = form.querySelector('input[type="email"]') as HTMLInputElement | null;
+    const note = form.querySelector('[data-news-note]') as HTMLElement | null;
+    const success = form.querySelector('[data-news-success]') as HTMLElement | null;
+    form.addEventListener('submit', (e) => {
+      e.preventDefault();
+      if (!input || !input.checkValidity()) {
+        field?.classList.add('is-invalid');
+        input?.focus();
+        return;
+      }
+      field?.classList.remove('is-invalid');
+      // Front-end only for now (no backend wired). Show confirmation.
+      if (field) field.style.display = 'none';
+      form.querySelector('.news__btn')?.setAttribute('hidden', '');
+      if (note) note.hidden = true;
+      if (success) success.hidden = false;
+    });
+    input?.addEventListener('input', () => field?.classList.remove('is-invalid'));
+  });
+</script>

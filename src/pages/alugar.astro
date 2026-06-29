@@ -1,0 +1,167 @@
+---
+import Base from '../layouts/Base.astro';
+import Button from '../components/Button.astro';
+import Icon from '../components/Icon.astro';
+---
+<Base
+  title="Alugar"
+  description="Arrendamento de imóveis distintos no Porto — selecionados com rigor para quem valoriza localização, conforto e qualidade."
+>
+  <!-- Alugar — split editorial: texto à esquerda, imagem premium + cartão navy à direita -->
+  <section class="alg" id="alugar">
+    <div class="alg__grid">
+      <!-- Coluna esquerda — editorial -->
+      <div class="alg__panel">
+        <div class="alg__panel-inner">
+          <span class="alg__eyebrow" data-reveal>Alugar</span>
+          <span class="gold-rule alg__rule" data-reveal="rule" style="--reveal-delay:60ms"></span>
+          <h2 class="h2 alg__title" data-reveal style="--reveal-delay:100ms">
+            Viver o Porto<br />com a <em class="em-gold serif-it">casa certa.</em>
+          </h2>
+          <p class="lede alg__lede" data-reveal style="--reveal-delay:160ms">
+            Arrendamento de imóveis distintos, selecionados com rigor para quem valoriza
+            localização, conforto e qualidade. Encontre o espaço ideal para o seu próximo capítulo.
+          </p>
+          <div class="alg__actions" data-reveal style="--reveal-delay:220ms">
+            <Button href="/imoveis" variant="gold" arrow class="alg__btn">Ver imóveis para alugar</Button>
+            <Button href="/contacto" variant="ghost-dark" arrow class="alg__btn alg__btn--2">Falar com consultor</Button>
+          </div>
+          <ul class="alg__benefits" data-reveal style="--reveal-delay:280ms">
+            <li class="alg__benefit">
+              <span class="alg__benefit-ic"><Icon name="diamond" size={22} stroke={1.4} /></span>
+              <h3 class="alg__benefit-title">Seleção cuidada</h3>
+              <p class="alg__benefit-text">Imóveis únicos, criteriosamente escolhidos.</p>
+            </li>
+            <li class="alg__benefit">
+              <span class="alg__benefit-ic"><Icon name="users" size={22} stroke={1.4} /></span>
+              <h3 class="alg__benefit-title">Acompanhamento dedicado</h3>
+              <p class="alg__benefit-text">Consultores experientes, ao seu lado em cada etapa.</p>
+            </li>
+            <li class="alg__benefit">
+              <span class="alg__benefit-ic"><Icon name="shield" size={22} stroke={1.4} /></span>
+              <h3 class="alg__benefit-title">Processo discreto</h3>
+              <p class="alg__benefit-text">Confidencialidade e discrição garantidas.</p>
+            </li>
+          </ul>
+        </div>
+      </div>
+
+      <!-- Coluna direita — imagem premium + cartão navy flutuante -->
+      <div class="alg__media" data-reveal style="--reveal-delay:160ms">
+        <img
+          class="alg__img"
+          src="/images/imoveis/imovel-sala-classica.webp"
+          alt="Sala de estar clássica de um imóvel premium no Porto, com lareira de mármore e luz natural"
+          width="1600"
+          height="930"
+          loading="lazy"
+          decoding="async"
+        />
+        <aside class="alg__card on-navy">
+          <span class="alg__card-ic" aria-hidden="true"><Icon name="diamond" size={26} stroke={1.3} /></span>
+          <h3 class="alg__card-title">À procura de arrendar?</h3>
+          <p class="alg__card-text">Diga-nos o que procura e encontramos o imóvel certo para si.</p>
+          <Button href="/imoveis" variant="gold" arrow class="alg__card-btn">Encontrar imóvel</Button>
+          <div class="alg__card-foot">
+            <span class="alg__card-meta"><Icon name="clock" size={15} stroke={1.6} />Resposta em 24h</span>
+            <span class="alg__card-div" aria-hidden="true"></span>
+            <span class="alg__card-meta"><Icon name="shield-check" size={15} stroke={1.6} />Sem compromisso</span>
+          </div>
+        </aside>
+      </div>
+    </div>
+  </section>
+</Base>
+
+<style>
+  /* ---------- Alugar — split editorial + premium media + navy card ---------- */
+  .alg { position: relative; overflow: hidden; background: var(--cream); color: var(--ink); }
+  .alg__grid {
+    display: grid; grid-template-columns: 1fr 1fr; align-items: stretch;
+    min-height: clamp(620px, 88vh, 920px);
+  }
+  /* Left column — aligns with the site container, breathes on the right.
+     Top padding clears the floating glass navbar on this standalone page. */
+  .alg__panel {
+    display: flex; align-items: center;
+    padding-block: clamp(112px, 11vw, 168px) clamp(64px, 8vw, 120px);
+    padding-left: max(var(--gutter), calc((100vw - var(--max)) / 2));
+    padding-right: clamp(32px, 4.5vw, 80px);
+  }
+  .alg__panel-inner { width: 100%; max-width: 600px; }
+  .alg__eyebrow {
+    display: inline-block; font-family: var(--font-sans); font-size: 12px; font-weight: 500;
+    letter-spacing: 0.28em; text-transform: uppercase; color: var(--gold-deep);
+  }
+  .alg__rule { width: 54px; margin: 16px 0 0; }
+  .alg__title { margin-top: 26px; max-width: 13ch; }
+  .alg__lede { margin-top: 22px; max-width: 46ch; }
+
+  .alg__actions { margin-top: clamp(30px, 3vw, 40px); display: flex; flex-wrap: wrap; gap: 14px; }
+  :global(.alg__btn) { border-radius: var(--radius-sm); padding-inline: 28px; }
+  :global(.alg__btn--2) { background: var(--cream-soft); border-color: var(--hairline-gold-strong); color: var(--navy); }
+  :global(.alg__btn--2:hover) { background: var(--cream-warm); border-color: var(--gold); color: var(--gold-deep); }
+
+  .alg__benefits {
+    list-style: none; margin: clamp(40px, 4vw, 56px) 0 0; padding: clamp(32px, 3vw, 40px) 0 0;
+    border-top: 1px solid var(--ink-10);
+    display: grid; grid-template-columns: repeat(3, 1fr); gap: clamp(20px, 2vw, 32px);
+  }
+  .alg__benefit-ic { display: block; line-height: 0; color: var(--gold-deep); }
+  .alg__benefit-title {
+    font-family: var(--font-sans); font-weight: 600; font-size: 14.5px; letter-spacing: 0.005em;
+    color: var(--ink); margin: 14px 0 0;
+  }
+  .alg__benefit-text { margin: 7px 0 0; font-size: 13px; line-height: 1.5; color: var(--ink-60); }
+
+  /* Right column — full-bleed image with navy floating card */
+  .alg__media { position: relative; min-height: 460px; }
+  .alg__img { display: block; width: 100%; height: 100%; object-fit: cover; }
+
+  .alg__card {
+    position: absolute; top: 50%; right: clamp(24px, 4vw, 56px);
+    transform: translateY(-50%);
+    width: min(384px, 78%);
+    background: var(--navy-ink); color: var(--cream); text-align: center;
+    border: 1px solid rgba(184, 153, 104, 0.24); border-radius: var(--radius-lg);
+    box-shadow: var(--shadow-float);
+    padding: clamp(28px, 2.4vw, 38px) clamp(26px, 2.2vw, 36px);
+  }
+  .alg__card-ic { display: flex; justify-content: center; line-height: 0; color: var(--gold); margin-bottom: 16px; }
+  .alg__card-title {
+    font-family: var(--font-serif); font-weight: 500; font-size: clamp(22px, 2vw, 27px);
+    line-height: 1.15; letter-spacing: -0.01em; color: var(--cream); margin: 0;
+  }
+  .alg__card-text { margin: 12px auto 0; font-size: 14.5px; line-height: 1.6; color: var(--white-70); max-width: 30ch; }
+  :global(.alg__card-btn) { margin-top: 22px; width: 100%; border-radius: var(--radius-sm); }
+  .alg__card-foot { margin-top: 22px; display: flex; align-items: center; justify-content: center; gap: 16px; }
+  .alg__card-meta { display: inline-flex; align-items: center; gap: 8px; font-size: 12.5px; color: var(--white-70); }
+  .alg__card-meta :global(.icon) { color: var(--gold); flex-shrink: 0; }
+  .alg__card-div { width: 1px; height: 16px; background: var(--white-15); }
+
+  /* Tablet / mobile — text first, image below, card overlaps image bottom cleanly */
+  @media (max-width: 980px) {
+    .alg__grid { grid-template-columns: 1fr; min-height: 0; }
+    .alg__panel {
+      order: 1; padding-inline: var(--gutter);
+      padding-block: clamp(104px, 16vw, 132px) clamp(36px, 5vw, 48px);
+    }
+    .alg__panel-inner { max-width: none; }
+    .alg__media { order: 2; display: flex; flex-direction: column; min-height: 0; padding-bottom: clamp(48px, 9vw, 76px); }
+    .alg__img { height: auto; aspect-ratio: 4 / 3; }
+    .alg__card {
+      position: static; width: auto; right: auto; top: auto; transform: none;
+      margin: -52px var(--gutter) 0; max-width: 420px;
+    }
+  }
+  @media (max-width: 620px) {
+    .alg__benefits { grid-template-columns: 1fr 1fr; gap: 26px 22px; }
+    .alg__img { aspect-ratio: 3 / 4; }
+    .alg__card { margin-inline: auto; }
+  }
+  @media (max-width: 430px) {
+    .alg__benefits { grid-template-columns: 1fr; gap: 22px; }
+    .alg__actions { gap: 12px; }
+    :global(.alg__btn) { width: 100%; }
+  }
+</style>

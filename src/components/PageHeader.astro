@@ -1,0 +1,29 @@
+---
+// Compact header for interior pages (clears the fixed solid nav).
+import SectionEyebrow from './SectionEyebrow.astro';
+interface Props {
+  eyebrow?: string;
+  title: string;
+  lede?: string;
+  tone?: 'navy' | 'cream';
+  align?: 'left' | 'center';
+}
+const { eyebrow, title, lede, tone = 'navy', align = 'left' } = Astro.props;
+---
+<header class:list={['phead', `phead--${tone}`, { 'phead--center': align === 'center', 'on-navy': tone === 'navy' }]}>
+  <div class:list={['container', { 'container--narrow': align === 'center' }]}>
+    {eyebrow && <SectionEyebrow text={eyebrow} center={align === 'center'} />}
+    <h1 class="display phead__title" data-reveal style="--reveal-delay:80ms" set:html={title} />
+    {lede && <p class="lede phead__lede" data-reveal style="--reveal-delay:160ms">{lede}</p>}
+  </div>
+</header>
+
+<style>
+  .phead { padding: calc(var(--nav-h) + clamp(44px, 6vw, 90px)) var(--gutter) clamp(40px, 5vw, 70px); }
+  .phead--navy { background: var(--navy-ink); color: var(--cream); }
+  .phead--cream { background: var(--cream); color: var(--ink); }
+  .phead--center { text-align: center; }
+  .phead__title { font-size: clamp(40px, 5.4vw, 76px); margin-top: 18px; }
+  .phead__lede { margin-top: 20px; }
+  .phead--center .phead__lede { margin-inline: auto; }
+</style>

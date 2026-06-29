@@ -1,0 +1,87 @@
+---
+import SectionEyebrow from './SectionEyebrow.astro';
+import Button from './Button.astro';
+import Icon from './Icon.astro';
+import { careersWhyJoin as w } from '../data/carreiras';
+---
+<section class="section section--navy on-navy cwhy">
+  <div class="container cwhy__grid">
+    <div class="cwhy__col">
+      <SectionEyebrow text={w.eyebrow} />
+      <h2 class="h2 cwhy__title" data-reveal style="--reveal-delay:80ms">
+        {w.titleLead} <em class="em-gold serif-it">{w.titleEmphasis}</em>.
+      </h2>
+      <p class="lede cwhy__lede" data-reveal style="--reveal-delay:150ms">{w.text}</p>
+      <ul class="cwhy__cards">
+        {w.benefits.map((b, i) => (
+          <li class="cwbcard" data-reveal style={`--reveal-delay:${180 + i * 80}ms`}>
+            <span class="cwbcard__ic"><Icon name={b.icon} size={20} stroke={1.4} /></span>
+            <h3 class="cwbcard__title">{b.title}</h3>
+            <p class="cwbcard__text">{b.text}</p>
+          </li>
+        ))}
+      </ul>
+      <Button href={w.cta.href} variant="gold" arrow class="cwhy__cta" reveal>{w.cta.label}</Button>
+    </div>
+
+    <aside class="cwhy__path">
+      <span class="cwhy__path-eyebrow">Percurso de carreira</span>
+      <ol class="cpath" data-reveal>
+        <span class="cpath__line" aria-hidden="true"></span>
+        {w.path.map((stage, i) => (
+          <li class="cpath__node" style={`--d:${i * 140}ms`}>
+            <span class="cpath__dot">{i + 1}</span>
+            <span class="cpath__stage">{stage}</span>
+          </li>
+        ))}
+      </ol>
+    </aside>
+  </div>
+</section>
+
+<style>
+  .cwhy__grid { display: grid; grid-template-columns: 1.1fr 0.9fr; gap: clamp(40px, 6vw, 90px); align-items: center; }
+  .cwhy__title { margin-top: 16px; max-width: 16ch; }
+  .cwhy__lede { margin-top: 18px; }
+  .cwhy__cards { list-style: none; margin: 30px 0 0; padding: 0; display: grid; grid-template-columns: 1fr 1fr; gap: 16px; }
+  .cwbcard {
+    border: 1px solid var(--hairline-gold); border-radius: var(--radius-lg);
+    background: rgba(255, 255, 255, 0.02); padding: 20px;
+    transition: transform var(--t-med), border-color var(--t-med), background var(--t-med);
+  }
+  .cwbcard:hover { transform: translateY(-3px); border-color: var(--hairline-gold-strong); background: rgba(184, 153, 104, 0.06); }
+  .cwbcard__ic { width: 42px; height: 42px; display: grid; place-items: center; border-radius: 50%; color: var(--gold-light); border: 1px solid var(--hairline-gold-strong); }
+  .cwbcard__title { font-family: var(--font-serif); font-weight: 500; font-size: 18px; margin: 14px 0 0; color: var(--cream); }
+  .cwbcard__text { margin: 7px 0 0; font-size: 13.5px; line-height: 1.55; color: var(--white-70); }
+  :global(.cwhy__cta) { margin-top: 30px; }
+
+  /* Success path */
+  .cwhy__path {
+    border: 1px solid var(--hairline-gold); border-radius: var(--radius-lg);
+    background: linear-gradient(160deg, rgba(184,153,104,0.08), rgba(11,26,46,0.2));
+    padding: clamp(28px, 3vw, 42px);
+  }
+  .cwhy__path-eyebrow { font-size: 11px; letter-spacing: 0.28em; text-transform: uppercase; color: var(--gold-light); font-weight: 500; }
+  .cpath { list-style: none; margin: 26px 0 0; padding: 0; position: relative; }
+  .cpath__line {
+    position: absolute; left: 17px; top: 14px; bottom: 14px; width: 1px;
+    background: linear-gradient(to bottom, var(--gold-light), var(--hairline-gold));
+    transform: scaleY(0); transform-origin: top; transition: transform 1100ms var(--t-ease-emph);
+  }
+  .cpath.is-in .cpath__line { transform: scaleY(1); }
+  .cpath__node {
+    position: relative; display: flex; align-items: center; gap: 18px; padding: 14px 0;
+    opacity: 0; transform: translateX(14px); transition: opacity var(--t-slow), transform var(--t-slow); transition-delay: var(--d);
+  }
+  .cpath.is-in .cpath__node { opacity: 1; transform: none; }
+  .cpath__dot {
+    flex-shrink: 0; width: 36px; height: 36px; border-radius: 50%; display: grid; place-items: center;
+    background: var(--navy-ink); border: 1px solid var(--hairline-gold-strong); color: var(--gold-light);
+    font-family: var(--font-serif); font-size: 15px; position: relative; z-index: 1;
+  }
+  .cpath__node:last-child .cpath__dot { background: var(--gold); color: var(--navy-ink); border-color: var(--gold); }
+  .cpath__stage { font-family: var(--font-serif); font-size: clamp(19px, 2vw, 24px); color: var(--cream); letter-spacing: -0.01em; }
+
+  @media (max-width: 900px) { .cwhy__grid { grid-template-columns: 1fr; } }
+  @media (max-width: 460px) { .cwhy__cards { grid-template-columns: 1fr; } }
+</style>

@@ -1,0 +1,58 @@
+---
+import SectionEyebrow from './SectionEyebrow.astro';
+import Button from './Button.astro';
+import Icon from './Icon.astro';
+import { careersFinalCta as c } from '../data/carreiras';
+---
+<section class="section section--ink on-navy cfinal">
+  <span class="cfinal__glow" aria-hidden="true"></span>
+  <div class="container cfinal__inner">
+    <SectionEyebrow text={c.eyebrow} center />
+    <h2 class="h2 cfinal__title" data-reveal style="--reveal-delay:80ms">
+      {c.titleLead} <em class="em-gold serif-it">{c.titleEmphasis}</em>.
+    </h2>
+    <p class="lede cfinal__text" data-reveal style="--reveal-delay:150ms">{c.text}</p>
+
+    <div class="cfinal__actions" data-reveal style="--reveal-delay:220ms">
+      <Button href={c.primary.href} variant="gold" arrow>{c.primary.label}</Button>
+      <Button href={c.secondary.href} variant="ghost-dark">{c.secondary.label}</Button>
+    </div>
+
+    <ul class="cfinal__trust" data-reveal style="--reveal-delay:300ms">
+      {c.trust.map((tr) => (
+        <li><span class="cfinal__trust-ic"><Icon name="check" size={13} stroke={2} /></span>{tr}</li>
+      ))}
+    </ul>
+  </div>
+</section>
+
+<style>
+  .cfinal { position: relative; overflow: hidden; text-align: center; }
+  .cfinal__glow {
+    position: absolute; left: 50%; top: 0; width: min(820px, 90%); height: 420px;
+    transform: translate(-50%, -42%);
+    background: radial-gradient(ellipse at center, rgba(184,153,104,0.22), transparent 68%);
+    pointer-events: none;
+  }
+  .cfinal__inner { position: relative; display: flex; flex-direction: column; align-items: center; }
+  .cfinal__title { margin-top: 16px; max-width: 18ch; }
+  .cfinal__text { margin: 18px auto 0; max-width: 56ch; }
+
+  .cfinal__actions { display: flex; flex-wrap: wrap; justify-content: center; gap: 16px; margin-top: 34px; }
+
+  .cfinal__trust {
+    list-style: none; margin: clamp(34px, 4vw, 52px) 0 0; padding: clamp(26px, 3vw, 34px) 0 0;
+    border-top: 1px solid var(--hairline-light); width: 100%; max-width: 760px;
+    display: flex; flex-wrap: wrap; justify-content: center; gap: 16px 32px;
+  }
+  .cfinal__trust li { display: inline-flex; align-items: center; gap: 10px; font-size: 14px; color: var(--white-90); }
+  .cfinal__trust-ic {
+    flex-shrink: 0; width: 24px; height: 24px; border-radius: 50%; display: grid; place-items: center;
+    background: rgba(184,153,104,0.16); color: var(--gold-light);
+  }
+
+  @media (max-width: 520px) {
+    .cfinal__actions { flex-direction: column; align-items: stretch; width: 100%; max-width: 320px; }
+    .cfinal__trust { gap: 14px 24px; }
+  }
+</style>

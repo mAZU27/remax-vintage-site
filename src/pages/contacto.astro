@@ -1,0 +1,224 @@
+---
+import Base from '../layouts/Base.astro';
+import PageHeader from '../components/PageHeader.astro';
+import Button from '../components/Button.astro';
+import Icon from '../components/Icon.astro';
+import { site } from '../data/site';
+
+const details = [
+  { icon: 'pin', label: 'Morada', lines: site.address },
+  { icon: 'phone', label: 'Telefone', lines: [site.phone], href: site.phoneHref },
+  { icon: 'mail', label: 'Email', lines: [site.email], href: `mailto:${site.email}` },
+  { icon: 'clock', label: 'Horário', lines: site.hours },
+];
+const assuntos = ['Comprar um imóvel', 'Vender / avaliação', 'Agendar uma visita', 'Outro assunto'];
+---
+<Base
+  title="Contacto"
+  description="Fale com a RE/MAX Collection Vintage — Porto. Avaliação confidencial, visitas e qualquer questão sobre a nossa coleção de imóveis."
+>
+  <PageHeader
+    eyebrow="Contacto"
+    title={'Falemos do <em class="em-gold serif-it">seu</em> projeto'}
+    lede="Comprar, vender ou apenas perceber o valor do seu imóvel — estamos a um contacto de distância, com toda a discrição."
+  />
+
+  <section class="section section--cream">
+    <div class="container contacto">
+      <aside class="contacto__info">
+        <ul class="contacto__details">
+          {details.map((d) => (
+            <li class="cdetail">
+              <span class="cdetail__ic"><Icon name={d.icon} size={20} stroke={1.5} /></span>
+              <div>
+                <span class="cdetail__label">{d.label}</span>
+                {d.href
+                  ? <a class="cdetail__val" href={d.href}>{d.lines[0]}</a>
+                  : d.lines.map((line) => <span class="cdetail__val">{line}</span>)}
+              </div>
+            </li>
+          ))}
+        </ul>
+        <div class="contacto__social">
+          <span class="cdetail__label">Seguir</span>
+          <div class="contacto__social-row">
+            {site.social.map((s) => (
+              <a href={s.href} aria-label={s.label} class="contacto__social-link" rel="noopener" target="_blank">
+                <Icon name={s.icon} size={18} stroke={1.6} />
+              </a>
+            ))}
+          </div>
+        </div>
+      </aside>
+
+      <form class="cform" data-contact novalidate aria-label="Formulário de contacto">
+        <div class="cform__body">
+          <div class="cform__grid">
+            <p class="field field--full">
+              <label for="c-nome">Nome</label>
+              <input id="c-nome" name="nome" type="text" autocomplete="name" required />
+              <span class="field__err" data-err hidden>Indique o seu nome.</span>
+            </p>
+            <p class="field">
+              <label for="c-email">Email</label>
+              <input id="c-email" name="email" type="email" autocomplete="email" required />
+              <span class="field__err" data-err hidden>Indique um email válido.</span>
+            </p>
+            <p class="field">
+              <label for="c-tel">Telefone <span class="field__opt">(opcional)</span></label>
+              <input id="c-tel" name="telefone" type="tel" autocomplete="tel" inputmode="tel" />
+            </p>
+            <p class="field field--full">
+              <label for="c-assunto">Assunto</label>
+              <select id="c-assunto" name="assunto" required>
+                <option value="" selected disabled>Selecione o assunto</option>
+                {assuntos.map((s) => <option value={s}>{s}</option>)}
+              </select>
+              <span class="field__err" data-err hidden>Selecione um assunto.</span>
+            </p>
+            <p class="field field--full">
+              <label for="c-msg">Mensagem</label>
+              <textarea id="c-msg" name="mensagem" rows="4" required></textarea>
+              <span class="field__err" data-err hidden>Escreva a sua mensagem.</span>
+            </p>
+          </div>
+
+          <label class="cform__consent">
+            <input type="checkbox" name="consent" required />
+            <span>Autorizo o contacto da Collection Vintage. Os meus dados são tratados de forma confidencial.</span>
+          </label>
+
+          <Button type="submit" variant="gold" arrow class="cform__submit">Enviar mensagem</Button>
+          <p class="cform__note">
+            <Icon name="shield-check" size={15} stroke={1.6} /> Confidencial · Resposta em 24h · Sem compromisso
+          </p>
+        </div>
+
+        <div class="cform__success" data-success hidden role="status" aria-live="polite">
+          <span class="cform__success-icon"><Icon name="check" size={26} stroke={2} /></span>
+          <h2 class="h3">Mensagem enviada.</h2>
+          <p>Obrigado pelo seu contacto. Respondemos dentro de 24 horas.</p>
+        </div>
+      </form>
+    </div>
+  </section>
+</Base>
+
+<style>
+  .contacto { display: grid; grid-template-columns: 0.8fr 1.2fr; gap: clamp(36px, 5vw, 80px); align-items: start; }
+
+  .contacto__details { list-style: none; margin: 0; padding: 0; display: flex; flex-direction: column; gap: 26px; }
+  .cdetail { display: flex; gap: 16px; align-items: flex-start; }
+  .cdetail__ic {
+    flex-shrink: 0; width: 44px; height: 44px; display: grid; place-items: center; border-radius: 50%;
+    color: var(--gold-deep); border: 1px solid var(--hairline-gold-strong);
+  }
+  .cdetail__label { display: block; font-size: 11px; letter-spacing: 0.18em; text-transform: uppercase; color: var(--gold-deep); font-weight: 500; margin-bottom: 5px; }
+  .cdetail__val { display: block; font-size: 16px; color: var(--ink); text-decoration: none; line-height: 1.5; }
+  a.cdetail__val { transition: color var(--t-fast); }
+  a.cdetail__val:hover { color: var(--gold-deep); }
+
+  .contacto__social { margin-top: 34px; padding-top: 30px; border-top: 1px solid var(--ink-10); }
+  .contacto__social-row { display: flex; gap: 12px; }
+  .contacto__social-link {
+    width: 42px; height: 42px; display: grid; place-items: center; border-radius: 50%; color: var(--navy);
+    border: 1px solid var(--ink-20); transition: background var(--t-fast), color var(--t-fast), border-color var(--t-fast);
+  }
+  .contacto__social-link:hover { background: var(--gold); color: var(--navy-ink); border-color: var(--gold); }
+
+  /* Form (mirrors ValuationForm styling) */
+  .cform {
+    background: var(--cream-soft); border: 1px solid var(--hairline-gold); border-radius: var(--radius-lg);
+    padding: clamp(24px, 3vw, 40px); box-shadow: var(--shadow-card);
+  }
+  .cform__grid { display: grid; grid-template-columns: 1fr 1fr; gap: 16px 18px; }
+  .field { display: flex; flex-direction: column; gap: 7px; margin: 0; }
+  .field--full { grid-column: 1 / -1; }
+  .field label { font-size: 12.5px; letter-spacing: 0.04em; font-weight: 500; color: var(--ink-60); }
+  .field__opt { color: var(--ink-40); font-weight: 400; }
+  .cform input, .cform select, .cform textarea {
+    width: 100%; padding: 13px 14px; font-size: 15px; color: var(--ink);
+    background: var(--cream); border: 1px solid var(--ink-20); border-radius: var(--radius-sm);
+    transition: border-color var(--t-fast), box-shadow var(--t-fast);
+  }
+  .cform textarea { resize: vertical; min-height: 100px; }
+  .cform input:focus, .cform select:focus, .cform textarea:focus { outline: none; border-color: var(--gold); box-shadow: var(--ring); }
+  .cform [aria-invalid="true"] { border-color: var(--error); }
+  .field__err { font-size: 12px; color: var(--error); }
+  .cform__consent { display: flex; gap: 11px; align-items: flex-start; margin-top: 18px; font-size: 13px; line-height: 1.5; color: var(--ink-60); }
+  .cform__consent input { width: 18px; height: 18px; margin-top: 1px; flex-shrink: 0; accent-color: var(--gold-deep); }
+  :global(.cform__submit) { margin-top: 22px; width: 100%; }
+  .cform__note {
+    display: flex; align-items: center; justify-content: center; gap: 8px;
+    margin: 16px 0 0; font-size: 12.5px; color: var(--ink-40); letter-spacing: 0.02em;
+  }
+  .cform__note :global(.icon) { color: var(--gold-deep); }
+
+  .cform__success { text-align: center; padding: clamp(20px, 3vw, 40px) 0; }
+  .cform__success-icon { display: inline-grid; place-items: center; width: 58px; height: 58px; border-radius: 50%; background: var(--gold); color: var(--navy-ink); margin-bottom: 18px; }
+  .cform__success p { margin: 10px auto 0; color: var(--ink-60); max-width: 42ch; }
+
+  @media (max-width: 860px) { .contacto { grid-template-columns: 1fr; } }
+  @media (max-width: 540px) { .cform__grid { grid-template-columns: 1fr; } }
+</style>
+
+<script>
+  const form = document.querySelector<HTMLFormElement>('form[data-contact]');
+  if (form) {
+    const body = form.querySelector<HTMLElement>('.cform__body');
+    const success = form.querySelector<HTMLElement>('[data-success]');
+    const emailRe = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+
+    // Pre-fill when arriving from a property page (/contacto?imovel=REF).
+    const imovel = new URLSearchParams(location.search).get('imovel');
+    if (imovel) {
+      const assunto = form.querySelector<HTMLSelectElement>('#c-assunto');
+      const msg = form.querySelector<HTMLTextAreaElement>('#c-msg');
+      if (assunto) assunto.value = 'Agendar uma visita';
+      if (msg) msg.value = `Tenho interesse no imóvel ${imovel}. Gostaria de agendar uma visita.`;
+    }
+
+    const showErr = (field: HTMLElement, on: boolean) => {
+      const control = field.querySelector('input, select, textarea');
+      const err = field.querySelector<HTMLElement>('[data-err]');
+      control?.setAttribute('aria-invalid', String(on));
+      if (err) err.hidden = !on;
+    };
+
+    form.querySelectorAll<HTMLElement>('.field').forEach((field) => {
+      const control = field.querySelector('input, select, textarea');
+      control?.addEventListener('input', () => showErr(field, false));
+      control?.addEventListener('change', () => showErr(field, false));
+    });
+
+    form.addEventListener('submit', (e) => {
+      e.preventDefault();
+      let firstInvalid: HTMLElement | null = null;
+
+      form.querySelectorAll<HTMLElement>('.field').forEach((field) => {
+        const control = field.querySelector<HTMLInputElement | HTMLSelectElement | HTMLTextAreaElement>('input, select, textarea');
+        if (!control || !control.required) return;
+        const value = control.value.trim();
+        let invalid = !value;
+        if ((control as HTMLInputElement).type === 'email' && value) invalid = !emailRe.test(value);
+        showErr(field, invalid);
+        if (invalid && !firstInvalid) firstInvalid = control;
+      });
+
+      const consent = form.querySelector<HTMLInputElement>('input[name="consent"]');
+      const consentLabel = form.querySelector<HTMLElement>('.cform__consent');
+      if (consent && !consent.checked) {
+        consentLabel?.style.setProperty('color', 'var(--error)');
+        if (!firstInvalid) firstInvalid = consent;
+      } else {
+        consentLabel?.style.removeProperty('color');
+      }
+
+      if (firstInvalid) { firstInvalid.focus(); return; }
+
+      if (body) body.hidden = true;
+      if (success) success.hidden = false;
+      success?.scrollIntoView({ behavior: 'smooth', block: 'center' });
+    });
+  }
+</script>

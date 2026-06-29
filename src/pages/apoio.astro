@@ -1,0 +1,298 @@
+---
+import Base from '../layouts/Base.astro';
+import PageHero from '../components/PageHero.astro';
+import SectionEyebrow from '../components/SectionEyebrow.astro';
+import Button from '../components/Button.astro';
+import Icon from '../components/Icon.astro';
+import SupportTopicCard from '../components/SupportTopicCard.astro';
+import FaqAccordion from '../components/FaqAccordion.astro';
+import ContactCard from '../components/ContactCard.astro';
+import GuideCard from '../components/GuideCard.astro';
+import {
+  supportSearchPlaceholder,
+  supportTopics,
+  faqs,
+  contactChannels,
+  qualityCommitments,
+  guides,
+  concierge,
+} from '../data/faqs';
+
+// Concierge aside reuses the two "talk now" channels (WhatsApp + Telefone).
+const conciergeChannels = [contactChannels[0], contactChannels[1]];
+---
+<Base
+  title="Apoio ao cliente"
+  description="Centro de apoio da RE/MAX Collection Vintage — perguntas frequentes, contacto rápido e guias úteis para comprar, vender e avaliar imóveis no Porto."
+  image="/images/porto/porto-douro-arrabida.webp"
+  overHeroNav
+>
+  <!-- S1 — Hero + pesquisa (visual) -->
+  <PageHero
+    eyebrow="Apoio ao cliente"
+    title='Como podemos <em class="em-gold serif-it">ajudar</em>?'
+    subtitle="Estamos aqui para tornar a sua experiência com a RE/MAX Collection Vintage simples, segura e memorável."
+    image="/images/porto/porto-douro-arrabida.webp"
+    align="center"
+  >
+    {/* TODO: ligar pesquisa real. Sem JS, o formulário salta para a FAQ (#faq). */}
+    <form class="ap-search" role="search" action="#faq" data-support-search>
+      <label class="sr-only" for="ap-q">Pesquisar no centro de apoio</label>
+      <span class="ap-search__ic" aria-hidden="true"><Icon name="search" size={20} stroke={1.6} /></span>
+      <input
+        id="ap-q"
+        class="ap-search__input"
+        type="search"
+        name="q"
+        placeholder={supportSearchPlaceholder}
+        autocomplete="off"
+      />
+      <button class="ap-search__btn" type="submit">Pesquisar</button>
+    </form>
+  </PageHero>
+
+  <!-- S2 — Tópicos de ajuda -->
+  <section class="section section--cream ap-topics" id="topicos">
+    <div class="container">
+      <header class="ap-head ap-head--center">
+        <SectionEyebrow text="Tópicos de ajuda" center />
+        <h2 class="h2 ap-head__title" data-reveal style="--reveal-delay:80ms">Encontre o que precisa, por tópico.</h2>
+      </header>
+
+      <ul class="ap-topic-grid">
+        {supportTopics.map((t, i) => (
+          <li><SupportTopicCard topic={t} index={i} /></li>
+        ))}
+      </ul>
+    </div>
+  </section>
+
+  <!-- S3 — Perguntas frequentes -->
+  <section class="section section--cream-soft ap-faq" id="faq">
+    <div class="container">
+      <header class="ap-head ap-head--center">
+        <SectionEyebrow text="Perguntas frequentes" center />
+        <h2 class="h2 ap-head__title" data-reveal style="--reveal-delay:80ms">As perguntas que mais nos fazem.</h2>
+      </header>
+
+      <div class="ap-faq__wrap" data-reveal style="--reveal-delay:140ms">
+        <FaqAccordion items={faqs} />
+      </div>
+    </div>
+  </section>
+
+  <!-- S4 — Contacto rápido -->
+  <section class="section section--cream ap-contact" id="contacto-rapido">
+    <div class="container">
+      <header class="ap-head ap-head--center">
+        <SectionEyebrow text="Contacto rápido" center />
+        <h2 class="h2 ap-head__title" data-reveal style="--reveal-delay:80ms">Prefere falar connosco?</h2>
+        <p class="lede ap-head__sub" data-reveal style="--reveal-delay:150ms">
+          Escolha o canal que lhe for mais cómodo — respondemos com a discrição de sempre.
+        </p>
+      </header>
+
+      <ul class="ap-contact-grid">
+        {contactChannels.map((c, i) => (
+          <li><ContactCard channel={c} index={i} /></li>
+        ))}
+      </ul>
+    </div>
+  </section>
+
+  <!-- S5 — Compromisso de qualidade -->
+  <section class="section section--navy on-navy ap-quality">
+    <div class="container">
+      <header class="ap-head ap-head--center">
+        <SectionEyebrow text="O nosso compromisso" center />
+        <h2 class="h2 ap-head__title" data-reveal style="--reveal-delay:80ms">Um padrão de serviço com que pode contar.</h2>
+      </header>
+
+      <ul class="ap-quality-grid">
+        {qualityCommitments.map((q, i) => (
+          <li class="ap-q" data-reveal style={`--reveal-delay:${i * 90}ms`}>
+            <span class="ap-q__ic" aria-hidden="true"><Icon name={q.icon} size={24} stroke={1.4} /></span>
+            <span class="ap-q__value">{q.value}</span>
+            <span class="ap-q__label">{q.label}</span>
+          </li>
+        ))}
+      </ul>
+    </div>
+  </section>
+
+  <!-- S6 — Guias úteis -->
+  <section class="section section--cream ap-guides" id="guias">
+    <div class="container">
+      <header class="ap-head ap-head--split">
+        <div>
+          <SectionEyebrow text="Guias úteis" />
+          <h2 class="h2 ap-head__title" data-reveal style="--reveal-delay:80ms">Recursos para decidir com confiança.</h2>
+        </div>
+        <Button href="/insights" variant="ghost-dark" arrow reveal>Ver todos os recursos</Button>
+      </header>
+
+      <ul class="ap-guide-grid">
+        {guides.map((g, i) => (
+          <li><GuideCard guide={g} index={i} /></li>
+        ))}
+      </ul>
+    </div>
+  </section>
+
+  <!-- S7 — CTA Concierge -->
+  <section class="section--ink ap-concierge-sec">
+    <div class="container">
+      <div class="ap-concierge on-navy" data-reveal>
+        <div class="ap-concierge__text">
+          <SectionEyebrow text={concierge.eyebrow} bare />
+          <h2 class="h2 ap-concierge__title">{concierge.title}</h2>
+          <p class="lede lede--light ap-concierge__sub">{concierge.text}</p>
+          <Button href={concierge.cta.href} variant="gold" arrow>{concierge.cta.label}</Button>
+        </div>
+
+        <div class="ap-concierge__aside">
+          <p class="ap-concierge__aside-h">Contacto direto</p>
+          {conciergeChannels.map((c, i) => (
+            <>
+              {i > 0 && <span class="ap-concierge__div" aria-hidden="true"></span>}
+              <ContactCard channel={c} bare />
+            </>
+          ))}
+        </div>
+      </div>
+    </div>
+  </section>
+</Base>
+
+<style>
+  /* Shared section headers (local to this page). */
+  .ap-head { max-width: 760px; margin-bottom: clamp(40px, 4.5vw, 64px); }
+  .ap-head__title { margin-top: 16px; }
+  .ap-head__sub { margin-top: 18px; }
+  .ap-head--center { max-width: 720px; margin-inline: auto; text-align: center; }
+  .ap-head--center .ap-head__sub { margin-inline: auto; }
+  .ap-head--split {
+    max-width: none; display: flex; align-items: flex-end; justify-content: space-between;
+    gap: 32px; flex-wrap: wrap;
+  }
+  .ap-head--split > div { max-width: 680px; }
+
+  /* S1 — Pesquisa (visual) */
+  .ap-search {
+    display: flex; align-items: center; gap: 10px; width: min(560px, 100%); margin: 0 auto;
+    padding: 8px 8px 8px 18px; border-radius: 100px;
+    background: rgba(244, 237, 222, 0.07); border: 1px solid var(--hairline-gold-strong);
+    -webkit-backdrop-filter: blur(8px); backdrop-filter: blur(8px);
+    transition: border-color var(--t-fast), background var(--t-fast), box-shadow var(--t-fast);
+  }
+  .ap-search:focus-within {
+    border-color: var(--gold-light); background: rgba(244, 237, 222, 0.11);
+    box-shadow: 0 0 0 4px rgba(184, 153, 104, 0.16), 0 0 28px -8px rgba(212, 187, 133, 0.5);
+  }
+  .ap-search__ic { display: inline-flex; color: var(--gold-light); flex-shrink: 0; }
+  .ap-search__input {
+    flex: 1; min-width: 0; background: none; border: none; outline: none;
+    color: var(--cream); font-family: var(--font-sans); font-size: 15px; letter-spacing: 0.01em; padding: 12px 0;
+  }
+  .ap-search__input::placeholder { color: var(--white-50); }
+  /* Hide native search clear/decoration for a clean field. */
+  .ap-search__input::-webkit-search-decoration,
+  .ap-search__input::-webkit-search-cancel-button { -webkit-appearance: none; }
+  .ap-search__btn {
+    flex-shrink: 0; border: none; cursor: pointer; border-radius: 100px;
+    padding: 13px 26px; font-family: var(--font-sans); font-size: 13px; font-weight: 500;
+    letter-spacing: 0.1em; text-transform: uppercase; color: var(--navy); background: var(--gold);
+    transition: background var(--t-fast), transform var(--t-fast);
+  }
+  .ap-search__btn:hover { background: var(--gold-light); transform: translateY(-1px); }
+
+  /* S2 — Tópicos */
+  .ap-topic-grid {
+    list-style: none; margin: 0; padding: 0;
+    display: grid; grid-template-columns: repeat(4, 1fr); gap: clamp(16px, 1.8vw, 22px);
+  }
+
+  /* S3 — FAQ */
+  .ap-faq__wrap { display: flex; justify-content: center; }
+  .ap-faq__wrap :global(.faq) { width: 100%; margin-inline: auto; }
+
+  /* S4 — Contacto rápido */
+  .ap-contact-grid {
+    list-style: none; margin: 0; padding: 0;
+    display: grid; grid-template-columns: repeat(4, 1fr); gap: clamp(16px, 1.8vw, 22px);
+  }
+  .ap-contact-grid > li { display: flex; }
+
+  /* S5 — Compromisso de qualidade (navy) */
+  .ap-quality :global(.eyebrow) { color: var(--gold-light); }
+  .ap-quality-grid {
+    list-style: none; margin: 0; padding: 0;
+    display: grid; grid-template-columns: repeat(4, 1fr); gap: clamp(20px, 3vw, 48px);
+  }
+  .ap-q { display: flex; flex-direction: column; align-items: center; text-align: center; }
+  .ap-q__ic {
+    width: 56px; height: 56px; display: grid; place-items: center; border-radius: 50%;
+    color: var(--gold-light); background: rgba(184, 153, 104, 0.12); border: 1px solid var(--hairline-gold-strong);
+  }
+  .ap-q__value {
+    margin-top: 20px; font-family: var(--font-serif); font-weight: 500;
+    font-size: clamp(24px, 2.6vw, 34px); color: var(--cream); line-height: 1.1; letter-spacing: -0.01em;
+  }
+  .ap-q__label { margin-top: 10px; font-size: 13px; letter-spacing: 0.04em; color: var(--white-70); max-width: 22ch; }
+
+  /* S6 — Guias */
+  .ap-guide-grid {
+    list-style: none; margin: 0; padding: 0;
+    display: grid; grid-template-columns: repeat(4, 1fr); gap: clamp(18px, 2vw, 26px);
+  }
+
+  /* S7 — Concierge */
+  .ap-concierge-sec { padding-block: clamp(72px, 8vw, 120px); }
+  .ap-concierge {
+    display: grid; grid-template-columns: 1.15fr 0.85fr; gap: clamp(36px, 5vw, 72px); align-items: center;
+    padding: clamp(36px, 4.5vw, 64px);
+    background: var(--navy); border: 1px solid var(--hairline-gold-strong); border-radius: var(--radius-lg);
+    box-shadow: var(--shadow-card-lg);
+  }
+  .ap-concierge :global(.eyebrow) { color: var(--gold-light); }
+  .ap-concierge__title { margin-top: 18px; max-width: 18ch; }
+  .ap-concierge__sub { margin: 18px 0 32px; max-width: 46ch; }
+  .ap-concierge__aside {
+    display: flex; flex-direction: column;
+    padding: clamp(26px, 2.6vw, 36px);
+    background: rgba(255, 255, 255, 0.03); border: 1px solid var(--hairline-gold); border-radius: var(--radius);
+  }
+  .ap-concierge__aside-h {
+    margin: 0 0 22px; font-size: 11px; letter-spacing: 0.22em; text-transform: uppercase;
+    color: var(--gold-light); font-weight: 500;
+  }
+  .ap-concierge__div { display: block; height: 1px; background: var(--hairline-gold); margin: 24px 0; }
+
+  /* ---------- Responsive ---------- */
+  @media (max-width: 920px) {
+    .ap-topic-grid { grid-template-columns: repeat(2, 1fr); }
+    .ap-contact-grid { grid-template-columns: repeat(2, 1fr); }
+    .ap-guide-grid { grid-template-columns: repeat(2, 1fr); }
+    .ap-quality-grid { grid-template-columns: repeat(2, 1fr); row-gap: clamp(32px, 6vw, 48px); }
+    .ap-concierge { grid-template-columns: 1fr; }
+  }
+  @media (max-width: 560px) {
+    .ap-search { flex-wrap: wrap; border-radius: var(--radius-lg); padding: 14px; }
+    .ap-search__input { flex: 1 1 60%; }
+    .ap-search__btn { flex: 1 1 100%; }
+    .ap-contact-grid { grid-template-columns: 1fr; }
+    .ap-guide-grid { grid-template-columns: 1fr; }
+    /* Topics stay 2-up at 390px (spec: 2×4). */
+  }
+</style>
+
+<script>
+  // Visual-only support search: no full-text index yet, so route the user to
+  // the FAQ section. No-JS fallback is the form's action="#faq" anchor.
+  // TODO: ligar pesquisa real quando houver conteúdo suficiente.
+  const form = document.querySelector<HTMLFormElement>('[data-support-search]');
+  form?.addEventListener('submit', (e) => {
+    e.preventDefault();
+    document.querySelector('#faq')?.scrollIntoView({ behavior: 'smooth', block: 'start' });
+  });
+</script>

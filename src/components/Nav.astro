@@ -1,0 +1,236 @@
+---
+import { site, nav, primaryCta } from '../data/site';
+import Button from './Button.astro';
+import Icon from './Icon.astro';
+interface Props {
+  // Homepage sits over a dark video hero → start transparent.
+  // Interior pages have no dark hero → start solid.
+  overHero?: boolean;
+}
+const { overHero = false } = Astro.props;
+const path = Astro.url.pathname.replace(/\/$/, '') || '/';
+const isActive = (href: string) => {
+  const base = href.split('#')[0].replace(/\/$/, '') || '/';
+  if (base === '/') return false; // home links are anchors, never "active"
+  return path === base || path.startsWith(base + '/');
+};
+---
+<header class:list={['nav', { 'nav--over-hero': overHero }]} data-nav>
+  <div class="nav__inner">
+    <a class="nav__brand" href="/" aria-label={`${site.name} — início`}>
+      <img src={site.logo} alt={site.name} width="2587" height="386" />
+    </a>
+
+    <nav class="nav__links" aria-label="Principal">
+      {nav.map((item) => (
+        <a
+          href={item.href}
+          class:list={['nav__link', { 'nav__link--highlight': item.highlight, 'is-active': isActive(item.href) }]}
+        >
+          {item.label}
+        </a>
+      ))}
+    </nav>
+
+    <div class="nav__actions">
+      <a class="nav__phone" href={site.phoneHref} aria-label={`Telefonar — ${site.phone}`}>
+        <Icon name="phone" size={16} stroke={1.6} />
+        <span>{site.phone}</span>
+      </a>
+      <Button href={primaryCta.href} variant="gold" class="nav__cta">{primaryCta.label}</Button>
+      <button class="nav__toggle" type="button" aria-label="Abrir menu" aria-expanded="false" aria-controls="nav-drawer" data-nav-toggle>
+        <span></span><span></span><span></span>
+      </button>
+    </div>
+  </div>
+
+  <div class="nav__drawer" id="nav-drawer" data-nav-drawer hidden>
+    <nav class="nav__drawer-links" aria-label="Menu móvel">
+      {nav.map((item) => (
+        <a href={item.href} class:list={['nav__drawer-link', { 'is-active': isActive(item.href) }]}>
+          {item.label}
+        </a>
+      ))}
+    </nav>
+    <div class="nav__drawer-foot">
+      <Button href={primaryCta.href} variant="gold" arrow class="nav__drawer-cta">{primaryCta.label}</Button>
+      <a class="nav__drawer-phone" href={site.phoneHref}>
+        <Icon name="phone" size={16} stroke={1.6} /> <span>{site.phone}</span>
+      </a>
+    </div>
+  </div>
+</header>
+
+<style>
+  /* The header is a full-width strip but only the centered capsule is visible.
+     pointer-events:none lets clicks pass through the empty sides to the page;
+     the pill + drawer re-enable pointer-events on themselves. */
+  .nav {
+    position: fixed; inset: 0 0 auto 0; z-index: 1000;
+    display: flex; justify-content: center;
+    padding-top: clamp(10px, 1.3vw, 18px);
+    pointer-events: none;
+  }
+
+  /* ---------- Liquid-glass capsule ---------- */
+  .nav__inner {
+    pointer-events: auto;
+    position: relative;
+    width: min(var(--max), calc(100% - 2 * var(--gutter)));
+    height: 60px;
+    display: flex; align-items: center; gap: clamp(16px, 1.5vw, 28px);
+    padding: 0 10px 0 clamp(20px, 1.8vw, 30px);
+    border-radius: 999px;
+    background: linear-gradient(180deg, rgba(18, 40, 68, 0.55), rgba(11, 26, 46, 0.5));
+    -webkit-backdrop-filter: saturate(160%) blur(18px);
+    backdrop-filter: saturate(160%) blur(18px);
+    border: 1px solid rgba(176, 198, 230, 0.22);
+    box-shadow:
+      0 20px 50px -24px rgba(6, 13, 26, 0.8),
+      0 4px 16px -8px rgba(6, 13, 26, 0.5),
+      inset 0 1px 0 rgba(255, 255, 255, 0.16),
+      inset 0 0 22px -10px rgba(150, 185, 235, 0.35),
+      inset 0 -1px 0 rgba(255, 255, 255, 0.04);
+    transition: background var(--t-med), border-color var(--t-med), box-shadow var(--t-med);
+  }
+  /* Scrolled — deepen the glass for legibility over light content. */
+  .nav.is-scrolled .nav__inner {
+    background: linear-gradient(180deg, rgba(16, 36, 61, 0.74), rgba(10, 23, 41, 0.72));
+    border-color: rgba(184, 153, 104, 0.32);
+    box-shadow:
+      0 26px 60px -26px rgba(6, 13, 26, 0.88),
+      0 4px 16px -8px rgba(6, 13, 26, 0.55),
+      inset 0 1px 0 rgba(255, 255, 255, 0.18),
+      inset 0 0 22px -10px rgba(150, 185, 235, 0.32);
+  }
+
+  .nav__brand { display: inline-flex; align-items: center; flex-shrink: 0; }
+  .nav__brand img { height: 26px; width: auto; transition: height var(--t-med); }
+
+  .nav__links {
+    display: flex; align-items: center; gap: clamp(16px, 1.8vw, 30px);
+    margin-left: auto;
+  }
+  .nav__link {
+    position: relative; font-size: 13px; letter-spacing: 0.05em; font-weight: 400;
+    color: var(--white-70); text-decoration: none; padding: 6px 2px;
+    transition: color var(--t-fast);
+  }
+  /* Gold underline that grows from the centre, with a soft glow. */
+  .nav__link::after {
+    content: ""; position: absolute; left: 50%; right: 50%; bottom: -1px; height: 2px;
+    border-radius: 2px; opacity: 0;
+    background: linear-gradient(90deg, var(--gold-deep), var(--gold-light), var(--gold-deep));
+    box-shadow: 0 0 8px rgba(212, 187, 133, 0.65), 0 0 2px rgba(212, 187, 133, 0.9);
+    transition: left var(--t-med), right var(--t-med), opacity var(--t-med);
+  }
+  .nav__link:hover { color: var(--gold-light); }
+  .nav__link:hover::after,
+  .nav__link.is-active::after { left: 0; right: 0; opacity: 1; }
+  .nav__link.is-active { color: var(--gold-light); }
+  /* "Vender" highlight — gold text only (dot removed) */
+  .nav__link--highlight { color: var(--gold-light); }
+
+  .nav__actions { display: flex; align-items: center; gap: clamp(12px, 1.2vw, 18px); flex-shrink: 0; }
+  .nav__phone {
+    display: inline-flex; align-items: center; gap: 8px; color: var(--white-70);
+    text-decoration: none; font-size: 13px; letter-spacing: 0.04em; transition: color var(--t-fast);
+  }
+  .nav__phone:hover { color: var(--gold-light); }
+  :global(.nav__cta) { padding: 11px 22px; font-size: 12px; border-radius: 999px; }
+
+  .nav__toggle {
+    display: none; width: 42px; height: 42px; border-radius: 999px;
+    position: relative; flex-direction: column; align-items: center; justify-content: center; gap: 5px;
+    background: rgba(255, 255, 255, 0.06);
+    border: 1px solid rgba(176, 198, 230, 0.22);
+    box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.14);
+    transition: background var(--t-fast), border-color var(--t-fast);
+  }
+  .nav__toggle:hover { background: rgba(255, 255, 255, 0.1); border-color: var(--hairline-gold-strong); }
+  .nav__toggle span {
+    display: block; width: 20px; height: 1.5px; background: var(--cream);
+    transition: transform var(--t-fast), opacity var(--t-fast);
+  }
+  .nav[data-open] .nav__toggle span:nth-child(1) { transform: translateY(6.5px) rotate(45deg); }
+  .nav[data-open] .nav__toggle span:nth-child(2) { opacity: 0; }
+  .nav[data-open] .nav__toggle span:nth-child(3) { transform: translateY(-6.5px) rotate(-45deg); }
+
+  /* ---------- Drawer (mobile) — floating glass card ---------- */
+  .nav__drawer {
+    pointer-events: none;
+    position: absolute; top: calc(100% + 10px); left: var(--gutter); right: var(--gutter);
+    background: linear-gradient(180deg, rgba(16, 36, 61, 0.86), rgba(10, 23, 41, 0.84));
+    -webkit-backdrop-filter: blur(22px) saturate(150%); backdrop-filter: blur(22px) saturate(150%);
+    border: 1px solid rgba(176, 198, 230, 0.22);
+    border-radius: 24px;
+    box-shadow:
+      0 30px 70px -28px rgba(6, 13, 26, 0.85),
+      inset 0 1px 0 rgba(255, 255, 255, 0.14),
+      inset 0 0 26px -12px rgba(150, 185, 235, 0.3);
+    padding: 14px 20px 24px;
+    display: flex; flex-direction: column; gap: 18px;
+    transform: translateY(-12px); opacity: 0;
+    transition: transform var(--t-med), opacity var(--t-med);
+  }
+  .nav[data-open] .nav__drawer { transform: translateY(0); opacity: 1; pointer-events: auto; }
+  .nav__drawer-links { display: flex; flex-direction: column; }
+  .nav__drawer-link {
+    font-family: var(--font-serif); font-size: 24px; font-weight: 500; color: var(--cream);
+    text-decoration: none; padding: 11px 0; border-bottom: 1px solid var(--hairline-light);
+    transition: color var(--t-fast); letter-spacing: -0.01em;
+  }
+  .nav__drawer-link:hover, .nav__drawer-link.is-active { color: var(--gold-light); }
+  .nav__drawer-foot { display: flex; flex-direction: column; gap: 16px; }
+  :global(.nav__drawer-cta) { width: 100%; border-radius: 999px; }
+  .nav__drawer-phone {
+    display: inline-flex; align-items: center; gap: 8px; color: var(--white-70);
+    text-decoration: none; font-size: 14px; letter-spacing: 0.04em; justify-content: center;
+  }
+
+  /* ---------- Responsive ---------- */
+  @media (max-width: 1180px) {
+    .nav__phone { display: none; }
+  }
+  @media (max-width: 1120px) {
+    .nav__links { display: none; }
+    .nav__toggle { display: flex; }
+  }
+  @media (max-width: 560px) {
+    :global(.nav__cta) { display: none; }
+    .nav__brand img { height: 24px; }
+  }
+  @media (min-width: 1121px) {
+    .nav__drawer { display: none; }
+  }
+</style>
+
+<script>
+  const header = document.querySelector('[data-nav]') as HTMLElement | null;
+  if (header) {
+    const toggle = header.querySelector('[data-nav-toggle]') as HTMLButtonElement | null;
+    const drawer = header.querySelector('[data-nav-drawer]') as HTMLElement | null;
+
+    const onScroll = () => header.classList.toggle('is-scrolled', window.scrollY > 8);
+    onScroll();
+    window.addEventListener('scroll', onScroll, { passive: true });
+
+    const close = () => {
+      header.removeAttribute('data-open');
+      toggle?.setAttribute('aria-expanded', 'false');
+      toggle?.setAttribute('aria-label', 'Abrir menu');
+      if (drawer) drawer.hidden = true;
+    };
+    const open = () => {
+      header.setAttribute('data-open', '');
+      toggle?.setAttribute('aria-expanded', 'true');
+      toggle?.setAttribute('aria-label', 'Fechar menu');
+      if (drawer) drawer.hidden = false;
+    };
+    toggle?.addEventListener('click', () =>
+      header.hasAttribute('data-open') ? close() : open()
+    );
+    drawer?.querySelectorAll('a').forEach((a) => a.addEventListener('click', close));
+    document.addEventListener('keydown', (e) => e.key === 'Escape' && close());
+  }
+</script>
