@@ -407,5 +407,22 @@ const aboutTestimonials = testimonials.slice(0, 3);
     .ab-facts { grid-template-columns: 1fr; }
     .ab-steps { grid-template-columns: 1fr; }
     .ab-hood-grid { grid-template-columns: 1fr; }
+    .ab-about__header {
+      flex-direction: column;
+      align-items: flex-start;
+      gap: clamp(24px, 4vw, 32px);
+    }
+    .ab-about__header > div {
+      min-width: auto;
+      width: 100%;
+      padding: 0 clamp(12px, 3vw, 20px);
+    }
+    .ab-about__title {
+      font-size: clamp(32px, 6vw, 48px);
+    }
+    .ab-about__cta {
+      align-self: flex-start;
+      width: 100%;
+    }
   }
 </style>
