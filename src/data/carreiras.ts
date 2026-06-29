@@ -290,7 +290,7 @@ export const careersApplication = {
   titleEmphasis: 'excecional',
   text:
     'Na RE/MAX Collection Vintage acreditamos que o talento, a ambição e a discrição são essenciais para elevar o mercado imobiliário de luxo. Valorizamos profissionais que partilham a nossa paixão pela excelência e pelo serviço verdadeiramente excecional.',
-  image: '/images/imoveis/imovel-fachada-classica.webp',
+  image: '/images/porto/porto-ribeira-barcos.webp',
   // Director box overlapping the bottom of the building image.
   director: {
     name: 'Sónia Santos',
