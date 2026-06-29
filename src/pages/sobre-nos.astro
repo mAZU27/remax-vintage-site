@@ -173,22 +173,25 @@ const aboutTestimonials = testimonials.slice(0, 3);
       </div>
 
       <div class="ab-about__gallery">
-        <div class="ab-gal__item" data-reveal style="--reveal-delay:100ms">
-          <img src="/images/equipa-1.png" alt="Equipa Collection Vintage" loading="lazy" decoding="async" />
-          <span class="ab-gal__cap">Missão 2026</span>
-        </div>
-        <div class="ab-gal__item" data-reveal style="--reveal-delay:150ms">
-          <img src="/images/equipa-2.png" alt="Consultores Collection Vintage" loading="lazy" decoding="async" />
-          <span class="ab-gal__cap">Consultores</span>
-        </div>
-        <div class="ab-gal__item" data-reveal style="--reveal-delay:200ms">
-          <img src="/images/equipa-3.png" alt="Rede RE/MAX Portugal" loading="lazy" decoding="async" />
-          <span class="ab-gal__cap">Rede RE/MAX</span>
-        </div>
-        <div class="ab-gal__item" data-reveal style="--reveal-delay:250ms">
-          <img src="/images/equipa-4.png" alt="Encontro Equipa" loading="lazy" decoding="async" />
-          <span class="ab-gal__cap">Encontro</span>
-        </div>
+        {Array.from({ length: 9 }, (_, i) => {
+          const captions = [
+            'Missão 2026',
+            'Consultores',
+            'Rede RE/MAX',
+            'Encontro',
+            'Dia a dia',
+            'Dedicação',
+            'Estratégia',
+            'Parceria',
+            'Compromisso'
+          ];
+          return (
+            <div class="ab-gal__item" data-reveal style={`--reveal-delay:${100 + i * 50}ms`}>
+              <img src={`/images/equipa-gallery/equipa-${i + 1}.png`} alt="Equipa Collection Vintage" loading="lazy" decoding="async" />
+              <span class="ab-gal__cap">{captions[i]}</span>
+            </div>
+          );
+        })}
       </div>
     </div>
   </section>

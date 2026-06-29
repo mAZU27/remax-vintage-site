@@ -71,7 +71,7 @@ import { primaryCta } from '../data/site';
     position: relative; isolation: isolate;
     min-height: 100svh;
     display: flex; align-items: flex-start;
-    padding: calc(var(--nav-h) + clamp(32px, 6vh, 72px)) var(--gutter) clamp(56px, 8vh, 110px);
+    padding: calc(var(--nav-h) + clamp(24px, 3.2vh, 48px)) var(--gutter) clamp(56px, 8vh, 110px);
     color: var(--cream); overflow: hidden;
   }
   .hero__media { position: absolute; inset: 0; z-index: -2; background: #2a2520; }
@@ -109,8 +109,8 @@ import { primaryCta } from '../data/site';
   .hero__eyebrow { color: var(--gold-light); }
   .hero__title { margin-top: 24px; font-size: calc(var(--fs-display) * 0.95); line-height: 1.08; text-shadow: 0 2px 34px rgba(0, 0, 0, 0.5); }
   .hero__rule { margin-top: 28px; width: 72px; }
-  .hero__lede { margin-top: 26px; max-width: 46ch; }
-  .hero__ctas { margin-top: 50px; display: flex; flex-wrap: wrap; gap: 16px; }
+  .hero__lede { margin-top: 20px; max-width: 46ch; }
+  .hero__ctas { margin-top: 36px; display: flex; flex-wrap: wrap; gap: 16px; }
 
   /* Valuation card — near-solid navy, soft luxury shadow.
      Compact so the whole card (incl. button + meta) stays inside the hero
@@ -120,7 +120,7 @@ import { primaryCta } from '../data/site';
     -webkit-backdrop-filter: blur(10px) saturate(135%); backdrop-filter: blur(10px) saturate(135%);
     border: 1px solid var(--hairline-gold); border-radius: var(--radius-lg);
     padding: clamp(16px, 1.3vw, 22px) clamp(24px, 2vw, 34px); max-width: 480px; width: 100%;
-    margin-top: clamp(18px, 2.6vh, 32px);
+    margin-top: clamp(12px, 1.6vh, 20px);
     box-shadow: 0 40px 80px -42px rgba(0, 0, 0, 0.85);
   }
   /* Card fades up directly beneath the copy (same left column). */

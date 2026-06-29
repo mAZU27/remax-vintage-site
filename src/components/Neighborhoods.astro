@@ -481,6 +481,20 @@ import SectionEyebrow from './SectionEyebrow.astro';
     // Default active neighbourhood; stays put on mouse-leave (keeps last active).
     setActive('foz-do-douro');
 
+    // Mobile: scroll to map when a feature/zone button is clicked
+    if (window.matchMedia('(max-width: 560px)').matches) {
+      const mapWrap = root.querySelector<HTMLElement>('.zonas__mapwrap');
+      const featureBtns = root.querySelectorAll<HTMLElement>('.bcard__features li');
+      featureBtns.forEach((btn) => {
+        btn.style.cursor = 'pointer';
+        btn.addEventListener('click', () => {
+          if (mapWrap) {
+            mapWrap.scrollIntoView({ behavior: 'smooth', block: 'start' });
+          }
+        });
+      });
+    }
+
     // Count-up — only on numeric, real values; runs once when the bar is seen.
     const reduce = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
     const statsEl = root.querySelector<HTMLElement>('[data-zonas-stats]');

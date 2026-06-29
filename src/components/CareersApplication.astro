@@ -145,21 +145,21 @@ import { site } from '../data/site';
   .capply__formwrap {
     border: 1px solid var(--hairline-gold); border-radius: var(--radius-lg);
     background: linear-gradient(165deg, rgba(184,153,104,0.08), rgba(11,26,46,0.25));
-    padding: clamp(26px, 3vw, 42px);
+    padding: clamp(22px, 2.4vw, 36px);
   }
-  .capply__form { display: flex; flex-direction: column; gap: 18px; }
-  .capply__formhead { margin-bottom: 4px; }
-  .capply__formtitle { font-family: var(--font-serif); font-weight: 500; font-size: clamp(22px, 2vw, 28px); line-height: 1.15; color: var(--cream); }
-  .cfield { display: flex; flex-direction: column; gap: 8px; }
-  .cfield--row { display: grid; grid-template-columns: 1fr 1fr; gap: 18px; }
+  .capply__form { display: flex; flex-direction: column; gap: 16px; }
+  .capply__formhead { margin-bottom: 2px; }
+  .capply__formtitle { font-family: var(--font-serif); font-weight: 500; font-size: clamp(20px, 1.8vw, 26px); line-height: 1.15; color: var(--cream); }
+  .cfield { display: flex; flex-direction: column; gap: 7px; }
+  .cfield--row { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; }
   .cfield--row > div { display: flex; flex-direction: column; gap: 8px; }
-  .capply__form label, .cfield__label { font-size: 12px; letter-spacing: 0.1em; text-transform: uppercase; color: var(--white-70); }
+  .capply__form label, .cfield__label { font-size: 11px; letter-spacing: 0.1em; text-transform: uppercase; color: var(--white-70); }
   .capply__form input, .capply__form select, .capply__form textarea {
     width: 100%; background: rgba(255,255,255,0.04); border: 1px solid var(--hairline-gold);
-    border-radius: var(--radius); color: var(--cream); padding: 13px 15px; font-size: 15px;
+    border-radius: var(--radius); color: var(--cream); padding: 11px 13px; font-size: 14px;
     transition: border-color var(--t-fast), box-shadow var(--t-fast), background var(--t-fast);
   }
-  .capply__form textarea { resize: vertical; min-height: 96px; }
+  .capply__form textarea { resize: vertical; min-height: 88px; }
   .capply__form select option { color: #102742; }
   .capply__form input::placeholder, .capply__form textarea::placeholder { color: var(--white-50); }
   .capply__form input:focus, .capply__form select:focus, .capply__form textarea:focus {
@@ -169,7 +169,7 @@ import { site } from '../data/site';
 
   .cupload {
     display: flex; align-items: center; gap: 12px; cursor: pointer; color: var(--white-90);
-    border: 1px dashed var(--hairline-gold-strong); border-radius: var(--radius); padding: 16px 18px;
+    border: 1px dashed var(--hairline-gold-strong); border-radius: var(--radius); padding: 13px 14px;
     background: rgba(255,255,255,0.02); transition: border-color var(--t-fast), background var(--t-fast), color var(--t-fast);
   }
   .cupload:hover { border-color: var(--gold-light); background: rgba(184,153,104,0.08); color: var(--cream); }

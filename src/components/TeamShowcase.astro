@@ -35,8 +35,9 @@ const ARC = [
   { y: '16px', r: '1.3deg' },
 ];
 const MARQUEE_COPIES = 2;
+const reversedConsultants = [...consultants].reverse();
 const marquee = Array.from({ length: MARQUEE_COPIES }, (_, copy) =>
-  consultants.map((c, j) => ({ ...c, clone: copy > 0, arc: ARC[j % ARC.length] }))
+  reversedConsultants.map((c, j) => ({ ...c, clone: copy > 0, arc: ARC[j % ARC.length] }))
 ).flat();
 
 // Keep a constant, premium glide speed regardless of how many consultants there
@@ -63,7 +64,7 @@ const marqueeSeconds = Math.max(20, consultants.length * SECONDS_PER_CARD);
       </div>
     </header>
 
-    <div class="ts__marquee" style={`--ts-speed:${marqueeSeconds}s`}>
+    <div class="ts__marquee ts__marquee--rtl" style={`--ts-speed:${marqueeSeconds}s`}>
       <ul class="ts__track" role="list">
         {marquee.map((c) => (
           <li class="ts__cell" style={`--arc-y:${c.arc.y};--arc-rot:${c.arc.r}`} aria-hidden={c.clone ? 'true' : undefined}>
@@ -248,6 +249,16 @@ const marqueeSeconds = Math.max(20, consultants.length * SECONDS_PER_CARD);
        -50% in sync with MARQUEE_COPIES in the frontmatter. */
     from { transform: translate3d(-50%, 0, 0); }
     to   { transform: translate3d(0, 0, 0); }
+  }
+
+  @keyframes ts-marquee-rtl {
+    /* Reverse direction: slides cards to the LEFT. */
+    from { transform: translate3d(0, 0, 0); }
+    to   { transform: translate3d(-50%, 0, 0); }
+  }
+
+  .ts__marquee--rtl .ts__track {
+    animation: ts-marquee-rtl var(--ts-speed) linear infinite;
   }
 
   /* Fixed card width + uniform right margin keeps the track perfectly periodic
