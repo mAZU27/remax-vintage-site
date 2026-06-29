@@ -5,7 +5,6 @@
 // tagline, and a bottom-left CTA card. Reveal is orchestrated from `.fb`:
 // the global IntersectionObserver adds `.is-in`, children cascade via `--d`.
 import Icon from './Icon.astro';
-import Crest from './Crest.astro';
 import { primaryCta } from '../data/site';
 ---
 <section class="fb" data-reveal>
@@ -28,7 +27,6 @@ import { primaryCta } from '../data/site';
   <div class="container fb__inner">
     <div class="fb__eyebrow r" style="--d: 120ms">
       <span class="fb__place fb__place--l">Porto</span>
-      <Crest size={44} />
     </div>
 
     <h2 class="fb__title r" style="--d: 240ms">Collection Vintage</h2>
