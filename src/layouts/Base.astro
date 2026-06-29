@@ -1,5 +1,6 @@
 ---
 import '../styles/global.css';
+import '../styles/performance.css';
 import Nav from '../components/Nav.astro';
 import Footer from '../components/Footer.astro';
 import ValueSimulator from '../components/ValueSimulator.astro';
@@ -96,6 +97,9 @@ const jsonLd = {
     />
 
     <script type="application/ld+json" set:html={JSON.stringify(jsonLd)} />
+
+    <!-- Image optimization: WebP detection and lazy-loading -->
+    <script src="/optimize-images.js" async></script>
   </head>
   <body>
     <a href="#main" class="skip-link">Saltar para o conteúdo</a>

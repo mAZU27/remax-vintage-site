@@ -1,0 +1,68 @@
+/* Performance optimizations */
+
+/* Load fonts with swap strategy */
+@font-face {
+  font-family: 'Cormorant Garamond';
+  src: url('/fonts/cormorant-garamond.woff2') format('woff2');
+  font-weight: 400 600;
+  font-display: swap;
+  font-stretch: 100%;
+}
+
+@font-face {
+  font-family: 'Jost';
+  src: url('/fonts/jost.woff2') format('woff2');
+  font-weight: 400 600;
+  font-display: swap;
+  font-stretch: 100%;
+}
+
+/* Lazy load images with blur effect during load */
+img[loading="lazy"] {
+  background: linear-gradient(
+    45deg,
+    rgba(184, 153, 104, 0.1),
+    rgba(184, 153, 104, 0.05)
+  );
+  background-size: 20px 20px;
+}
+
+/* Prevent layout shift during image load */
+img {
+  aspect-ratio: auto;
+}
+
+/* Enable GPU acceleration for smooth animations */
+[data-reveal],
+.pin,
+.bcard,
+.chip,
+.ts__track {
+  will-change: transform, opacity;
+}
+
+/* Reduce repaints on hover */
+button,
+a,
+[role="button"] {
+  transform: translateZ(0);
+}
+
+/* Optimize scroll performance */
+@supports (scroll-behavior: smooth) {
+  html {
+    scroll-behavior: smooth;
+  }
+}
+
+/* Defer non-critical animations */
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+    scroll-behavior: auto !important;
+  }
+}

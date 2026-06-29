@@ -5,5 +5,25 @@ import { defineConfig } from 'astro/config';
 export default defineConfig({
   site: 'https://www.remax-collection-vintage.pt',
   trailingSlash: 'ignore',
-  build: { format: 'directory' },
+  build: {
+    format: 'directory',
+    inlineStylesheets: 'auto',
+    assets: 'assets',
+  },
+  vite: {
+    build: {
+      minify: 'terser',
+      cssCodeSplit: true,
+      rollupOptions: {
+        output: {
+          manualChunks: {
+            vendor: ['astro'],
+          },
+        },
+      },
+    },
+    ssr: {
+      external: [],
+    },
+  },
 });
