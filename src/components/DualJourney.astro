@@ -114,7 +114,7 @@ import SectionEyebrow from './SectionEyebrow.astro';
           <ul class="jcard__features">
             {j.features.map((f) => (
               <li class="jfeat">
-                <span class="jfeat__chip"><Icon name={f.icon} size={20} stroke={1.5} /></span>
+                <span class="jfeat__chip"><Icon name={f.icon} size={24} stroke={1.5} /></span>
                 <span class="jfeat__label">{f.label[0]}<br />{f.label[1]}</span>
               </li>
             ))}
@@ -253,7 +253,7 @@ import SectionEyebrow from './SectionEyebrow.astro';
   }
   .jfeat { display: flex; flex-direction: column; align-items: center; text-align: center; gap: 11px; }
   .jfeat__chip {
-    width: 48px; height: 48px; border-radius: 50%; display: grid; place-items: center;
+    width: 56px; height: 56px; border-radius: 50%; display: grid; place-items: center;
     border: 1px solid var(--hairline-gold); background: rgba(184, 153, 104, 0.07); color: var(--gold-light);
     transition: border-color var(--t-fast), background var(--t-fast), transform var(--t-fast);
   }
