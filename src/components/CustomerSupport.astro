@@ -56,7 +56,8 @@ import Icon from './Icon.astro';
      namespaced (cs / cs__*) and the widget mounts once, so global is safe. */
   .cs {
     position: fixed; right: clamp(16px, 2.4vw, 30px); bottom: clamp(16px, 2.4vw, 30px);
-    z-index: 950; display: flex; flex-direction: column; align-items: flex-end; gap: 14px;
+    z-index: 999999; display: flex; flex-direction: column; align-items: flex-end; gap: 14px;
+    font-family: var(--font-sans);
   }
 
   /* ---------- Floating button (liquid-glass navy + gold ring) ---------- */
@@ -114,10 +115,11 @@ import Icon from './Icon.astro';
       inset 0 1px 0 rgba(255, 255, 255, 0.14),
       inset 0 0 28px -12px rgba(150, 185, 235, 0.3);
     overflow: hidden;
+    z-index: 999998;
     transform-origin: bottom right; transform: translateY(10px) scale(0.96); opacity: 0;
     transition: transform var(--t-med), opacity var(--t-med);
   }
-  .cs__panel[hidden] { display: none; }
+  .cs__panel[hidden] { display: none !important; }
   .cs[data-open] .cs__panel { transform: translateY(0) scale(1); opacity: 1; }
 
   /* ---------- Header ---------- */
@@ -240,12 +242,17 @@ import Icon from './Icon.astro';
   }
 </style>
 
-<script>
-  import { getReply, getWelcome, flows, composeLead, type BotReply, type Chip, type FlowId } from '../data/supportResponses';
-  import { quickStart } from '../data/supportKnowledge';
+<script type="module">
+  (async () => {
+    try {
+      const { getReply, getWelcome, flows, composeLead } = await import('../data/supportResponses.ts');
+      const { quickStart } = await import('../data/supportKnowledge.ts');
 
-  const root = document.querySelector<HTMLElement>('[data-cs]');
-  if (root) {
+      const root = document.querySelector('[data-cs]');
+      if (!root) {
+        console.warn('CustomerSupport: root element not found');
+        return;
+      }
     const toggle = root.querySelector<HTMLButtonElement>('[data-cs-toggle]');
     const closeBtn = root.querySelector<HTMLButtonElement>('[data-cs-close]');
     const panel = root.querySelector<HTMLElement>('#cs-panel');
