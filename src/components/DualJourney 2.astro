@@ -1,0 +1,335 @@
+---
+// "Escolha o seu caminho" — dual-journey section (sell vs buy).
+// Self-contained premium navy section: header, two glass cards framed by
+// bespoke inline-SVG illustrations on glowing pedestals, faint Porto skyline,
+// ambient glows + sparse sparks, and a closing tagline.
+// All reveals are CSS-only (gated on the global observer's `.is-in`); hover and
+// ambient motion are pure CSS. Everything is guarded by prefers-reduced-motion.
+import { journeys } from '../data/site';
+import Icon from './Icon.astro';
+import Button from './Button.astro';
+import SectionEyebrow from './SectionEyebrow.astro';
+---
+<section class="dj section on-navy" id="caminhos" aria-labelledby="dj-title">
+  <div class="dj__bg" aria-hidden="true">
+    <span class="dj__glow dj__glow--a"></span>
+    <span class="dj__glow dj__glow--b"></span>
+    <span class="dj__grain"></span>
+
+    <svg class="dj__skyline dj__skyline--l" viewBox="0 0 440 360" fill="none" aria-hidden="true" data-reveal>
+      <g class="dj__sky">
+        <path d="M0 360 V250 h20 v-14 h14 v14 h22 v-34 l10 -12 10 12 v34 h26 v-22 h16 v22 h30 v-52 h12 v52 h24 v-18 h18 v18 h28 v-40 h14 v40 h44 V360 Z" />
+        <path d="M152 252 V150 q8 -22 16 0 V252" />
+        <path d="M157 150 V120 l7 -10 7 10 V150" />
+        <path d="M2 322 q126 -150 268 0" />
+        <path d="M44 302 V244 M96 282 V214 M156 276 V198 M216 284 V216 M260 304 V252" />
+      </g>
+    </svg>
+
+    <svg class="dj__skyline dj__skyline--r" viewBox="0 0 440 360" fill="none" aria-hidden="true" data-reveal>
+      <g class="dj__sky">
+        <path d="M440 360 V236 h-22 v-16 h-14 v16 h-24 v-38 l-10 -12 -10 12 v38 h-28 v-24 h-16 v24 h-32 v-54 h-12 v54 h-26 v-20 h-18 v20 h-46 V360 Z" />
+        <path d="M300 236 V140 l7 -12 7 12 V236" />
+      </g>
+    </svg>
+
+    <span class="dj__spark" style="left:14%;top:30%;--d:0s"></span>
+    <span class="dj__spark" style="left:26%;top:62%;--d:1.6s"></span>
+    <span class="dj__spark" style="left:48%;top:20%;--d:.8s"></span>
+    <span class="dj__spark" style="left:67%;top:54%;--d:2.4s"></span>
+    <span class="dj__spark" style="left:82%;top:28%;--d:1.1s"></span>
+    <span class="dj__spark" style="left:90%;top:66%;--d:3s"></span>
+  </div>
+
+  <div class="container dj__inner">
+    <header class="dj__head">
+      <SectionEyebrow text="Escolha o seu caminho" center />
+      <h2 class="h2 dj__title" id="dj-title" data-reveal style="--reveal-delay:90ms">
+        Duas jornadas. Um padrão de <em class="em-gold serif-it">excelência.</em>
+      </h2>
+      <p class="lede dj__sub" data-reveal style="--reveal-delay:180ms">
+        Cada imóvel tem uma história. E cada decisão merece ser guiada com rigor,
+        estratégia e confiança.
+      </p>
+    </header>
+
+    <div class="dj__cards">
+      {journeys.map((j, i) => (
+        <article class={`jcard jcard--${j.variant}`} data-reveal style={`--reveal-delay:${220 + i * 140}ms`}>
+          <span class="jcard__edge" aria-hidden="true"></span>
+
+          <div class="jcard__head">
+            <div class="jcard__intro">
+              <span class="jcard__pill">{j.label}</span>
+              <h3 class="jcard__title">
+                {j.titleLead}<br />{j.emphasisPrefix}<em class="em-gold serif-it">{j.emphasis}</em>
+              </h3>
+              <p class="jcard__desc">{j.description}</p>
+            </div>
+
+            <div class="jcard__art" aria-hidden="true">
+              <span class="jcard__art-glow"></span>
+              {j.variant === 'seller' ? (
+                <svg class="jart" viewBox="0 0 360 320" fill="none">
+                  <ellipse class="jart-ped" cx="180" cy="258" rx="118" ry="27" />
+                  <path class="jart-line--soft" d="M62 258 v9 a118 27 0 0 0 236 0 v-9" />
+                  <path class="jart-line--soft" d="M96 226 a14 14 0 0 1 -2 -28 a18 18 0 0 1 34 -6 a13 13 0 0 1 4 34 Z" />
+                  <path class="jart-line--soft" d="M104 226 v22" />
+                  <path class="jart-line" d="M132 240 V120 h84 V240" />
+                  <path class="jart-line" d="M124 120 h100" />
+                  <path class="jart-line" d="M132 120 l42 -26 42 26" />
+                  <rect class="jart-lit" x="144" y="136" width="18" height="24" rx="2" />
+                  <rect class="jart-lit" x="186" y="136" width="18" height="24" rx="2" />
+                  <rect class="jart-lit" x="144" y="174" width="18" height="24" rx="2" />
+                  <rect class="jart-lit" x="186" y="174" width="18" height="24" rx="2" />
+                  <path class="jart-line" d="M158 240 v-30 a16 16 0 0 1 32 0 v30" />
+                  <path class="jart-pin-glow" d="M262 116 a36 36 0 0 1 36 36 c0 28 -36 60 -36 60 s-36 -32 -36 -60 a36 36 0 0 1 36 -36 Z" />
+                  <path class="jart-pin" d="M262 120 a32 32 0 0 1 32 32 c0 25 -32 54 -32 54 s-32 -29 -32 -54 a32 32 0 0 1 32 -32 Z" />
+                  <circle class="jart-pin-eye" cx="262" cy="150" r="15" />
+                  <path class="jart-pin-mark" d="M255 153 a7 8 0 0 1 14 0 c0 5 -7 8 -7 8 s-7 -3 -7 -8 Z M258 161 h8" />
+                </svg>
+              ) : (
+                <svg class="jart" viewBox="0 0 360 320" fill="none">
+                  <ellipse class="jart-ped" cx="180" cy="258" rx="118" ry="27" />
+                  <path class="jart-line--soft" d="M62 258 v9 a118 27 0 0 0 236 0 v-9" />
+                  <path class="jart-line" d="M150 246 V152 a30 30 0 0 1 60 0 V246" />
+                  <path class="jart-line--soft" d="M180 122 V152 M150 152 h60" />
+                  <path class="jart-line--soft" d="M163 138 a17 17 0 0 1 34 0" />
+                  <path class="jart-line" d="M180 152 V246" />
+                  <circle class="jart-line--soft" cx="170" cy="200" r="3" />
+                  <path class="jart-line--soft" d="M236 246 l4 -30 h26 l4 30 Z M243 216 c-6 -16 2 -30 6 -34 c2 10 8 16 0 34 M252 216 c8 -12 18 -12 22 -12 c-4 12 -12 16 -22 12" />
+                  <circle class="jart-key-glow" cx="158" cy="206" r="46" />
+                  <circle class="jart-key" cx="150" cy="206" r="17" />
+                  <circle class="jart-key-hole" cx="150" cy="206" r="6" />
+                  <path class="jart-key" d="M166 200 l54 16" />
+                  <path class="jart-key" d="M214 214 l4 -12 M222 218 l4 -12 M230 221 l3 -10" />
+                  <path class="jart-key" d="M162 214 l40 22" />
+                  <rect class="jart-key-fob" x="196" y="232" width="26" height="32" rx="6" transform="rotate(-18 209 248)" />
+                  <path class="jart-pin-mark" d="M203 244 a5 6 0 0 1 10 0 c0 4 -5 6 -5 6 s-5 -2 -5 -6 Z" transform="rotate(-18 209 248)" />
+                </svg>
+              )}
+            </div>
+          </div>
+
+          <ul class="jcard__features">
+            {j.features.map((f) => (
+              <li class="jfeat">
+                <span class="jfeat__chip"><Icon name={f.icon} size={20} stroke={1.5} /></span>
+                <span class="jfeat__label">{f.label[0]}<br />{f.label[1]}</span>
+              </li>
+            ))}
+          </ul>
+
+          <div class="jcard__ctawrap">
+            <Button
+              href={j.cta.href}
+              variant={j.variant === 'seller' ? 'gold' : 'ghost'}
+              arrow
+              class="jbtn"
+            >{j.cta.label}</Button>
+          </div>
+
+          <p class="jcard__micro"><Icon name="lock" size={13} stroke={1.6} /> {j.micro}</p>
+        </article>
+      ))}
+    </div>
+
+    <div class="dj__tagline" data-reveal style="--reveal-delay:160ms">
+      <span class="dj__rule" aria-hidden="true"></span>
+      <span class="dj__tagline-text">O mercado certo. O método certo. O resultado certo.</span>
+      <span class="dj__rule" aria-hidden="true"></span>
+    </div>
+  </div>
+</section>
+
+<style>
+  .dj {
+    position: relative; isolation: isolate; overflow: hidden;
+    background: linear-gradient(180deg, var(--navy-ink), var(--navy) 46%, var(--navy-ink));
+    color: var(--cream);
+  }
+  .dj__inner { position: relative; z-index: 2; }
+
+  /* Ambient background */
+  .dj__bg { position: absolute; inset: 0; z-index: 0; pointer-events: none; }
+  .dj__glow { position: absolute; border-radius: 50%; filter: blur(100px); }
+  .dj__glow--a {
+    width: 620px; height: 620px; top: -180px; left: 50%; transform: translateX(-50%);
+    background: radial-gradient(circle, rgba(184, 153, 104, 0.16), transparent 70%);
+  }
+  .dj__glow--b {
+    width: 540px; height: 540px; bottom: -200px; right: -120px;
+    background: radial-gradient(circle, rgba(26, 54, 86, 0.55), transparent 70%);
+  }
+  .dj__grain {
+    position: absolute; inset: 0; opacity: 0.4; mix-blend-mode: overlay;
+    background-image: radial-gradient(circle at 1px 1px, rgba(255, 255, 255, 0.1) 1px, transparent 0);
+    background-size: 3px 3px;
+  }
+  .dj__skyline { position: absolute; bottom: 0; width: clamp(280px, 30vw, 440px); height: auto; }
+  .dj__skyline--l { left: 0; }
+  .dj__skyline--r { right: 0; }
+  .dj__sky { stroke: var(--gold-light); stroke-width: 1; fill: none; opacity: 0.14; }
+  .dj__spark {
+    position: absolute; width: 3px; height: 3px; border-radius: 50%;
+    background: var(--gold-light); box-shadow: 0 0 8px 1px rgba(212, 187, 133, 0.6);
+    opacity: 0.5; animation: djTwinkle 5s ease-in-out var(--d, 0s) infinite;
+  }
+  @keyframes djTwinkle {
+    0%, 100% { opacity: 0.18; transform: scale(0.7); }
+    50% { opacity: 0.8; transform: scale(1.15); }
+  }
+
+  /* Header */
+  .dj__head { text-align: center; max-width: 720px; margin: 0 auto; }
+  .dj__title { margin-top: 18px; margin-inline: auto; max-width: 16ch; }
+  .dj__sub { margin: 18px auto 0; max-width: 52ch; }
+
+  /* Cards layout */
+  .dj__cards {
+    margin-top: clamp(40px, 5vw, 64px);
+    display: grid; grid-template-columns: repeat(2, 1fr); gap: clamp(20px, 2.4vw, 34px);
+  }
+
+  .jcard {
+    position: relative; overflow: hidden;
+    display: flex; flex-direction: column;
+    padding: clamp(24px, 2.6vw, 40px);
+    background: rgba(13, 31, 53, 0.62);
+    -webkit-backdrop-filter: blur(12px); backdrop-filter: blur(12px);
+    border: 1px solid var(--hairline-gold); border-radius: var(--radius-lg);
+    box-shadow: var(--shadow-float), inset 0 1px 0 rgba(244, 237, 222, 0.06);
+    transition: transform var(--t-med) var(--t-ease-emph), border-color var(--t-med), box-shadow var(--t-med), background var(--t-med);
+  }
+  .jcard--seller { border-color: var(--hairline-gold-strong); background: rgba(16, 39, 66, 0.66); }
+  /* Top-edge highlight */
+  .jcard__edge {
+    position: absolute; inset: 0 0 auto 0; height: 1px;
+    background: linear-gradient(90deg, transparent, rgba(212, 187, 133, 0.6), transparent);
+  }
+  .dj .jcard:hover {
+    transform: translateY(-6px); border-color: var(--gold);
+    box-shadow: 0 40px 90px -40px rgba(0, 0, 0, 0.7), 0 0 40px -12px rgba(184, 153, 104, 0.3), inset 0 1px 0 rgba(244, 237, 222, 0.1);
+    background: rgba(18, 43, 72, 0.72);
+  }
+
+  .jcard__head { display: grid; grid-template-columns: 1.05fr 0.95fr; gap: 8px; align-items: center; }
+
+  .jcard__pill {
+    display: inline-flex; align-items: center; align-self: flex-start;
+    padding: 7px 15px; border: 1px solid var(--hairline-gold-strong); border-radius: 999px;
+    font-size: 10.5px; letter-spacing: 0.2em; text-transform: uppercase; color: var(--gold-light); font-weight: 500;
+  }
+  .jcard__title {
+    font-family: var(--font-serif); font-weight: 500; font-size: clamp(28px, 3vw, 40px);
+    line-height: 1.06; letter-spacing: -0.01em; margin-top: 18px; color: var(--cream);
+  }
+  .jcard__desc { margin-top: 16px; font-size: 15px; line-height: 1.65; color: var(--white-70); max-width: 34ch; }
+
+  /* Illustration */
+  .jcard__art { position: relative; display: grid; place-items: center; min-height: 220px; }
+  .jcard__art-glow {
+    position: absolute; width: 78%; height: 78%; border-radius: 50%; filter: blur(34px);
+    background: radial-gradient(circle, rgba(184, 153, 104, 0.28), transparent 68%);
+  }
+  .jart { position: relative; width: 100%; max-width: 300px; height: auto; }
+  .jart-line { stroke: var(--gold); stroke-width: 1.5; fill: none; stroke-linecap: round; stroke-linejoin: round; }
+  .jart-line--soft { stroke: var(--gold-light); stroke-width: 1.3; fill: none; opacity: 0.62; stroke-linecap: round; stroke-linejoin: round; }
+  .jart-lit { fill: var(--gold-light); fill-opacity: 0.78; stroke: var(--gold); stroke-width: 1; }
+  .jart-ped { stroke: var(--gold); stroke-width: 1.4; fill: var(--gold); fill-opacity: 0.05; }
+  .jart-pin { fill: var(--gold-light); stroke: var(--gold-deep); stroke-width: 1.2; }
+  .jart-pin-glow { fill: rgba(212, 187, 133, 0.28); }
+  .jart-pin-eye { fill: var(--navy-ink); }
+  .jart-pin-mark { stroke: var(--gold-light); stroke-width: 1.1; fill: none; stroke-linecap: round; stroke-linejoin: round; }
+  .jart-key { stroke: var(--gold-light); stroke-width: 2.2; fill: none; stroke-linecap: round; stroke-linejoin: round; }
+  .jart-key-hole { fill: var(--navy-ink); stroke: none; }
+  .jart-key-glow { fill: rgba(212, 187, 133, 0.22); }
+  .jart-key-fob { fill: none; stroke: var(--gold-light); stroke-width: 1.6; }
+
+  /* Features */
+  .jcard__features {
+    list-style: none; margin: clamp(22px, 2.4vw, 30px) 0 0; padding: 0;
+    display: grid; grid-template-columns: repeat(4, 1fr); gap: 14px;
+  }
+  .jfeat { display: flex; flex-direction: column; align-items: center; text-align: center; gap: 11px; }
+  .jfeat__chip {
+    width: 48px; height: 48px; border-radius: 50%; display: grid; place-items: center;
+    border: 1px solid var(--hairline-gold); background: rgba(184, 153, 104, 0.07); color: var(--gold-light);
+    transition: border-color var(--t-fast), background var(--t-fast), transform var(--t-fast);
+  }
+  .dj .jcard:hover .jfeat__chip { border-color: var(--hairline-gold-strong); }
+  .jfeat__label { font-size: 11.5px; line-height: 1.35; color: var(--white-70); letter-spacing: 0.01em; }
+
+  /* CTA */
+  .jcard__ctawrap { margin-top: clamp(24px, 2.6vw, 32px); }
+  :global(.jbtn) { width: 100%; justify-content: center; position: relative; overflow: hidden; letter-spacing: 0.14em; }
+  :global(.jbtn span) { position: relative; z-index: 1; }
+  :global(.jbtn .arrow) { transition: transform var(--t-fast); position: relative; z-index: 1; }
+  :global(.jbtn:hover .arrow) { transform: translateX(5px); }
+  /* Gold sheen sweep (seller) */
+  :global(.jcard--seller .jbtn)::after {
+    content: ''; position: absolute; inset: 0; z-index: 0;
+    background: linear-gradient(110deg, transparent 25%, rgba(255, 255, 255, 0.4) 50%, transparent 75%);
+    transform: translateX(-130%); transition: transform 0.7s var(--t-ease-emph);
+  }
+  :global(.jcard--seller .jbtn:hover)::after { transform: translateX(130%); }
+  /* Ghost button tint (buyer) */
+  :global(.jcard--buyer .jbtn:hover) { background: rgba(184, 153, 104, 0.1); border-color: var(--gold-light); box-shadow: 0 0 24px -8px rgba(184, 153, 104, 0.5); }
+
+  .jcard__micro {
+    margin-top: 16px; display: inline-flex; align-items: center; gap: 8px;
+    font-size: 11px; letter-spacing: 0.16em; text-transform: uppercase; color: var(--white-50);
+  }
+  .jcard__micro :global(.icon) { color: var(--gold-light); }
+
+  /* Closing tagline */
+  .dj__tagline {
+    margin-top: clamp(44px, 5.5vw, 72px); display: flex; align-items: center; justify-content: center;
+    gap: clamp(16px, 3vw, 38px);
+  }
+  .dj__rule { height: 1px; flex: 1; max-width: 180px; background: linear-gradient(90deg, transparent, var(--hairline-gold-strong)); }
+  .dj__rule:last-child { background: linear-gradient(90deg, var(--hairline-gold-strong), transparent); }
+  .dj__tagline-text {
+    font-family: var(--font-serif); font-size: clamp(17px, 2vw, 24px); color: var(--gold-light);
+    text-align: center; letter-spacing: 0.01em;
+  }
+
+  /* ---- Within-card staggered reveal (gated on the global observer .is-in) ---- */
+  .jcard__pill, .jcard__title, .jcard__desc, .jcard__features li, .jcard__ctawrap, .jcard__micro {
+    opacity: 0; transform: translateY(16px);
+    transition: opacity 0.7s var(--t-ease-emph), transform 0.7s var(--t-ease-emph);
+  }
+  .jcard__art { opacity: 0; transform: scale(0.94); transition: opacity 0.8s var(--t-ease-emph), transform 0.8s var(--t-ease-emph); }
+  .jcard.is-in .jcard__pill { opacity: 1; transform: none; transition-delay: 0.08s; }
+  .jcard.is-in .jcard__title { opacity: 1; transform: none; transition-delay: 0.16s; }
+  .jcard.is-in .jcard__desc { opacity: 1; transform: none; transition-delay: 0.24s; }
+  .jcard.is-in .jcard__art { opacity: 1; transform: scale(1); transition-delay: 0.3s; }
+  .jcard.is-in .jcard__features li { opacity: 1; transform: none; }
+  .jcard.is-in .jcard__features li:nth-child(1) { transition-delay: 0.36s; }
+  .jcard.is-in .jcard__features li:nth-child(2) { transition-delay: 0.44s; }
+  .jcard.is-in .jcard__features li:nth-child(3) { transition-delay: 0.52s; }
+  .jcard.is-in .jcard__features li:nth-child(4) { transition-delay: 0.6s; }
+  .jcard.is-in .jcard__ctawrap { opacity: 1; transform: none; transition-delay: 0.66s; }
+  .jcard.is-in .jcard__micro { opacity: 1; transform: none; transition-delay: 0.74s; }
+
+  /* ---- Responsive ---- */
+  @media (max-width: 920px) {
+    .dj__cards { grid-template-columns: 1fr; max-width: 560px; margin-inline: auto; }
+  }
+  @media (max-width: 600px) {
+    .jcard__head { grid-template-columns: 1fr; }
+    .jcard__art { order: -1; max-width: 220px; min-height: 0; margin: 0 auto 8px; }
+    .jcard__desc { max-width: none; }
+    .jcard__features { grid-template-columns: repeat(2, 1fr); gap: 18px 12px; }
+    .dj__skyline { width: 220px; opacity: 0.7; }
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    .dj__spark { animation: none; }
+    .jcard, .jcard__pill, .jcard__title, .jcard__desc, .jcard__art,
+    .jcard__features li, .jcard__ctawrap, .jcard__micro {
+      opacity: 1 !important; transform: none !important; transition: none;
+    }
+    :global(.jcard--seller .jbtn)::after { display: none; }
+  }
+</style>

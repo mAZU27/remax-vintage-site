@@ -1,0 +1,83 @@
+---
+import SectionEyebrow from './SectionEyebrow.astro';
+import Icon from './Icon.astro';
+import CareersMetrics from './CareersMetrics.astro';
+import { careersOffice as o } from '../data/carreiras';
+---
+<section class="section section--cream-soft coffice">
+  <div class="container">
+    <header class="shead">
+      <SectionEyebrow text={o.eyebrow} />
+      <h2 class="h2 coffice__title" data-reveal style="--reveal-delay:80ms">
+        {o.titleLead} <em class="em-gold serif-it">{o.titleEmphasis}</em>.
+      </h2>
+      <p class="lede coffice__lede" data-reveal style="--reveal-delay:150ms">{o.text}</p>
+    </header>
+
+    <ul class="coffice__grid">
+      {o.images.map((img, i) => (
+        <li class="otile" data-reveal style={`--reveal-delay:${i * 90}ms`}>
+          <img src={img.src} alt="" loading="lazy" decoding="async" />
+          <span class="otile__cap">{img.caption}</span>
+        </li>
+      ))}
+    </ul>
+
+    <ul class="coffice__cards">
+      {o.cards.map((c, i) => (
+        <li class="ofcard" data-reveal style={`--reveal-delay:${i * 80}ms`}>
+          <span class="ofcard__ic"><Icon name={c.icon} size={20} stroke={1.4} /></span>
+          <h3 class="ofcard__title">{c.title}</h3>
+        </li>
+      ))}
+    </ul>
+
+    <div class="coffice__metrics" data-reveal>
+      <CareersMetrics metrics={o.metrics} tone="cream" />
+    </div>
+  </div>
+</section>
+
+<style>
+  .shead { margin-bottom: clamp(36px, 4vw, 56px); }
+  .coffice__title { margin-top: 16px; max-width: 20ch; }
+  .coffice__lede { margin-top: 16px; }
+
+  .coffice__grid {
+    list-style: none; margin: 0; padding: 0; display: grid; grid-template-columns: repeat(4, 1fr); gap: 14px;
+  }
+  .otile {
+    position: relative; overflow: hidden; border-radius: var(--radius-lg); border: 1px solid var(--hairline-gold);
+    aspect-ratio: 3 / 4;
+  }
+  .otile img { width: 100%; height: 100%; object-fit: cover; transition: transform var(--t-slow); }
+  .otile:hover img { transform: scale(1.06); }
+  .otile::after { content: ""; position: absolute; inset: 0; background: linear-gradient(to top, rgba(8,17,30,0.78), transparent 55%); }
+  .otile__cap {
+    position: absolute; left: 16px; right: 16px; bottom: 14px; z-index: 1; color: var(--cream);
+    font-size: 13px; line-height: 1.4; letter-spacing: 0.01em;
+  }
+
+  .coffice__cards {
+    list-style: none; margin: clamp(28px, 3vw, 44px) 0 0; padding: 0;
+    display: grid; grid-template-columns: repeat(4, 1fr); gap: 14px;
+  }
+  .ofcard {
+    display: flex; align-items: center; gap: 14px; padding: 20px 22px;
+    border: 1px solid var(--hairline-gold); border-radius: var(--radius); background: var(--cream);
+    transition: transform var(--t-med), border-color var(--t-med);
+  }
+  .ofcard:hover { transform: translateY(-3px); border-color: var(--hairline-gold-strong); }
+  .ofcard__ic { flex-shrink: 0; width: 42px; height: 42px; display: grid; place-items: center; border-radius: 50%; color: var(--gold-deep); border: 1px solid var(--hairline-gold-strong); }
+  .ofcard__title { font-family: var(--font-serif); font-weight: 500; font-size: 17px; margin: 0; }
+
+  .coffice__metrics { margin-top: clamp(40px, 5vw, 64px); }
+
+  @media (max-width: 860px) {
+    .coffice__grid { grid-template-columns: repeat(2, 1fr); }
+    .coffice__cards { grid-template-columns: repeat(2, 1fr); }
+  }
+  @media (max-width: 460px) {
+    .coffice__cards { grid-template-columns: 1fr; }
+  }
+</style>

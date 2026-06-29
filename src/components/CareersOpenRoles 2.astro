@@ -1,0 +1,222 @@
+---
+import SectionEyebrow from './SectionEyebrow.astro';
+import Icon from './Icon.astro';
+import { careersRoles as r, anchors } from '../data/carreiras';
+
+const areas = [...new Set(r.jobs.map((j) => j.area))];
+const types = [...new Set(r.jobs.map((j) => j.type))];
+const locations = [...new Set(r.jobs.map((j) => j.location))];
+
+// Filtering a single vacancy is pointless, so the filter bar only appears
+// once there are at least two open roles.
+const jobCount = r.jobs.length;
+const showFilters = jobCount > 1;
+const vagasLabel = (n: number) => (n === 1 ? 'vaga aberta' : 'vagas abertas');
+---
+<section class="section section--ink on-navy croles" id={anchors.roles}>
+  <div class="container">
+    <header class="shead">
+      <SectionEyebrow text={r.eyebrow} />
+      <h2 class="h2 croles__title" data-reveal style="--reveal-delay:80ms">
+        {r.titleLead} <em class="em-gold serif-it">{r.titleEmphasis}</em>
+      </h2>
+      <p class="lede croles__lede" data-reveal style="--reveal-delay:150ms">{r.text}</p>
+    </header>
+
+    <div class="croles__layout">
+      <div class="croles__main">
+        {showFilters && (
+          <form class="rfilters" data-reveal data-role-filters aria-label="Filtrar vagas">
+            <label class="rfilters__field">
+              <span>Área</span>
+              <select data-filter="area">
+                <option value="">Todas</option>
+                {areas.map((a) => <option value={a}>{a}</option>)}
+              </select>
+            </label>
+            <label class="rfilters__field">
+              <span>Tipo de contrato</span>
+              <select data-filter="type">
+                <option value="">Todos</option>
+                {types.map((t) => <option value={t}>{t}</option>)}
+              </select>
+            </label>
+            <label class="rfilters__field">
+              <span>Localização</span>
+              <select data-filter="location">
+                <option value="">Todas</option>
+                {locations.map((l) => <option value={l}>{l}</option>)}
+              </select>
+            </label>
+            <button type="button" class="rfilters__clear" data-role-clear>
+              <Icon name="close" size={14} stroke={1.8} /> Limpar filtros
+            </button>
+          </form>
+        )}
+
+        <ul class="rlist" data-role-list>
+          {r.jobs.map((j, i) => (
+            <li
+              class="rjob"
+              data-reveal
+              style={`--reveal-delay:${i * 90}ms`}
+              data-area={j.area}
+              data-type={j.type}
+              data-location={j.location}
+            >
+              <span class="rjob__ic"><Icon name={j.icon} size={24} stroke={1.4} /></span>
+              <div class="rjob__body">
+                <h3 class="rjob__title">{j.title}</h3>
+                <p class="rjob__dept">{j.area}</p>
+                <p class="rjob__text">{j.text}</p>
+                <ul class="rjob__meta">
+                  <li><Icon name="pin" size={14} stroke={1.6} /> {j.location}</li>
+                  <li><Icon name="clock" size={14} stroke={1.6} /> {j.type}</li>
+                </ul>
+              </div>
+              <div class="rjob__actions">
+                <a class="btn btn--gold rjob__apply" href={`#${anchors.apply}`}>
+                  <span>Candidatar-me</span><Icon name="arrow" size={14} stroke={1.8} />
+                </a>
+                <a class="btn-link rjob__view" href={`#${anchors.apply}`}>
+                  <span>Ver função</span><Icon name="arrow" size={13} stroke={1.6} />
+                </a>
+              </div>
+            </li>
+          ))}
+        </ul>
+        <p class="rlist__empty" data-role-empty hidden>Sem vagas para os filtros selecionados.</p>
+      </div>
+
+      <aside class="rsummary" data-reveal style="--reveal-delay:120ms">
+        <span class="rsummary__count"><strong data-roles-count>{jobCount}</strong> <span data-roles-word>{vagasLabel(jobCount)}</span></span>
+        <span class="rsummary__where">no Porto</span>
+        <ul class="rsummary__benefits">
+          {r.summaryBenefits.map((bft) => (
+            <li><span class="rsummary__check"><Icon name="check" size={13} stroke={2} /></span>{bft}</li>
+          ))}
+        </ul>
+      </aside>
+    </div>
+  </div>
+</section>
+
+<style>
+  .shead { margin-bottom: clamp(32px, 4vw, 52px); }
+  .croles__title { margin-top: 16px; }
+  .croles__lede { margin-top: 16px; }
+
+  .croles__layout { display: grid; grid-template-columns: 1fr 320px; gap: clamp(28px, 3vw, 52px); align-items: start; }
+
+  /* Filters */
+  .rfilters {
+    display: grid; grid-template-columns: repeat(3, 1fr) auto; gap: 16px; align-items: end;
+    padding-bottom: 26px; margin-bottom: 26px; border-bottom: 1px solid var(--hairline-light);
+  }
+  .rfilters__field { display: flex; flex-direction: column; gap: 8px; }
+  .rfilters__field span { font-size: 11px; letter-spacing: 0.16em; text-transform: uppercase; color: var(--white-70); }
+  .rfilters__field select {
+    appearance: none; -webkit-appearance: none; width: 100%;
+    background: rgba(255,255,255,0.04) url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='8' viewBox='0 0 12 8' fill='none' stroke='%23D4BB85' stroke-width='1.6'%3E%3Cpath d='m1 1.5 5 5 5-5'/%3E%3C/svg%3E") no-repeat right 14px center;
+    color: var(--cream); border: 1px solid var(--hairline-gold); border-radius: var(--radius);
+    padding: 13px 36px 13px 14px; font-size: 14px; cursor: pointer; transition: border-color var(--t-fast);
+  }
+  .rfilters__field select:hover { border-color: var(--hairline-gold-strong); }
+  .rfilters__field select option { color: #102742; }
+  .rfilters__clear {
+    display: inline-flex; align-items: center; gap: 8px; color: var(--white-70);
+    font-size: 13px; letter-spacing: 0.04em; padding: 13px 4px; transition: color var(--t-fast);
+  }
+  .rfilters__clear:hover { color: var(--gold-light); }
+
+  /* Job rows */
+  .rlist { list-style: none; margin: 0; padding: 0; display: flex; flex-direction: column; gap: 16px; }
+  .rjob {
+    display: grid; grid-template-columns: auto 1fr auto; gap: clamp(16px, 2vw, 28px); align-items: center;
+    padding: clamp(20px, 2vw, 28px); border: 1px solid var(--hairline-gold); border-radius: var(--radius-lg);
+    background: rgba(255,255,255,0.02); transition: transform var(--t-med), border-color var(--t-med), box-shadow var(--t-med);
+  }
+  .rjob:hover { transform: translateY(-3px); border-color: var(--hairline-gold-strong); box-shadow: var(--shadow-float); }
+  .rjob__ic {
+    width: 56px; height: 56px; border-radius: 50%; display: grid; place-items: center; align-self: start;
+    color: var(--gold-light); border: 1px solid var(--hairline-gold-strong);
+  }
+  .rjob__title { font-family: var(--font-serif); font-weight: 500; font-size: clamp(20px, 2vw, 24px); margin: 0; color: var(--cream); }
+  .rjob__dept { margin: 4px 0 0; font-size: 12px; letter-spacing: 0.14em; text-transform: uppercase; color: var(--gold-light); }
+  .rjob__text { margin: 10px 0 0; font-size: 14px; line-height: 1.55; color: var(--white-70); max-width: 52ch; }
+  .rjob__meta { list-style: none; display: flex; flex-wrap: wrap; gap: 8px 20px; margin: 14px 0 0; padding: 0; }
+  .rjob__meta li { display: inline-flex; align-items: center; gap: 7px; font-size: 13px; color: var(--white-70); }
+  .rjob__meta :global(.icon) { color: var(--gold-light); }
+  .rjob__actions { display: flex; flex-direction: column; align-items: stretch; gap: 12px; min-width: 168px; }
+  :global(.rjob__apply) { padding: 13px 20px; font-size: 12px; }
+  .rjob__view { justify-content: center; border-bottom: none; }
+  .rlist__empty { margin: 22px 0 0; color: var(--white-70); font-size: 15px; }
+
+  /* Summary panel */
+  .rsummary {
+    position: sticky; top: calc(var(--nav-h) + 20px);
+    border: 1px solid var(--hairline-gold); border-radius: var(--radius-lg);
+    background: linear-gradient(160deg, rgba(184,153,104,0.12), rgba(11,26,46,0.3));
+    padding: clamp(26px, 2.4vw, 34px);
+  }
+  .rsummary__count { display: block; font-size: 15px; color: var(--white-90); }
+  .rsummary__count strong { font-family: var(--font-serif); font-weight: 500; font-size: 30px; color: var(--gold-light); margin-right: 6px; }
+  .rsummary__where { display: block; font-size: 13px; letter-spacing: 0.14em; text-transform: uppercase; color: var(--gold-light); margin-top: 2px; }
+  .rsummary__benefits { list-style: none; margin: 22px 0 0; padding: 22px 0 0; border-top: 1px solid var(--hairline-light); display: flex; flex-direction: column; gap: 14px; }
+  .rsummary__benefits li { display: flex; align-items: center; gap: 12px; font-size: 14px; color: var(--white-90); }
+  .rsummary__check {
+    flex-shrink: 0; width: 22px; height: 22px; border-radius: 50%; display: grid; place-items: center;
+    background: rgba(184,153,104,0.16); color: var(--gold-light);
+  }
+
+  @media (max-width: 980px) {
+    .croles__layout { grid-template-columns: 1fr; }
+    .rsummary { position: static; order: -1; }
+  }
+  @media (max-width: 760px) {
+    .rfilters { grid-template-columns: 1fr 1fr; }
+    .rfilters__clear { grid-column: 1 / -1; justify-content: flex-start; }
+    .rjob { grid-template-columns: auto 1fr; }
+    .rjob__actions { grid-column: 1 / -1; flex-direction: row; min-width: 0; }
+    :global(.rjob__apply) { flex: 1; }
+  }
+  @media (max-width: 420px) {
+    .rfilters { grid-template-columns: 1fr; }
+    .rjob__actions { flex-direction: column; }
+  }
+</style>
+
+<script>
+  const root = document.querySelector('[data-role-filters]') as HTMLFormElement | null;
+  const list = document.querySelector('[data-role-list]') as HTMLElement | null;
+  if (root && list) {
+    const selects = Array.from(root.querySelectorAll<HTMLSelectElement>('select[data-filter]'));
+    const jobs = Array.from(list.querySelectorAll<HTMLElement>('.rjob'));
+    const empty = document.querySelector('[data-role-empty]') as HTMLElement | null;
+    const count = document.querySelector('[data-roles-count]') as HTMLElement | null;
+    const word = document.querySelector('[data-roles-word]') as HTMLElement | null;
+    const clear = document.querySelector('[data-role-clear]') as HTMLButtonElement | null;
+
+    const apply = () => {
+      const f = Object.fromEntries(selects.map((s) => [s.dataset.filter, s.value]));
+      let visible = 0;
+      jobs.forEach((job) => {
+        const ok =
+          (!f.area || job.dataset.area === f.area) &&
+          (!f.type || job.dataset.type === f.type) &&
+          (!f.location || job.dataset.location === f.location);
+        job.hidden = !ok;
+        if (ok) visible++;
+      });
+      if (empty) empty.hidden = visible !== 0;
+      if (count) count.textContent = String(visible);
+      if (word) word.textContent = visible === 1 ? 'vaga aberta' : 'vagas abertas';
+    };
+
+    selects.forEach((s) => s.addEventListener('change', apply));
+    clear?.addEventListener('click', () => {
+      selects.forEach((s) => (s.value = ''));
+      apply();
+    });
+  }
+</script>

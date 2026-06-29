@@ -1,0 +1,151 @@
+---
+// Catalog-only property card — image-dominant with content overlaid on a
+// dark gradient (distinct from the shared PropertyCard, which uses a cream
+// body). Used solely by /imoveis. Favorites share the global `cv:favorites`
+// store so a heart toggled here also reflects on the homepage / detail card.
+import Icon from './Icon.astro';
+import { type Property, formatPrice, statusLabel } from '../data/properties';
+
+interface Props {
+  property: Property;
+  index?: number;
+}
+const { property: p, index = 0 } = Astro.props;
+const href = `/imoveis/${p.slug}`;
+const location = `${p.neighborhoodName}, ${p.region ?? 'Porto'}`;
+const beds = `${p.beds} ${p.beds === 1 ? 'Quarto' : 'Quartos'}`;
+const baths = `${p.baths} ${p.baths === 1 ? 'Casa de banho' : 'Casas de banho'}`;
+---
+<article class="ccard" data-reveal style={`--reveal-delay:${index * 80}ms`}>
+  <a class="ccard__media" href={href} aria-label={`${p.title} — ${p.neighborhoodName}`}>
+    <img src={p.image} alt={`${p.title} — ${p.neighborhoodName}`} loading="lazy" decoding="async" width="1200" height="900" />
+    <span class="ccard__scrim" aria-hidden="true"></span>
+
+    <span class:list={['ccard__status', `is-${p.status}`]}>{statusLabel[p.status]}</span>
+
+    <div class="ccard__content">
+      <p class="ccard__price">{formatPrice(p.price)}</p>
+      <h3 class="ccard__title">{p.title}</h3>
+      <p class="ccard__loc"><Icon name="pin" size={14} stroke={1.6} /> {location}</p>
+      <span class="ccard__rule" aria-hidden="true"></span>
+      <ul class="ccard__meta">
+        <li><Icon name="bed" size={15} stroke={1.5} /> {beds}</li>
+        <li><Icon name="bath" size={15} stroke={1.5} /> {baths}</li>
+        <li><Icon name="ruler" size={15} stroke={1.5} /> {p.area} m²</li>
+      </ul>
+    </div>
+  </a>
+
+  <div class="ccard__tr" aria-hidden="false">
+    {p.badge && p.status === 'disponivel' && <span class="ccard__tag">{p.badge}</span>}
+    <button
+      class="ccard__fav"
+      type="button"
+      aria-pressed="false"
+      aria-label={`Guardar ${p.title} nos favoritos`}
+      data-fav-toggle
+      data-slug={p.slug}
+    >
+      <Icon name="heart" size={17} stroke={1.7} />
+    </button>
+  </div>
+</article>
+
+<style>
+  .ccard {
+    position: relative; border-radius: var(--radius-lg); overflow: hidden;
+    background: var(--navy-soft); box-shadow: var(--shadow-card);
+    transition: transform var(--t-med) var(--t-ease-emph), box-shadow var(--t-med);
+  }
+  .ccard:hover { transform: translateY(-4px); box-shadow: var(--shadow-float); }
+
+  .ccard__media { display: block; position: relative; aspect-ratio: 4 / 3; overflow: hidden; text-decoration: none; }
+  .ccard__media img { width: 100%; height: 100%; object-fit: cover; display: block; transition: transform var(--t-slow) var(--t-ease-emph); }
+  .ccard:hover .ccard__media img { transform: scale(1.03); }
+
+  .ccard__scrim {
+    position: absolute; inset: 0; pointer-events: none;
+    background: linear-gradient(
+      to top,
+      rgba(8, 17, 30, 0.92) 0%, rgba(8, 17, 30, 0.66) 26%,
+      rgba(8, 17, 30, 0.18) 50%, transparent 70%
+    );
+  }
+
+  /* Status — top-left, inside the link */
+  .ccard__status {
+    position: absolute; top: 16px; left: 16px; z-index: 2;
+    font-size: 10px; letter-spacing: 0.16em; text-transform: uppercase; font-weight: 500;
+    padding: 7px 13px; border-radius: 3px; color: var(--cream);
+    background: rgba(11, 26, 46, 0.72); -webkit-backdrop-filter: blur(6px); backdrop-filter: blur(6px);
+  }
+  .ccard__status.is-reservado { background: rgba(154, 126, 80, 0.92); color: var(--navy-ink); }
+  .ccard__status.is-vendido { background: rgba(11, 26, 46, 0.85); color: var(--white-70); }
+
+  /* Top-right cluster — gold tag + favorite. Cluster ignores pointer events so the
+     card stays fully clickable; only the heart re-enables them. */
+  .ccard__tr {
+    position: absolute; top: 14px; right: 14px; z-index: 3;
+    display: flex; align-items: center; gap: 10px; pointer-events: none;
+  }
+  .ccard__tag {
+    font-size: 10px; letter-spacing: 0.16em; text-transform: uppercase; font-weight: 500;
+    padding: 7px 12px; border-radius: 3px; color: var(--navy-ink); background: var(--gold-light);
+  }
+  .ccard__fav {
+    pointer-events: auto; width: 40px; height: 40px; display: grid; place-items: center; border-radius: 50%;
+    color: var(--cream); background: rgba(244, 237, 222, 0.16); border: 1px solid rgba(244, 237, 222, 0.32);
+    -webkit-backdrop-filter: blur(8px); backdrop-filter: blur(8px);
+    transition: background var(--t-fast), color var(--t-fast), transform var(--t-fast), border-color var(--t-fast);
+  }
+  .ccard__fav:hover { background: rgba(244, 237, 222, 0.3); transform: scale(1.08); border-color: var(--gold-light); }
+  .ccard__fav[aria-pressed="true"] { background: var(--gold); color: var(--navy-ink); border-color: var(--gold); }
+  .ccard__fav[aria-pressed="true"] :global(.icon) { fill: var(--navy-ink); }
+
+  /* Overlaid content */
+  .ccard__content { position: absolute; left: 0; right: 0; bottom: 0; z-index: 2; padding: clamp(20px, 2vw, 26px); color: var(--cream); }
+  .ccard__price { font-family: var(--font-serif); font-weight: 500; font-size: clamp(25px, 2.1vw, 31px); color: #fff; margin: 0; line-height: 1; letter-spacing: -0.01em; }
+  .ccard__title { font-family: var(--font-serif); font-weight: 500; font-size: clamp(18px, 1.5vw, 21px); color: var(--cream); margin: 11px 0 0; line-height: 1.2; letter-spacing: -0.01em; }
+  .ccard__loc { display: inline-flex; align-items: center; gap: 6px; margin: 9px 0 0; font-size: 12.5px; color: var(--white-70); letter-spacing: 0.02em; }
+  .ccard__loc :global(.icon) { color: var(--gold-light); flex-shrink: 0; }
+  .ccard__rule { display: block; height: 1px; background: var(--hairline-light); margin: 14px 0; }
+  .ccard__meta { list-style: none; display: flex; flex-wrap: wrap; gap: 7px 16px; margin: 0; padding: 0; }
+  .ccard__meta li { display: inline-flex; align-items: center; gap: 6px; font-size: 12px; color: var(--white-90); }
+  .ccard__meta :global(.icon) { color: var(--gold-light); flex-shrink: 0; }
+</style>
+
+<script>
+  // Favorites — persisted in localStorage under the shared `cv:favorites` key,
+  // mirroring PropertyCard so a heart toggled on the catalog also lights up on
+  // the homepage / detail cards (which read the same store).
+  const KEY = 'cv:favorites';
+  const read = (): string[] => {
+    try { return JSON.parse(localStorage.getItem(KEY) || '[]'); } catch { return []; }
+  };
+  const write = (list: string[]) => {
+    localStorage.setItem(KEY, JSON.stringify(list));
+    document.dispatchEvent(new CustomEvent('favorites:change', { detail: list }));
+  };
+  const sync = () => {
+    const favs = read();
+    document.querySelectorAll('[data-fav-toggle]').forEach((btn) => {
+      const slug = (btn as HTMLElement).dataset.slug || '';
+      btn.setAttribute('aria-pressed', String(favs.includes(slug)));
+    });
+  };
+
+  document.addEventListener('click', (e) => {
+    const btn = (e.target as HTMLElement).closest('[data-fav-toggle]') as HTMLElement | null;
+    if (!btn) return;
+    e.preventDefault();
+    const slug = btn.dataset.slug || '';
+    const favs = read();
+    const i = favs.indexOf(slug);
+    if (i >= 0) favs.splice(i, 1); else favs.push(slug);
+    write(favs);
+    sync();
+  });
+
+  document.addEventListener('favorites:change', sync);
+  sync();
+</script>

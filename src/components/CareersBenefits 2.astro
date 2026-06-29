@@ -1,0 +1,78 @@
+---
+import SectionEyebrow from './SectionEyebrow.astro';
+import Button from './Button.astro';
+import Icon from './Icon.astro';
+import { careersBenefits as b } from '../data/carreiras';
+---
+<section class="section section--cream-soft cben">
+  <div class="container">
+    <header class="shead shead--center">
+      <SectionEyebrow text={b.eyebrow} center />
+      <h2 class="h2 cben__title" data-reveal style="--reveal-delay:80ms">
+        {b.titleLead} <em class="em-gold serif-it">{b.titleEmphasis}</em>.
+      </h2>
+      <p class="lede cben__lede" data-reveal style="--reveal-delay:150ms">{b.text}</p>
+    </header>
+
+    <ul class="cben__grid">
+      {b.items.map((item, i) => (
+        <li class="cbcard" data-reveal style={`--reveal-delay:${i * 70}ms`}>
+          <span class="cbcard__ic"><Icon name={item.icon} size={22} stroke={1.4} /></span>
+          <h3 class="cbcard__title">{item.title}</h3>
+          <p class="cbcard__text">{item.text}</p>
+          <span class="cbcard__arrow" aria-hidden="true"><Icon name="arrow" size={15} stroke={1.6} /></span>
+        </li>
+      ))}
+    </ul>
+
+    <div class="cben__strip" data-reveal>
+      <p class="cben__strip-text">{b.strip.text}</p>
+      <Button href={b.strip.cta.href} variant="gold" arrow>{b.strip.cta.label}</Button>
+    </div>
+  </div>
+</section>
+
+<style>
+  .shead { margin-bottom: clamp(40px, 4vw, 64px); }
+  .shead--center { text-align: center; }
+  .cben__title { margin-top: 16px; max-width: 22ch; margin-inline: auto; }
+  .cben__lede { margin: 16px auto 0; }
+
+  .cben__grid {
+    list-style: none; margin: 0; padding: 0;
+    display: grid; grid-template-columns: repeat(4, 1fr); gap: clamp(14px, 1.6vw, 22px);
+  }
+  .cbcard {
+    position: relative; background: var(--cream); border: 1px solid var(--hairline-gold);
+    border-radius: var(--radius-lg); padding: clamp(22px, 2vw, 28px);
+    transition: transform var(--t-med), border-color var(--t-med), box-shadow var(--t-med);
+  }
+  .cbcard:hover {
+    transform: translateY(-4px); border-color: var(--hairline-gold-strong);
+    box-shadow: 0 24px 50px -34px rgba(184, 153, 104, 0.55);
+  }
+  .cbcard__ic {
+    width: 48px; height: 48px; display: grid; place-items: center; border-radius: 50%;
+    color: var(--gold-deep); border: 1px solid var(--hairline-gold-strong);
+    transition: background var(--t-med), color var(--t-med), transform var(--t-med);
+  }
+  .cbcard:hover .cbcard__ic { background: var(--gold); color: var(--navy-ink); transform: translateY(-2px); }
+  .cbcard__title { font-family: var(--font-serif); font-weight: 500; font-size: 19px; margin: 16px 0 0; color: var(--gold-deep); }
+  .cbcard__text { margin: 8px 0 0; font-size: 13.5px; line-height: 1.55; color: var(--ink-60); }
+  .cbcard__arrow {
+    position: absolute; right: 18px; bottom: 16px; color: var(--gold-deep);
+    opacity: 0; transform: translateX(-4px); transition: opacity var(--t-fast), transform var(--t-fast);
+  }
+  .cbcard:hover .cbcard__arrow { opacity: 1; transform: translateX(0); }
+
+  .cben__strip {
+    margin-top: clamp(44px, 5vw, 72px); display: flex; align-items: center; justify-content: space-between;
+    gap: 24px; flex-wrap: wrap; padding: clamp(28px, 3vw, 40px) clamp(28px, 3vw, 48px);
+    border: 1px solid var(--hairline-gold-strong); border-radius: var(--radius-lg);
+    background: linear-gradient(120deg, rgba(184,153,104,0.1), rgba(244,237,222,0.2));
+  }
+  .cben__strip-text { margin: 0; font-family: var(--font-serif); font-size: clamp(22px, 2.6vw, 30px); letter-spacing: -0.01em; }
+
+  @media (max-width: 1040px) { .cben__grid { grid-template-columns: repeat(2, 1fr); } }
+  @media (max-width: 480px) { .cben__grid { grid-template-columns: 1fr; } }
+</style>

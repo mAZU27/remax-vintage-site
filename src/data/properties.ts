@@ -72,7 +72,7 @@ export const properties: Property[] = [
     area: 240,
     energy: 'C',
     year: 2021,
-    image: '/images/imoveis/imovel-fachada-varanda.webp',
+    image: '/images/imoveis/ribeira-edificio-principal.png',
     blurb: 'Pedra granítica, vista rio e uma recuperação que respeita o original.',
     description: [
       'Um edifício de autor na malha histórica da Ribeira, recuperado com rigor patrimonial e uma sensibilidade rara ao detalhe.',
@@ -96,7 +96,7 @@ export const properties: Property[] = [
     area: 210,
     energy: 'A',
     year: 2022,
-    image: '/images/imoveis/imovel-sala-vista-rio.webp',
+    image: '/images/imoveis/boavista-penthouse-principal.png',
     blurb: 'Último piso, terraço envolvente e a cidade aos seus pés.',
     description: [
       'Cobertura de gaveto na Boavista, com terraço envolvente e exposição solar dupla — a opção certa para quem procura centralidade sem abdicar de privacidade.',
@@ -191,7 +191,7 @@ export const properties: Property[] = [
     area: 620,
     energy: 'C',
     year: 2016,
-    image: '/images/imoveis/quinta-douro-vinhas.jpg',
+    image: '/images/imoveis/douro-quinta-principal.png',
     gallery: [
       '/images/imoveis/quinta-douro-sala.jpg',
       '/images/imoveis/quinta-douro-suite.jpg',

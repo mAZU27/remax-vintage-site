@@ -1,0 +1,168 @@
+---
+// Seller lead capture. Front-end only for now (no backend) — see CLAUDE.md P5.
+// Validates client-side and shows an inline success state.
+import { neighborhoods } from '../data/site';
+import Button from './Button.astro';
+import Icon from './Icon.astro';
+const tipologias = ['T0', 'T1', 'T2', 'T3', 'T4', 'T5+', 'Moradia', 'Outro'];
+---
+<form class="vform" data-valuation novalidate aria-label="Pedir avaliação confidencial">
+  <div class="vform__body">
+    <div class="vform__grid">
+      <p class="field field--full">
+        <label for="v-nome">Nome</label>
+        <input id="v-nome" name="nome" type="text" autocomplete="name" required />
+        <span class="field__err" data-err hidden>Indique o seu nome.</span>
+      </p>
+      <p class="field">
+        <label for="v-email">Email</label>
+        <input id="v-email" name="email" type="email" autocomplete="email" required />
+        <span class="field__err" data-err hidden>Indique um email válido.</span>
+      </p>
+      <p class="field">
+        <label for="v-tel">Telefone <span class="field__opt">(opcional)</span></label>
+        <input id="v-tel" name="telefone" type="tel" autocomplete="tel" inputmode="tel" />
+      </p>
+      <p class="field">
+        <label for="v-zona">Localização do imóvel</label>
+        <select id="v-zona" name="zona" required>
+          <option value="" selected disabled>Selecione a zona</option>
+          {neighborhoods.map((n) => <option value={n.slug}>{n.name}</option>)}
+          <option value="outra">Outra zona do Porto</option>
+        </select>
+        <span class="field__err" data-err hidden>Selecione a zona.</span>
+      </p>
+      <p class="field">
+        <label for="v-tipo">Tipologia <span class="field__opt">(opcional)</span></label>
+        <select id="v-tipo" name="tipologia">
+          <option value="" selected disabled>Selecione</option>
+          {tipologias.map((t) => <option value={t}>{t}</option>)}
+        </select>
+      </p>
+      <p class="field field--full">
+        <label for="v-msg">Mensagem <span class="field__opt">(opcional)</span></label>
+        <textarea id="v-msg" name="mensagem" rows="3" placeholder="Conte-nos um pouco sobre o imóvel."></textarea>
+      </p>
+    </div>
+
+    <label class="vform__consent">
+      <input type="checkbox" name="consent" required />
+      <span>Autorizo o contacto da Collection Vintage sobre este pedido. Os meus dados são tratados de forma confidencial.</span>
+    </label>
+
+    <Button type="submit" variant="gold" arrow class="vform__submit">Pedir avaliação</Button>
+    <p class="vform__note">
+      <Icon name="shield-check" size={15} stroke={1.6} /> Confidencial · Resposta em 24h · Sem compromisso
+    </p>
+  </div>
+
+  <div class="vform__success" data-success hidden role="status" aria-live="polite">
+    <span class="vform__success-icon"><Icon name="check" size={26} stroke={2} /></span>
+    <h3 class="h3">Pedido recebido.</h3>
+    <p>Obrigado. A nossa equipa entra em contacto consigo dentro de 24 horas, com toda a confidencialidade.</p>
+  </div>
+</form>
+
+<style>
+  .vform {
+    background: var(--cream-soft); border: 1px solid var(--hairline-gold); border-radius: var(--radius-lg);
+    padding: clamp(24px, 3vw, 40px); box-shadow: var(--shadow-card); color: var(--ink);
+  }
+  .vform__grid { display: grid; grid-template-columns: 1fr 1fr; gap: 16px 18px; }
+  .field { display: flex; flex-direction: column; gap: 7px; margin: 0; }
+  .field--full { grid-column: 1 / -1; }
+  .field label { font-size: 12.5px; letter-spacing: 0.04em; font-weight: 500; color: var(--ink-60); }
+  .field__opt { color: var(--ink-40); font-weight: 400; text-transform: none; letter-spacing: 0; }
+  .vform input, .vform select, .vform textarea {
+    width: 100%; padding: 13px 14px; font-size: 15px; color: var(--ink);
+    background: var(--cream); border: 1px solid var(--ink-20); border-radius: var(--radius-sm);
+    transition: border-color var(--t-fast), box-shadow var(--t-fast);
+  }
+  .vform textarea { resize: vertical; min-height: 78px; }
+  .vform input:focus, .vform select:focus, .vform textarea:focus {
+    outline: none; border-color: var(--gold); box-shadow: var(--ring);
+  }
+  .vform [aria-invalid="true"] { border-color: var(--error); }
+  .field__err { font-size: 12px; color: var(--error); }
+
+  .vform__consent {
+    display: flex; gap: 11px; align-items: flex-start; margin-top: 18px;
+    font-size: 13px; line-height: 1.5; color: var(--ink-60);
+  }
+  .vform__consent input { width: 18px; height: 18px; margin-top: 1px; flex-shrink: 0; accent-color: var(--gold-deep); }
+  :global(.vform__submit) { margin-top: 22px; width: 100%; }
+  .vform__note {
+    display: flex; align-items: center; justify-content: center; gap: 8px;
+    margin: 16px 0 0; font-size: 12.5px; color: var(--ink-40); letter-spacing: 0.02em;
+  }
+  .vform__note :global(.icon) { color: var(--gold-deep); }
+
+  /* Success state */
+  .vform__success { text-align: center; padding: clamp(20px, 3vw, 40px) 0; }
+  .vform__success-icon {
+    display: inline-grid; place-items: center; width: 58px; height: 58px; border-radius: 50%;
+    background: var(--gold); color: var(--navy-ink); margin-bottom: 18px;
+  }
+  .vform__success p { margin: 10px auto 0; color: var(--ink-60); max-width: 42ch; }
+
+  @media (max-width: 540px) { .vform__grid { grid-template-columns: 1fr; } }
+</style>
+
+<script>
+  document.querySelectorAll<HTMLFormElement>('form[data-valuation]').forEach((form) => {
+    if (form.dataset.bound) return;
+    form.dataset.bound = 'true';
+
+    const body = form.querySelector<HTMLElement>('.vform__body');
+    const success = form.querySelector<HTMLElement>('[data-success]');
+    const emailRe = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+
+    const showErr = (field: HTMLElement, on: boolean) => {
+      const control = field.querySelector('input, select, textarea');
+      const err = field.querySelector<HTMLElement>('[data-err]');
+      control?.setAttribute('aria-invalid', String(on));
+      if (err) err.hidden = !on;
+    };
+
+    form.addEventListener('submit', (e) => {
+      e.preventDefault();
+      let firstInvalid: HTMLElement | null = null;
+
+      form.querySelectorAll<HTMLElement>('.field').forEach((field) => {
+        const control = field.querySelector<HTMLInputElement | HTMLSelectElement>('input, select, textarea');
+        if (!control || !control.required) return;
+        const value = control.value.trim();
+        let invalid = !value;
+        if (control.type === 'email' && value) invalid = !emailRe.test(value);
+        showErr(field, invalid);
+        if (invalid && !firstInvalid) firstInvalid = control;
+      });
+
+      const consent = form.querySelector<HTMLInputElement>('input[name="consent"]');
+      const consentLabel = form.querySelector<HTMLElement>('.vform__consent');
+      if (consent && !consent.checked) {
+        consentLabel?.style.setProperty('color', 'var(--error)');
+        if (!firstInvalid) firstInvalid = consent;
+      } else {
+        consentLabel?.style.removeProperty('color');
+      }
+
+      if (firstInvalid) {
+        firstInvalid.focus();
+        return;
+      }
+
+      // Valid — front-end only: reveal the success state.
+      if (body) body.hidden = true;
+      if (success) success.hidden = false;
+      success?.scrollIntoView({ behavior: 'smooth', block: 'center' });
+    });
+
+    // Clear a field's error as soon as the user fixes it.
+    form.querySelectorAll<HTMLElement>('.field').forEach((field) => {
+      const control = field.querySelector('input, select, textarea');
+      control?.addEventListener('input', () => showErr(field, false));
+      control?.addEventListener('change', () => showErr(field, false));
+    });
+  });
+</script>

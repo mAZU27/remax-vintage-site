@@ -1,0 +1,32 @@
+---
+import Icon from './Icon.astro';
+interface Props {
+  href?: string;
+  variant?: 'gold' | 'ghost' | 'ghost-dark' | 'link';
+  arrow?: boolean;
+  type?: 'button' | 'submit';
+  class?: string;
+  ariaLabel?: string;
+  reveal?: boolean;
+}
+const {
+  href,
+  variant = 'gold',
+  arrow = false,
+  type = 'button',
+  class: cls = '',
+  ariaLabel,
+  reveal = false,
+} = Astro.props;
+const cl = variant === 'link' ? 'btn-link' : `btn btn--${variant}`;
+const Tag = href ? 'a' : 'button';
+---
+<Tag
+  class={`${cl} ${cls}`.trim()}
+  {...href ? { href } : { type }}
+  {...ariaLabel ? { 'aria-label': ariaLabel } : {}}
+  {...reveal ? { 'data-reveal': '' } : {}}
+>
+  <span><slot /></span>
+  {arrow && <Icon name="arrow" size={14} stroke={1.8} />}
+</Tag>

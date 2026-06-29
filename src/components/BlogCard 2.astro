@@ -1,0 +1,64 @@
+---
+import Icon from './Icon.astro';
+import { type Article, formatDate } from '../data/insights';
+interface Props {
+  article: Article;
+  feature?: boolean;
+}
+const { article: a, feature = false } = Astro.props;
+const href = `/insights/${a.slug}`;
+---
+<article class:list={['bcard', { 'bcard--feature': feature }]} data-reveal>
+  <a class="bcard__media" href={href} tabindex="-1" aria-hidden="true">
+    <img src={a.image} alt={a.title} loading="lazy" decoding="async" width="1600" height="1067" />
+    <span class="bcard__cat">{a.category}</span>
+  </a>
+  <div class="bcard__body">
+    <div class="bcard__meta">
+      <time datetime={a.date}>{formatDate(a.date)}</time>
+      <span class="bcard__dot">·</span>
+      <span>{a.readingTime} min de leitura</span>
+    </div>
+    <h3 class="bcard__title"><a href={href}>{a.title}</a></h3>
+    <p class="bcard__excerpt">{a.excerpt}</p>
+    <span class="bcard__more">Ler artigo <Icon name="arrow" size={14} stroke={1.8} /></span>
+  </div>
+</article>
+
+<style>
+  .bcard {
+    position: relative; display: flex; flex-direction: column; height: 100%;
+    background: var(--cream-soft); border: 1px solid var(--ink-10); border-radius: var(--radius); overflow: hidden;
+    transition: transform var(--t-med), box-shadow var(--t-med), border-color var(--t-med);
+  }
+  .bcard:hover { transform: translateY(-6px); box-shadow: var(--shadow-card); border-color: var(--hairline-gold); }
+  .bcard__media { position: relative; display: block; aspect-ratio: 16 / 10; overflow: hidden; background: var(--navy-soft); }
+  .bcard__media img { width: 100%; height: 100%; object-fit: cover; transition: transform var(--t-slow); }
+  .bcard:hover .bcard__media img { transform: scale(1.05); }
+  .bcard__cat {
+    position: absolute; top: 14px; left: 14px; font-size: 10.5px; letter-spacing: 0.16em; text-transform: uppercase;
+    font-weight: 500; padding: 6px 12px; border-radius: 2px; color: var(--navy-ink); background: var(--gold-light);
+  }
+  .bcard__body { padding: 24px 24px 26px; display: flex; flex-direction: column; flex: 1; }
+  .bcard__meta { display: flex; align-items: center; gap: 9px; font-size: 12px; letter-spacing: 0.04em; color: var(--ink-40); }
+  .bcard__title { font-family: var(--font-serif); font-weight: 500; font-size: 23px; line-height: 1.18; margin: 12px 0 0; letter-spacing: -0.012em; }
+  .bcard__title a { color: var(--ink); text-decoration: none; transition: color var(--t-fast); }
+  .bcard__title a::after { content: ""; position: absolute; inset: 0; }
+  .bcard:hover .bcard__title a { color: var(--gold-deep); }
+  .bcard__excerpt { color: var(--ink-60); font-size: 14.5px; line-height: 1.6; margin: 12px 0 0; }
+  .bcard__more {
+    display: inline-flex; align-items: center; gap: 9px; margin-top: 20px; padding-top: 0;
+    font-size: 12px; letter-spacing: 0.12em; text-transform: uppercase; color: var(--gold-deep); font-weight: 500;
+  }
+  .bcard__more :global(.arrow) { transition: transform var(--t-fast); }
+  .bcard:hover .bcard__more :global(.arrow) { transform: translateX(4px); }
+
+  /* Feature variant — large, horizontal on desktop */
+  @media (min-width: 860px) {
+    .bcard--feature { flex-direction: row; grid-column: 1 / -1; }
+    .bcard--feature .bcard__media { flex: 1.2; aspect-ratio: auto; }
+    .bcard--feature .bcard__body { flex: 1; justify-content: center; padding: clamp(28px, 4vw, 56px); }
+    .bcard--feature .bcard__title { font-size: clamp(28px, 3vw, 40px); }
+    .bcard--feature .bcard__excerpt { font-size: 16px; max-width: 48ch; }
+  }
+</style>

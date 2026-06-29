@@ -1,0 +1,167 @@
+---
+import Button from './Button.astro';
+import Icon from './Icon.astro';
+import { primaryCta } from '../data/site';
+
+// Homepage hero — static "RE/MAX Collection Vintage" plaque interior plate.
+// The image is the LCP: a responsive <img> (cover) preloaded in Base via the
+// `heroPreload` prop. The former hero video now lives on the /sobre-nos hero.
+---
+<section class="hero" data-hero>
+  <div class="hero__media">
+    <img
+      class="hero__bg"
+      src="/media/hero-collection-1280.jpg"
+      srcset="/media/hero-collection-768.jpg 768w, /media/hero-collection-1280.jpg 1280w, /media/hero-collection-1672.jpg 1672w"
+      sizes="100vw"
+      alt=""
+      width="1672"
+      height="941"
+      fetchpriority="high"
+      decoding="async"
+    />
+    <div class="hero__scrim"></div>
+    <div class="hero__grain" aria-hidden="true"></div>
+  </div>
+
+  <div class="hero__inner container">
+    <div class="hero__copy">
+      <span class="eyebrow eyebrow--bare hero__eyebrow" data-reveal>RE/MAX Collection · Porto</span>
+      <h1 class="display hero__title" data-reveal style="--reveal-delay: 90ms">
+        A coleção mais<br />rara do <em class="em-gold serif-it">Porto</em>.
+      </h1>
+      <span class="gold-rule hero__rule" data-reveal="rule" style="--reveal-delay: 180ms"></span>
+      <p class="lede lede--light hero__lede" data-reveal style="--reveal-delay: 220ms">
+        A seleção mais exclusiva de imóveis no Porto. Para quem valoriza o que é
+        verdadeiramente raro.
+      </p>
+      <div class="hero__ctas" data-reveal style="--reveal-delay: 340ms">
+        <Button href="/imoveis" variant="gold" arrow>Ver a coleção</Button>
+        <Button href={primaryCta.href} variant="ghost">{primaryCta.label}</Button>
+      </div>
+    </div>
+
+    <aside class="hero__card" data-reveal style="--reveal-delay: 440ms" aria-label="Avaliação confidencial">
+      <span class="hero__card-eyebrow">Para quem vende</span>
+      <h2 class="h3 hero__card-title">Quanto vale, hoje, o seu imóvel?</h2>
+      <p class="hero__card-text">
+        Uma avaliação confidencial e fundamentada — pelo valor real do mercado do Porto.
+      </p>
+      <button type="button" class="btn btn--gold hero__card-btn" data-open-simulator>
+        <span>Simular o valor</span><Icon name="arrow" size={14} stroke={1.8} />
+      </button>
+      <ul class="hero__card-meta">
+        <li><Icon name="clock" size={15} stroke={1.6} /> Resposta em 24h</li>
+        <li><Icon name="shield-check" size={15} stroke={1.6} /> Sem compromisso</li>
+      </ul>
+    </aside>
+  </div>
+
+  <a class="hero__cue" href="#sobre" aria-label="Continuar para baixo">
+    <span>Descobrir</span>
+    <Icon name="chevron" size={18} stroke={1.6} />
+  </a>
+</section>
+
+<style>
+  .hero {
+    position: relative; isolation: isolate;
+    min-height: 100svh;
+    display: flex; align-items: flex-start;
+    padding: calc(var(--nav-h) + clamp(32px, 6vh, 72px)) var(--gutter) clamp(56px, 8vh, 110px);
+    color: var(--cream); overflow: hidden;
+  }
+  .hero__media { position: absolute; inset: 0; z-index: -2; background: #2a2520; }
+  .hero__bg {
+    width: 100%; height: 100%; object-fit: cover;
+    /* Keep the plaque + far hallway visible on screens narrower than 16:9,
+       while the plain left wall stays clean behind the copy. */
+    object-position: 65% center;
+  }
+  /* Slow scale-in on load — premium, never busy. */
+  @media (prefers-reduced-motion: no-preference) {
+    .hero__bg { animation: heroZoom 2400ms var(--t-ease-emph) both; }
+  }
+  @keyframes heroZoom {
+    from { transform: scale(1.08); }
+    to { transform: scale(1); }
+  }
+
+  /* Warm, premium overlay — darker on the left for legibility, fading toward
+     the plaque/hallway. Keeps the warm brown/gold tone of the plate (no navy). */
+  .hero__scrim {
+    position: absolute; inset: 0;
+    background:
+      linear-gradient(100deg, rgba(18, 13, 7, 0.9) 0%, rgba(18, 13, 7, 0.62) 26%, rgba(18, 13, 7, 0.22) 50%, rgba(18, 13, 7, 0) 70%),
+      linear-gradient(to top, rgba(11, 8, 4, 0.72) 0%, rgba(11, 8, 4, 0.1) 44%, rgba(11, 8, 4, 0.26) 100%);
+  }
+  .hero__grain {
+    position: absolute; inset: 0; opacity: 0.5; mix-blend-mode: overlay; pointer-events: none;
+    background-image: radial-gradient(circle at 1px 1px, rgba(255, 255, 255, 0.12) 1px, transparent 0);
+    background-size: 3px 3px;
+  }
+
+  .hero__inner { display: block; }
+  .hero__copy { max-width: 720px; }
+  .hero__eyebrow { color: var(--gold-light); }
+  .hero__title { margin-top: 22px; font-size: calc(var(--fs-display) * 0.82); text-shadow: 0 2px 34px rgba(0, 0, 0, 0.5); }
+  .hero__rule { margin-top: 30px; width: 72px; }
+  .hero__lede { margin-top: 26px; max-width: 46ch; }
+  .hero__ctas { margin-top: 38px; display: flex; flex-wrap: wrap; gap: 16px; }
+
+  /* Valuation card — near-solid navy, soft luxury shadow */
+  .hero__card {
+    background: rgba(11, 26, 46, 0.92);
+    -webkit-backdrop-filter: blur(10px) saturate(135%); backdrop-filter: blur(10px) saturate(135%);
+    border: 1px solid var(--hairline-gold); border-radius: var(--radius-lg);
+    padding: clamp(24px, 2.4vw, 34px); max-width: 400px; width: 100%;
+    margin-top: clamp(30px, 4.5vh, 52px);
+    box-shadow: 0 40px 80px -42px rgba(0, 0, 0, 0.85);
+  }
+  /* Card fades up directly beneath the copy (same left column). */
+  .hero__card[data-reveal] { transform: translateY(28px); }
+  .hero__card[data-reveal].is-in { transform: translateY(0); }
+  .hero__card-eyebrow {
+    font-size: 11px; letter-spacing: 0.28em; text-transform: uppercase; color: var(--gold-light); font-weight: 500;
+  }
+  .hero__card-title { margin-top: 14px; color: var(--cream); }
+  .hero__card-text { margin-top: 12px; color: var(--white-70); font-size: 15px; line-height: 1.6; }
+  :global(.hero__card-btn) { margin-top: 22px; width: 100%; }
+  .hero__card-meta {
+    list-style: none; margin: 20px 0 0; padding: 18px 0 0; display: flex; flex-wrap: wrap; gap: 8px 20px;
+    border-top: 1px solid var(--hairline-light);
+  }
+  .hero__card-meta li {
+    display: inline-flex; align-items: center; gap: 7px; font-size: 12.5px; color: var(--white-70);
+    letter-spacing: 0.02em;
+  }
+  .hero__card-meta :global(.icon) { color: var(--gold-light); }
+
+  /* Scroll cue */
+  .hero__cue {
+    position: absolute; left: 50%; bottom: 22px; transform: translateX(-50%);
+    display: inline-flex; flex-direction: column; align-items: center; gap: 6px;
+    color: var(--white-70); text-decoration: none; font-size: 11px; letter-spacing: 0.22em;
+    text-transform: uppercase; transition: color var(--t-fast);
+  }
+  .hero__cue:hover { color: var(--gold-light); }
+  .hero__cue :global(.icon) { animation: cueBob 2.4s ease-in-out infinite; }
+  @keyframes cueBob { 0%, 100% { transform: translateY(0); } 50% { transform: translateY(5px); } }
+
+  @media (max-width: 940px) {
+    .hero__card { max-width: 420px; }
+    .hero__cue { display: none; }
+    .hero__bg { object-position: 52% center; }
+  }
+  @media (max-width: 560px) {
+    .hero__bg { object-position: 42% center; }
+    .hero__copy { min-width: 0; }
+    /* Stack CTAs full-width so neither button is clipped or hard to tap. */
+    .hero__ctas { flex-direction: column; align-items: stretch; }
+    .hero__ctas :global(.btn) { width: 100%; }
+    .hero__card { max-width: none; }
+  }
+  @media (prefers-reduced-motion: reduce) {
+    .hero__cue :global(.icon) { animation: none; }
+  }
+</style>

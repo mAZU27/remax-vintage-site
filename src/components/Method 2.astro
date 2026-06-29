@@ -1,0 +1,46 @@
+---
+// Método — the 5-step working process (methodSteps in site.ts).
+import { methodSteps } from '../data/site';
+import Icon from './Icon.astro';
+---
+<ol class="method">
+  {methodSteps.map((s, i) => (
+    <li class="method__step" data-reveal style={`--reveal-delay:${i * 80}ms`}>
+      <span class="method__num">{s.num}</span>
+      <span class="method__icon"><Icon name={s.icon} size={24} stroke={1.4} /></span>
+      <h3 class="method__name">{s.name}</h3>
+      <p class="method__text">{s.text}</p>
+    </li>
+  ))}
+</ol>
+
+<style>
+  .method {
+    list-style: none; margin: 0; padding: 0;
+    display: grid; grid-template-columns: repeat(5, 1fr); gap: clamp(20px, 2.4vw, 36px);
+    counter-reset: step;
+  }
+  .method__step {
+    position: relative; display: flex; flex-direction: column; align-items: flex-start;
+    padding-top: 28px; border-top: 1px solid var(--ink-10);
+  }
+  .method__num {
+    font-family: var(--font-serif); font-size: 15px; letter-spacing: 0.1em;
+    color: var(--gold-deep); font-weight: 500;
+  }
+  .method__icon {
+    margin-top: 18px; width: 52px; height: 52px; display: grid; place-items: center;
+    border-radius: 50%; color: var(--gold-deep);
+    border: 1px solid var(--hairline-gold-strong);
+    transition: background var(--t-med), color var(--t-med), transform var(--t-med);
+  }
+  .method__step:hover .method__icon { background: var(--gold); color: var(--navy-ink); transform: translateY(-3px); }
+  .method__name {
+    font-family: var(--font-serif); font-weight: 500; font-size: 21px; line-height: 1.2;
+    margin: 18px 0 0; letter-spacing: -0.01em;
+  }
+  .method__text { margin: 10px 0 0; font-size: 14.5px; line-height: 1.6; color: var(--ink-60); }
+
+  @media (max-width: 980px) { .method { grid-template-columns: repeat(2, 1fr); } }
+  @media (max-width: 520px) { .method { grid-template-columns: 1fr; } }
+</style>

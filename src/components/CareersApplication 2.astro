@@ -1,0 +1,195 @@
+---
+import SectionEyebrow from './SectionEyebrow.astro';
+import Icon from './Icon.astro';
+import { careersApplication as a, anchors } from '../data/carreiras';
+import { site } from '../data/site';
+---
+<section class="section section--navy on-navy capply" id={anchors.apply}>
+  <div class="container capply__grid">
+    <div class="capply__intro">
+      <SectionEyebrow text={a.eyebrow} />
+      <h2 class="h2 capply__title" data-reveal style="--reveal-delay:80ms">
+        {a.titleLead} <em class="em-gold serif-it">{a.titleEmphasis}</em>.
+      </h2>
+      <p class="lede capply__lede" data-reveal style="--reveal-delay:150ms">{a.text}</p>
+
+      <div class="capply__media" data-reveal style="--reveal-delay:200ms">
+        <img src={a.image} alt="" loading="lazy" decoding="async" />
+      </div>
+
+      <ul class="capply__trust" data-reveal style="--reveal-delay:240ms">
+        {a.trust.map((tr) => (
+          <li><span class="capply__trust-ic"><Icon name={tr.icon} size={18} stroke={1.5} /></span>{tr.title}</li>
+        ))}
+      </ul>
+
+      <div class="capply__support" data-reveal style="--reveal-delay:300ms">
+        <span class="capply__support-label">Tem dúvidas?</span>
+        <a href={site.phoneHref}><Icon name="phone" size={15} stroke={1.6} /> {site.phone}</a>
+        <a href={`mailto:${site.email}`}><Icon name="mail" size={15} stroke={1.6} /> {site.email}</a>
+      </div>
+    </div>
+
+    <div class="capply__formwrap" data-reveal style="--reveal-delay:160ms">
+      <form class="capply__form" data-apply-form novalidate>
+        <div class="cfield">
+          <label for="ap-nome">Nome completo</label>
+          <input id="ap-nome" name="nome" type="text" autocomplete="name" required />
+        </div>
+        <div class="cfield cfield--row">
+          <div>
+            <label for="ap-email">E-mail</label>
+            <input id="ap-email" name="email" type="email" autocomplete="email" required />
+          </div>
+          <div>
+            <label for="ap-tel">Telefone</label>
+            <input id="ap-tel" name="telefone" type="tel" autocomplete="tel" required />
+          </div>
+        </div>
+        <div class="cfield cfield--row">
+          <div>
+            <label for="ap-local">Localidade</label>
+            <input id="ap-local" name="localidade" type="text" autocomplete="address-level2" />
+          </div>
+          <div>
+            <label for="ap-area">Área de interesse</label>
+            <select id="ap-area" name="area" required>
+              <option value="" disabled selected>Selecione…</option>
+              {a.areas.map((opt) => <option value={opt}>{opt}</option>)}
+            </select>
+          </div>
+        </div>
+        <div class="cfield">
+          <label for="ap-msg">Mensagem</label>
+          <textarea id="ap-msg" name="mensagem" rows="4" placeholder="Conte-nos um pouco sobre si e as suas ambições."></textarea>
+        </div>
+
+        <div class="cfield">
+          <span class="cfield__label">Curriculum (CV)</span>
+          <label class="cupload" for="ap-cv">
+            <Icon name="download" size={20} stroke={1.5} />
+            <span class="cupload__text" data-cv-text>Carregar ficheiro <em>(PDF ou Word)</em></span>
+            <input id="ap-cv" name="cv" type="file" accept=".pdf,.doc,.docx" />
+          </label>
+        </div>
+
+        <label class="cconsent">
+          <input type="checkbox" name="consentimento" required />
+          <span>Autorizo o tratamento dos meus dados para efeitos de recrutamento, nos termos da política de privacidade.</span>
+        </label>
+
+        <button type="submit" class="btn btn--gold capply__submit">
+          <span>Enviar candidatura</span><Icon name="arrow" size={14} stroke={1.8} />
+        </button>
+        <p class="capply__micro"><Icon name="lock" size={13} stroke={1.6} /> Confidencial · Resposta em breve</p>
+      </form>
+
+      <div class="capply__done" data-apply-done hidden role="status">
+        <span class="capply__done-ic"><Icon name="check" size={26} stroke={2} /></span>
+        <h3 class="capply__done-title">Candidatura recebida</h3>
+        <p>Obrigado pelo seu interesse. A nossa equipa entrará em contacto consigo em breve.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<style>
+  .capply__grid { display: grid; grid-template-columns: 0.92fr 1.08fr; gap: clamp(36px, 5vw, 80px); align-items: start; }
+  .capply__title { margin-top: 16px; max-width: 20ch; }
+  .capply__lede { margin-top: 16px; }
+  .capply__media { margin-top: 28px; border-radius: var(--radius-lg); overflow: hidden; border: 1px solid var(--hairline-gold); aspect-ratio: 16 / 10; }
+  .capply__media img { width: 100%; height: 100%; object-fit: cover; }
+
+  .capply__trust { list-style: none; margin: 26px 0 0; padding: 0; display: flex; flex-wrap: wrap; gap: 12px 24px; }
+  .capply__trust li { display: inline-flex; align-items: center; gap: 10px; font-size: 14px; color: var(--white-90); }
+  .capply__trust-ic { width: 34px; height: 34px; display: grid; place-items: center; border-radius: 50%; color: var(--gold-light); border: 1px solid var(--hairline-gold-strong); }
+
+  .capply__support {
+    margin-top: 26px; padding: 18px 22px; border: 1px solid var(--hairline-light); border-radius: var(--radius);
+    display: flex; flex-wrap: wrap; align-items: center; gap: 10px 22px; background: rgba(255,255,255,0.02);
+  }
+  .capply__support-label { font-size: 13px; color: var(--white-70); letter-spacing: 0.04em; }
+  .capply__support a { display: inline-flex; align-items: center; gap: 8px; color: var(--gold-light); text-decoration: none; font-size: 14px; transition: color var(--t-fast); }
+  .capply__support a:hover { color: var(--cream); }
+
+  /* Form */
+  .capply__formwrap {
+    border: 1px solid var(--hairline-gold); border-radius: var(--radius-lg);
+    background: linear-gradient(165deg, rgba(184,153,104,0.08), rgba(11,26,46,0.25));
+    padding: clamp(26px, 3vw, 42px);
+  }
+  .capply__form { display: flex; flex-direction: column; gap: 18px; }
+  .cfield { display: flex; flex-direction: column; gap: 8px; }
+  .cfield--row { display: grid; grid-template-columns: 1fr 1fr; gap: 18px; }
+  .cfield--row > div { display: flex; flex-direction: column; gap: 8px; }
+  .capply__form label, .cfield__label { font-size: 12px; letter-spacing: 0.1em; text-transform: uppercase; color: var(--white-70); }
+  .capply__form input, .capply__form select, .capply__form textarea {
+    width: 100%; background: rgba(255,255,255,0.04); border: 1px solid var(--hairline-gold);
+    border-radius: var(--radius); color: var(--cream); padding: 13px 15px; font-size: 15px;
+    transition: border-color var(--t-fast), box-shadow var(--t-fast), background var(--t-fast);
+  }
+  .capply__form textarea { resize: vertical; min-height: 96px; }
+  .capply__form select option { color: #102742; }
+  .capply__form input::placeholder, .capply__form textarea::placeholder { color: var(--white-50); }
+  .capply__form input:focus, .capply__form select:focus, .capply__form textarea:focus {
+    outline: none; border-color: var(--gold-light); background: rgba(255,255,255,0.06);
+    box-shadow: 0 0 0 3px rgba(184, 153, 104, 0.22);
+  }
+
+  .cupload {
+    display: flex; align-items: center; gap: 12px; cursor: pointer; color: var(--white-90);
+    border: 1px dashed var(--hairline-gold-strong); border-radius: var(--radius); padding: 16px 18px;
+    background: rgba(255,255,255,0.02); transition: border-color var(--t-fast), background var(--t-fast), color var(--t-fast);
+  }
+  .cupload:hover { border-color: var(--gold-light); background: rgba(184,153,104,0.08); color: var(--cream); }
+  .cupload :global(.icon) { color: var(--gold-light); flex-shrink: 0; }
+  .cupload__text { font-size: 14px; letter-spacing: 0; text-transform: none; color: inherit; }
+  .cupload__text em { color: var(--white-50); font-style: normal; }
+  .cupload input[type="file"] { position: absolute; width: 1px; height: 1px; opacity: 0; pointer-events: none; }
+
+  .cconsent { display: flex; gap: 12px; align-items: flex-start; }
+  .cconsent input { width: 18px; height: 18px; margin-top: 2px; flex-shrink: 0; accent-color: var(--gold); }
+  .cconsent span { font-size: 13px; line-height: 1.5; color: var(--white-70); letter-spacing: 0; text-transform: none; }
+
+  :global(.capply__submit) { width: 100%; margin-top: 4px; }
+  .capply__micro { display: flex; align-items: center; justify-content: center; gap: 8px; margin: 4px 0 0; font-size: 12.5px; color: var(--white-70); }
+  .capply__micro :global(.icon) { color: var(--gold-light); }
+
+  .capply__done { text-align: center; padding: clamp(30px, 4vw, 56px) 10px; }
+  .capply__done-ic { width: 56px; height: 56px; margin: 0 auto; border-radius: 50%; display: grid; place-items: center; background: rgba(184,153,104,0.16); color: var(--gold-light); }
+  .capply__done-title { font-family: var(--font-serif); font-weight: 500; font-size: 26px; margin: 18px 0 0; color: var(--cream); }
+  .capply__done p { margin: 10px auto 0; max-width: 36ch; color: var(--white-70); font-size: 15px; }
+
+  @media (max-width: 900px) { .capply__grid { grid-template-columns: 1fr; } }
+  @media (max-width: 480px) { .cfield--row { grid-template-columns: 1fr; } }
+</style>
+
+<script>
+  const form = document.querySelector('[data-apply-form]') as HTMLFormElement | null;
+  const done = document.querySelector('[data-apply-done]') as HTMLElement | null;
+  if (form) {
+    const cvInput = form.querySelector('#ap-cv') as HTMLInputElement | null;
+    const cvText = form.querySelector('[data-cv-text]') as HTMLElement | null;
+    cvInput?.addEventListener('change', () => {
+      if (cvText && cvInput.files && cvInput.files.length) {
+        cvText.textContent = cvInput.files[0].name;
+      }
+    });
+
+    form.addEventListener('submit', (e) => {
+      e.preventDefault();
+      if (!form.checkValidity()) {
+        form.reportValidity();
+        return;
+      }
+      // TODO(backend): no backend yet. Wire this submit to the recruitment
+      // endpoint (email/CRM/ATS) once the destination is confirmed. UI-only
+      // for now — the CV file is selected but not uploaded anywhere.
+      if (done) {
+        form.hidden = true;
+        done.hidden = false;
+        done.scrollIntoView({ behavior: 'smooth', block: 'center' });
+      }
+    });
+  }
+</script>

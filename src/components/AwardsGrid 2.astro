@@ -1,0 +1,167 @@
+---
+// Credibility block — /sobre-nos, between "Origem e Missão" and "Filosofia".
+// Honesty: network awards (RE/MAX Portugal), framed as "fazemos parte da rede".
+import SectionEyebrow from './SectionEyebrow.astro';
+import Icon from './Icon.astro';
+import {
+  awards as defaultAwards,
+  awardStats as defaultStats,
+  awardsGridCopy,
+} from '../data/awards';
+import type { Award, AwardStat } from '../data/awards';
+
+interface Props {
+  awards?: Award[];
+  stats?: AwardStat[];
+}
+const { awards = defaultAwards, stats = defaultStats } = Astro.props;
+const { cta } = awardsGridCopy;
+---
+
+<section class="section agrid">
+  <div class="container">
+    <header class="agrid__head">
+      <SectionEyebrow text={awardsGridCopy.eyebrow} center />
+      <h2 class="h2 agrid__title" data-reveal style="--reveal-delay:80ms">{awardsGridCopy.headline}</h2>
+      <p class="lede agrid__sub" data-reveal style="--reveal-delay:150ms">{awardsGridCopy.subtitle}</p>
+    </header>
+
+    <ul class="agrid__grid">
+      {awards.map((a, i) => (
+        <li class="agrid__card" data-reveal style={`--reveal-delay:${i * 60}ms`}>
+          {a.image ? (
+            <img
+              class="agrid__seal"
+              src={`${a.image}.webp`}
+              alt={`${a.name} ${a.year} — distinção RE/MAX Portugal`}
+              loading="lazy"
+              decoding="async"
+            />
+          ) : (
+            <span class="agrid__lockup">
+              <span class="agrid__lockup-name">{a.name}</span>
+              <span class="agrid__lockup-year">{a.year}</span>
+              <span class="agrid__lockup-issuer">{a.issuer}</span>
+            </span>
+          )}
+        </li>
+      ))}
+    </ul>
+
+    <div class="agrid__stats on-navy" data-reveal style="--reveal-delay:120ms">
+      {stats.map((s) => (
+        <div class="agrid__stat">
+          <span class="agrid__stat-value">{s.value}</span>
+          <span class="agrid__stat-label">{s.label}</span>
+        </div>
+      ))}
+    </div>
+
+    <a class="agrid__cta" href={cta.href} target="_blank" rel="noopener noreferrer">
+      <span>{cta.label}</span>
+      <Icon name="arrow" size={14} stroke={1.8} />
+    </a>
+  </div>
+</section>
+
+<style>
+  .agrid { background: var(--cream-soft); }
+  .agrid__head { max-width: 720px; margin-inline: auto; text-align: center; }
+  .agrid__title { margin-top: 16px; }
+  .agrid__sub { margin: 18px auto 0; max-width: 60ch; }
+
+  .agrid__grid {
+    list-style: none;
+    margin: clamp(40px, 5vw, 64px) 0 0;
+    padding: 0;
+    display: grid;
+    grid-template-columns: repeat(5, 1fr);
+    gap: clamp(14px, 1.6vw, 20px);
+  }
+  .agrid__card {
+    display: grid;
+    place-items: center;
+    min-height: 132px;
+    padding: 16px;
+    background: #fff;
+    border-radius: var(--radius);
+    box-shadow: 0 2px 12px rgba(0, 0, 0, 0.06);
+    transition: transform var(--t-med), box-shadow var(--t-med);
+  }
+  .agrid__card:hover {
+    transform: translateY(-3px);
+    box-shadow: 0 10px 26px rgba(0, 0, 0, 0.1);
+  }
+  .agrid__seal { max-height: 100px; width: auto; object-fit: contain; }
+
+  /* Text fallback lockup (until real seals are on disk) */
+  .agrid__lockup { display: flex; flex-direction: column; align-items: center; text-align: center; gap: 4px; }
+  .agrid__lockup-name {
+    font-family: var(--font-serif);
+    font-weight: 500;
+    font-size: 17px;
+    line-height: 1.15;
+    color: var(--navy);
+  }
+  .agrid__lockup-year {
+    font-family: var(--font-serif);
+    font-size: 22px;
+    color: var(--gold-deep);
+    line-height: 1;
+  }
+  .agrid__lockup-issuer {
+    font-family: var(--font-sans);
+    font-size: 9.5px;
+    text-transform: uppercase;
+    letter-spacing: 0.1em;
+    color: var(--ink-40);
+    margin-top: 2px;
+  }
+
+  /* Navy stats strip */
+  .agrid__stats {
+    margin-top: clamp(36px, 4vw, 56px);
+    padding: clamp(24px, 3vw, 36px) clamp(20px, 3vw, 44px);
+    background: var(--navy);
+    border-radius: var(--radius-lg);
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: clamp(20px, 3vw, 40px);
+  }
+  .agrid__stat { text-align: center; display: flex; flex-direction: column; gap: 8px; }
+  .agrid__stat-value {
+    font-family: var(--font-serif);
+    font-weight: 500;
+    font-size: clamp(24px, 2.6vw, 34px);
+    color: var(--gold-light);
+    letter-spacing: -0.01em;
+    line-height: 1.05;
+  }
+  .agrid__stat-label { font-family: var(--font-sans); font-size: 13px; color: var(--white-70); line-height: 1.4; }
+
+  /* CTA */
+  .agrid__cta {
+    display: flex;
+    width: fit-content;
+    align-items: center;
+    gap: 10px;
+    margin: clamp(28px, 3vw, 40px) auto 0;
+    font-family: var(--font-sans);
+    font-size: 14px;
+    letter-spacing: 0.02em;
+    color: var(--gold-deep);
+    text-decoration: none;
+    transition: gap var(--t-fast), color var(--t-fast);
+  }
+  .agrid__cta:hover { gap: 16px; color: var(--gold); }
+  .agrid__cta :global(.icon) { transition: transform var(--t-fast); }
+  .agrid__cta:hover :global(.icon) { transform: translateX(3px); }
+
+  @media (max-width: 900px) {
+    .agrid__grid { grid-template-columns: repeat(3, 1fr); }
+  }
+  @media (max-width: 560px) {
+    .agrid__grid { grid-template-columns: repeat(2, 1fr); }
+    .agrid__stats { grid-template-columns: 1fr; gap: 20px; }
+  }
+</style>
