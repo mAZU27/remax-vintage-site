@@ -242,17 +242,17 @@ import Icon from './Icon.astro';
   }
 </style>
 
-<script type="module">
-  (async () => {
-    try {
-      const { getReply, getWelcome, flows, composeLead } = await import('../data/supportResponses.ts');
-      const { quickStart } = await import('../data/supportKnowledge.ts');
+<script>
+  import { getReply, getWelcome, flows, composeLead, type BotReply, type Chip, type FlowId } from '../data/supportResponses';
+  import { quickStart } from '../data/supportKnowledge';
 
-      const root = document.querySelector('[data-cs]');
-      if (!root) {
-        console.warn('CustomerSupport: root element not found');
-        return;
-      }
+  const root = document.querySelector<HTMLElement>('[data-cs]');
+  if (!root) {
+    console.error('[CustomerSupport] Root element [data-cs] not found');
+    throw new Error('CustomerSupport initialization failed');
+  }
+
+  if (root) {
     const toggle = root.querySelector<HTMLButtonElement>('[data-cs-toggle]');
     const closeBtn = root.querySelector<HTMLButtonElement>('[data-cs-close]');
     const panel = root.querySelector<HTMLElement>('#cs-panel');
@@ -433,5 +433,6 @@ import Icon from './Icon.astro';
       if (btn.dataset.flow) { userSay(label); startFlow(btn.dataset.flow as FlowId); return; }
       if (btn.dataset.send) { userSay(label); deliver(getReply(btn.dataset.send)); return; }
     });
+  }
   }
 </script>
