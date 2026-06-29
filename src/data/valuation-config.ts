@@ -26,7 +26,7 @@ export const valuationConfig = {
   /**
    * Base €/m² by neighbourhood (keys match `neighborhoods[].slug` in site.ts,
    * plus `outra` for "Outra zona do Porto").
-   * TODO(agência): substituir por €/m² reais e defensáveis por bairro.
+   * TODO(agência): substituir por €/m² reais e defensáveis por zona.
    */
   basePricePerM2: {
     'foz-do-douro': 5200,

@@ -6,7 +6,7 @@
 export interface Article {
   slug: string;
   title: string;
-  category: 'Mercado' | 'Bairros' | 'Guias' | 'Estilo de vida';
+  category: 'Mercado' | 'Zonas' | 'Guias' | 'Estilo de vida';
   excerpt: string;
   date: string; // ISO
   readingTime: number; // minutes
@@ -21,7 +21,7 @@ export const articles: Article[] = [
     slug: 'mercado-premium-porto-2026',
     title: 'O mercado premium do Porto em 2026',
     category: 'Mercado',
-    excerpt: 'Onde está a procura, como evoluem os valores por bairro e o que esperar do segmento de luxo no próximo ano.',
+    excerpt: 'Onde está a procura, como evoluem os valores por zona e o que esperar do segmento de luxo no próximo ano.',
     date: '2026-05-18',
     readingTime: 6,
     author: 'Equipa Collection Vintage',
@@ -50,9 +50,9 @@ export const articles: Article[] = [
     ],
   },
   {
-    slug: 'foz-do-douro-guia-do-bairro',
-    title: 'Foz do Douro: guia de um bairro à beira-mar',
-    category: 'Bairros',
+    slug: 'foz-do-douro-guia-da-zona',
+    title: 'Foz do Douro: guia de uma zona à beira-mar',
+    category: 'Zonas',
     excerpt: 'Privacidade, luz atlântica e uma procura naturalmente seletiva — porque a Foz continua a ser a morada mais desejada do Porto.',
     date: '2026-04-30',
     readingTime: 5,

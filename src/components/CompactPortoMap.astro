@@ -17,7 +17,7 @@ const pinPos: Record<string, { x: number; y: number }> = {
 };
 const pins = neighborhoods.map((n) => ({ slug: n.slug, name: n.name, ...(pinPos[n.slug] ?? { x: 50, y: 50 }) }));
 ---
-<figure class="cmap" data-map aria-label="Mapa do Porto com os bairros da coleção">
+<figure class="cmap" data-map aria-label="Mapa do Porto com os zonas da coleção">
   <svg class="cmap__art" viewBox="0 0 720 360" fill="none" preserveAspectRatio="none" aria-hidden="true">
     <!-- Atlantic coastline (west) -->
     <path class="cmap-coast" d="M52 8 C40 58 64 96 50 150 C40 196 66 232 80 286 C86 312 78 336 70 356" />

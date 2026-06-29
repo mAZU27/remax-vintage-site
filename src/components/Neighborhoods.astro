@@ -1,33 +1,33 @@
 ---
-// Bairros — self-contained premium section.
+// Zonas — self-contained premium section.
 // Centered header + interactive SVG Porto map (glowing numbered pins + floating
 // tooltip) framed by four glass neighbourhood cards, plus an honest stats bar.
-// Data-driven from `neighborhoods` / `bairrosStats` in site.ts.
+// Data-driven from `neighborhoods` / `zonasStats` in site.ts.
 // Interaction (hover/focus/keyboard sync, tooltip, count-up) lives in the
 // <script> below; all motion is guarded by prefers-reduced-motion.
-import { neighborhoods, bairrosStats } from '../data/site';
+import { neighborhoods, zonasStats } from '../data/site';
 import Icon from './Icon.astro';
 import Button from './Button.astro';
 import SectionEyebrow from './SectionEyebrow.astro';
 ---
-<section class="bairros section section--navy on-navy" id="bairros" data-bairros>
-  <div class="bairros__glow bairros__glow--a" aria-hidden="true"></div>
-  <div class="bairros__glow bairros__glow--b" aria-hidden="true"></div>
-  <div class="bairros__grain" aria-hidden="true"></div>
+<section class="zonas section section--navy on-navy" id="zonas" data-zonas>
+  <div class="zonas__glow zonas__glow--a" aria-hidden="true"></div>
+  <div class="zonas__glow zonas__glow--b" aria-hidden="true"></div>
+  <div class="zonas__grain" aria-hidden="true"></div>
 
-  <div class="container bairros__inner">
-    <header class="bairros__head">
-      <SectionEyebrow text="Bairros" center />
-      <h2 class="h2 bairros__title" data-reveal style="--reveal-delay:80ms">
-        Bairros. Cada história<br /><em class="em-gold serif-it">tem o seu valor.</em>
+  <div class="container zonas__inner">
+    <header class="zonas__head">
+      <SectionEyebrow text="Zonas" center />
+      <h2 class="h2 zonas__title" data-reveal style="--reveal-delay:80ms">
+        Zonas. Cada história<br /><em class="em-gold serif-it">tem o seu valor.</em>
       </h2>
-      <p class="lede bairros__sub" data-reveal style="--reveal-delay:160ms">
-        Explore os bairros mais exclusivos do Porto. Escolha um bairro no mapa e descubra
+      <p class="lede zonas__sub" data-reveal style="--reveal-delay:160ms">
+        Explore as zonas mais exclusivas do Porto. Escolha uma zona no mapa e descubra
         o seu carácter, estilo de vida e oportunidades únicas.
       </p>
     </header>
 
-    <div class="bairros__stage">
+    <div class="zonas__stage">
       {neighborhoods.map((n, i) => (
         <article
           class="bcard"
@@ -47,26 +47,26 @@ import SectionEyebrow from './SectionEyebrow.astro';
               <li><Icon name={f.icon} size={14} stroke={1.5} /> {f.label}</li>
             ))}
           </ul>
-          <a class="bcard__link" href={`/imoveis?bairro=${n.slug}`}>
-            Explorar bairro <Icon name="arrow" size={14} stroke={1.8} />
+          <a class="bcard__link" href={`/imoveis?zona=${n.slug}`}>
+            Explorar zona <Icon name="arrow" size={14} stroke={1.8} />
           </a>
         </article>
       ))}
 
-      <div class="bairros__mapcol" style="grid-area: map">
-        <div class="bairros__mapcta">
+      <div class="zonas__mapcol" style="grid-area: map">
+        <div class="zonas__mapcta">
           <Button href="/imoveis" variant="gold" arrow>Ver toda a coleção</Button>
         </div>
 
-        <div class="bairros__mapwrap" data-reveal style="--reveal-delay:200ms">
-          <svg class="bairros__map" viewBox="0 0 1000 640" fill="none" aria-hidden="true">
-            <g class="bairros__districts">
+        <div class="zonas__mapwrap" data-reveal style="--reveal-delay:200ms">
+          <svg class="zonas__map" viewBox="0 0 1000 640" fill="none" aria-hidden="true">
+            <g class="zonas__districts">
               <path class="district" pathLength="1" d="M360 132 L556 112 L650 210 L556 332 L408 350 L320 250 Z" />
               <path class="district" pathLength="1" d="M556 112 L800 122 L862 252 L700 322 L650 210 Z" />
               <path class="district" pathLength="1" d="M150 282 L320 250 L408 350 L330 470 L182 442 Z" />
               <path class="district" pathLength="1" d="M408 350 L556 332 L650 432 L600 540 L444 540 L330 470 Z" />
             </g>
-            <g class="bairros__avenues">
+            <g class="zonas__avenues">
               <path class="avenue" d="M320 250 L650 432" />
               <path class="avenue" d="M556 112 L556 332" />
               <path class="avenue" d="M150 282 L862 252" />
@@ -74,7 +74,7 @@ import SectionEyebrow from './SectionEyebrow.astro';
             <path class="water" d="M0 640 L0 384 Q140 404 262 472 Q420 560 642 558 Q840 556 1000 510 L1000 640 Z" />
           </svg>
 
-          <div class="bairros__pins">
+          <div class="zonas__pins">
             {neighborhoods.map((n, i) => (
               <button
                 type="button"
@@ -85,37 +85,37 @@ import SectionEyebrow from './SectionEyebrow.astro';
                 data-name={n.name}
                 data-price={n.price}
                 data-demand={n.demand}
-                data-href={`/imoveis?bairro=${n.slug}`}
+                data-href={`/imoveis?zona=${n.slug}`}
                 style={`left:${n.x}%; top:${n.y}%; --pin-delay:${i * 150}ms`}
-                aria-label={`Ver bairro ${n.name}`}
+                aria-label={`Ver zona ${n.name}`}
               >
                 <span class="pin__pulse" aria-hidden="true"></span>
                 <span class="pin__dot"><span class="pin__num">{n.num}</span></span>
               </button>
             ))}
 
-            <div class="bairros__tip" data-tip role="status" aria-live="polite">
-              <span class="bairros__tip-name" data-tip-name></span>
-              <dl class="bairros__tip-meta">
+            <div class="zonas__tip" data-tip role="status" aria-live="polite">
+              <span class="zonas__tip-name" data-tip-name></span>
+              <dl class="zonas__tip-meta">
                 <div><dt>Preço médio</dt><dd data-tip-price></dd></div>
                 <div><dt>Procura</dt><dd data-tip-demand></dd></div>
               </dl>
-              <a class="bairros__tip-link" data-tip-link href="/imoveis">
+              <a class="zonas__tip-link" data-tip-link href="/imoveis">
                 Ver imóveis <Icon name="arrow" size={13} stroke={1.8} />
               </a>
             </div>
           </div>
         </div>
 
-        <span class="bairros__cue" aria-hidden="true">
+        <span class="zonas__cue" aria-hidden="true">
           <Icon name="chevron" size={15} stroke={1.6} />
-          Passe sobre um bairro para explorar
+          Passe sobre uma zona para explorar
         </span>
       </div>
     </div>
 
-    <div class="bairros__stats" data-bairros-stats data-reveal>
-      {bairrosStats.map((s) => (
+    <div class="zonas__stats" data-zonas-stats data-reveal>
+      {zonasStats.map((s) => (
         <div class="bstat">
           <span class="bstat__icon"><Icon name={s.icon} size={20} stroke={1.5} /></span>
           <span class="bstat__value" data-count-to={'countTo' in s ? s.countTo : ''}>{s.value}</span>
@@ -127,32 +127,32 @@ import SectionEyebrow from './SectionEyebrow.astro';
 </section>
 
 <style>
-  .bairros { position: relative; isolation: isolate; overflow: hidden; }
-  .bairros__inner { position: relative; z-index: 1; }
+  .zonas { position: relative; isolation: isolate; overflow: hidden; }
+  .zonas__inner { position: relative; z-index: 1; }
 
   /* Ambient light */
-  .bairros__glow { position: absolute; border-radius: 50%; filter: blur(90px); pointer-events: none; z-index: 0; }
-  .bairros__glow--a {
+  .zonas__glow { position: absolute; border-radius: 50%; filter: blur(90px); pointer-events: none; z-index: 0; }
+  .zonas__glow--a {
     width: 540px; height: 540px; top: -140px; left: 50%; transform: translateX(-50%);
     background: radial-gradient(circle, rgba(184, 153, 104, 0.16), transparent 70%);
   }
-  .bairros__glow--b {
+  .zonas__glow--b {
     width: 620px; height: 620px; bottom: -220px; left: -120px;
     background: radial-gradient(circle, rgba(26, 54, 86, 0.55), transparent 70%);
   }
-  .bairros__grain {
+  .zonas__grain {
     position: absolute; inset: 0; z-index: 0; opacity: 0.4; mix-blend-mode: overlay; pointer-events: none;
     background-image: radial-gradient(circle at 1px 1px, rgba(255, 255, 255, 0.1) 1px, transparent 0);
     background-size: 3px 3px;
   }
 
   /* Header */
-  .bairros__head { text-align: center; max-width: 760px; margin: 0 auto; }
-  .bairros__title { margin-top: 18px; margin-inline: auto; }
-  .bairros__sub { margin: 18px auto 0; max-width: 60ch; }
+  .zonas__head { text-align: center; max-width: 760px; margin: 0 auto; }
+  .zonas__title { margin-top: 18px; margin-inline: auto; }
+  .zonas__sub { margin: 18px auto 0; max-width: 60ch; }
 
   /* Stage: cards in the four corners, map spanning the centre column */
-  .bairros__stage {
+  .zonas__stage {
     margin-top: clamp(40px, 5vw, 66px);
     display: grid;
     grid-template-columns: minmax(220px, 1fr) minmax(360px, 1.55fr) minmax(220px, 1fr);
@@ -165,28 +165,28 @@ import SectionEyebrow from './SectionEyebrow.astro';
   }
 
   /* Map column */
-  .bairros__mapcol { display: flex; flex-direction: column; align-items: center; justify-content: center; gap: clamp(14px, 1.6vw, 22px); }
-  .bairros__mapwrap { position: relative; width: 100%; }
-  .bairros__map { width: 100%; height: auto; display: block; overflow: visible; }
+  .zonas__mapcol { display: flex; flex-direction: column; align-items: center; justify-content: center; gap: clamp(14px, 1.6vw, 22px); }
+  .zonas__mapwrap { position: relative; width: 100%; }
+  .zonas__map { width: 100%; height: auto; display: block; overflow: visible; }
 
   .district {
     fill: var(--gold); fill-opacity: 0.05; stroke: var(--gold); stroke-width: 1.4;
     stroke-dasharray: 1; stroke-dashoffset: 1;
     transition: stroke-dashoffset 1.3s var(--t-ease-emph);
   }
-  .bairros__mapwrap.is-in .district { stroke-dashoffset: 0; }
+  .zonas__mapwrap.is-in .district { stroke-dashoffset: 0; }
   .district:nth-child(1) { transition-delay: 0.05s; }
   .district:nth-child(2) { transition-delay: 0.2s; }
   .district:nth-child(3) { transition-delay: 0.35s; }
   .district:nth-child(4) { transition-delay: 0.5s; }
 
   .avenue { fill: none; stroke: var(--gold-light); stroke-width: 1; stroke-dasharray: 2 8; stroke-linecap: round; opacity: 0; transition: opacity 0.9s ease 0.7s; }
-  .bairros__mapwrap.is-in .avenue { opacity: 0.24; }
+  .zonas__mapwrap.is-in .avenue { opacity: 0.24; }
 
   .water { fill: var(--navy-ink); fill-opacity: 0.55; stroke: var(--hairline-gold); stroke-width: 1; }
 
   /* Pins (HTML overlay, positioned in % over the map) */
-  .bairros__pins { position: absolute; inset: 0; }
+  .zonas__pins { position: absolute; inset: 0; }
   .pin {
     position: absolute; width: 44px; height: 44px; margin: 0; padding: 0; border: 0; background: none; cursor: pointer;
     transform: translate(-50%, -50%) scale(0.4); opacity: 0;
@@ -194,7 +194,7 @@ import SectionEyebrow from './SectionEyebrow.astro';
     transition-delay: calc(620ms + var(--pin-delay, 0ms));
     z-index: 3;
   }
-  .bairros__mapwrap.is-in .pin { opacity: 1; transform: translate(-50%, -50%) scale(1); }
+  .zonas__mapwrap.is-in .pin { opacity: 1; transform: translate(-50%, -50%) scale(1); }
   .pin__dot {
     position: absolute; inset: 6px; border-radius: 50%; display: grid; place-items: center;
     background: radial-gradient(circle at 50% 32%, var(--gold-light), var(--gold-deep));
@@ -219,7 +219,7 @@ import SectionEyebrow from './SectionEyebrow.astro';
   }
 
   /* Floating tooltip */
-  .bairros__tip {
+  .zonas__tip {
     position: absolute; left: 50%; top: 50%; transform: translate(-50%, calc(-100% - 22px));
     width: max-content; min-width: 208px; max-width: 244px; text-align: left;
     background: rgba(11, 26, 46, 0.92);
@@ -230,36 +230,36 @@ import SectionEyebrow from './SectionEyebrow.astro';
     transition: opacity var(--t-med), transform var(--t-med), visibility var(--t-med);
     z-index: 6;
   }
-  .bairros__tip.is-on { opacity: 1; visibility: visible; pointer-events: auto; transform: translate(-50%, calc(-100% - 16px)); }
-  .bairros__tip::after {
+  .zonas__tip.is-on { opacity: 1; visibility: visible; pointer-events: auto; transform: translate(-50%, calc(-100% - 16px)); }
+  .zonas__tip::after {
     content: ''; position: absolute; left: 50%; bottom: -6px; width: 11px; height: 11px;
     transform: translateX(-50%) rotate(45deg);
     background: rgba(11, 26, 46, 0.92);
     border-right: 1px solid var(--hairline-gold-strong); border-bottom: 1px solid var(--hairline-gold-strong);
   }
-  .bairros__tip-name {
+  .zonas__tip-name {
     display: block; font-size: 11px; letter-spacing: 0.2em; text-transform: uppercase;
     color: var(--gold-light); font-weight: 600;
   }
-  .bairros__tip-meta { margin: 12px 0 0; display: flex; flex-direction: column; gap: 8px; }
-  .bairros__tip-meta div { display: flex; align-items: baseline; justify-content: space-between; gap: 14px; }
-  .bairros__tip-meta dt { font-size: 11px; color: var(--white-50); letter-spacing: 0.04em; }
-  .bairros__tip-meta dd { margin: 0; font-size: 13px; color: var(--cream); font-weight: 500; }
-  .bairros__tip-link {
+  .zonas__tip-meta { margin: 12px 0 0; display: flex; flex-direction: column; gap: 8px; }
+  .zonas__tip-meta div { display: flex; align-items: baseline; justify-content: space-between; gap: 14px; }
+  .zonas__tip-meta dt { font-size: 11px; color: var(--white-50); letter-spacing: 0.04em; }
+  .zonas__tip-meta dd { margin: 0; font-size: 13px; color: var(--cream); font-weight: 500; }
+  .zonas__tip-link {
     display: inline-flex; align-items: center; gap: 7px; margin-top: 14px; padding-top: 12px;
     border-top: 1px solid var(--hairline-light);
     font-size: 10.5px; letter-spacing: 0.16em; text-transform: uppercase; color: var(--gold-light);
     text-decoration: none; font-weight: 500;
   }
-  .bairros__tip-link :global(.arrow) { transition: transform var(--t-fast); }
-  .bairros__tip-link:hover :global(.arrow) { transform: translateX(4px); }
+  .zonas__tip-link :global(.arrow) { transition: transform var(--t-fast); }
+  .zonas__tip-link:hover :global(.arrow) { transform: translateX(4px); }
 
   /* Scroll/explore cue */
-  .bairros__cue {
+  .zonas__cue {
     display: inline-flex; align-items: center; gap: 8px; color: var(--white-50);
     font-size: 11px; letter-spacing: 0.16em; text-transform: uppercase;
   }
-  .bairros__cue :global(.icon) { color: var(--gold-light); }
+  .zonas__cue :global(.icon) { color: var(--gold-light); }
 
   /* Cards */
   .bcard {
@@ -270,7 +270,7 @@ import SectionEyebrow from './SectionEyebrow.astro';
     border: 1px solid var(--hairline-light); border-radius: var(--radius-lg);
     transition: transform var(--t-med), border-color var(--t-med), box-shadow var(--t-med), background var(--t-med), opacity var(--t-med);
   }
-  .bairros .bcard:hover, .bairros .bcard.is-active {
+  .zonas .bcard:hover, .zonas .bcard.is-active {
     transform: translateY(-4px); border-color: var(--hairline-gold-strong);
     box-shadow: var(--shadow-float); background: rgba(16, 39, 66, 0.62);
   }
@@ -295,7 +295,7 @@ import SectionEyebrow from './SectionEyebrow.astro';
   .bcard__link:hover :global(.arrow) { transform: translateX(4px); }
 
   /* Stats bar */
-  .bairros__stats {
+  .zonas__stats {
     margin-top: clamp(48px, 6vw, 82px);
     display: grid; grid-template-columns: repeat(4, 1fr);
     border: 1px solid var(--hairline-gold); border-radius: var(--radius-lg);
@@ -312,21 +312,21 @@ import SectionEyebrow from './SectionEyebrow.astro';
 
   /* ---- Responsive ---- */
   @media (max-width: 1024px) {
-    .bairros__stage {
+    .zonas__stage {
       grid-template-columns: 1fr 1fr;
       grid-template-areas:
         "map   map"
         "cardI cardII"
         "cardIII cardIV";
     }
-    .bairros__mapwrap { max-width: 620px; margin-inline: auto; }
+    .zonas__mapwrap { max-width: 620px; margin-inline: auto; }
   }
   @media (max-width: 560px) {
-    .bairros__stage {
+    .zonas__stage {
       grid-template-columns: 1fr;
       grid-template-areas: "map" "cardI" "cardII" "cardIII" "cardIV";
     }
-    .bairros__stats { grid-template-columns: repeat(2, 1fr); }
+    .zonas__stats { grid-template-columns: repeat(2, 1fr); }
     .bstat:nth-child(odd) { border-left: 0; }
     .bstat:nth-child(even) { border-left: 1px solid var(--hairline-light); }
     .bstat:nth-child(n + 3) { border-top: 1px solid var(--hairline-light); }
@@ -337,12 +337,12 @@ import SectionEyebrow from './SectionEyebrow.astro';
     .pin.is-active .pin__pulse { animation: none; }
     .district { stroke-dashoffset: 0 !important; transition: none; }
     .avenue { opacity: 0.24; transition: none; }
-    .bairros__tip { transition: opacity var(--t-fast); }
+    .zonas__tip { transition: opacity var(--t-fast); }
   }
 </style>
 
 <script>
-  const root = document.querySelector<HTMLElement>('[data-bairros]');
+  const root = document.querySelector<HTMLElement>('[data-zonas]');
   if (root) {
     const pins = Array.from(root.querySelectorAll<HTMLButtonElement>('.pin'));
     const cards = Array.from(root.querySelectorAll<HTMLElement>('.bcard'));
@@ -384,7 +384,7 @@ import SectionEyebrow from './SectionEyebrow.astro';
 
     // Count-up — only on numeric, real values; runs once when the bar is seen.
     const reduce = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
-    const statsEl = root.querySelector<HTMLElement>('[data-bairros-stats]');
+    const statsEl = root.querySelector<HTMLElement>('[data-zonas-stats]');
     const counters = Array.from(root.querySelectorAll<HTMLElement>('[data-count-to]')).filter(
       (el) => el.dataset.countTo,
     );

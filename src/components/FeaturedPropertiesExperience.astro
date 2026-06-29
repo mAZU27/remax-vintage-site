@@ -3,7 +3,7 @@
 // Combines: a centred scroll-snap property carousel, a compact interactive
 // Porto map, native-select filters, and a trust/CTA strip. The filters + map
 // compose a live destination URL into /imoveis (whose existing filter logic is
-// extended additively to read bairro/tipo/preco/quartos), so nothing here
+// extended additively to read zona/tipo/preco/quartos), so nothing here
 // duplicates or breaks the listing page. CSS-first; all motion is guarded by
 // prefers-reduced-motion. Favourites mirror the shared cv:favorites store.
 import { properties, propertyTypes } from '../data/properties';
@@ -405,7 +405,7 @@ const quartosOpts = [
 
       const buildHref = () => {
         const q = new URLSearchParams();
-        if (state.zona !== 'all') q.set('bairro', state.zona);
+        if (state.zona !== 'all') q.set('zona', state.zona);
         if (state.tipo !== 'all') q.set('tipo', state.tipo);
         if (state.preco !== 'all') q.set('preco', state.preco);
         if (state.quartos !== 'all') q.set('quartos', state.quartos);

@@ -12,7 +12,7 @@ export interface Property {
   slug: string;
   ref: string;
   title: string;
-  neighborhood: string; // matches neighborhoods[].slug (or a region slug outside the 4 bairros)
+  neighborhood: string; // matches neighborhoods[].slug (or a region slug outside the 4 zones)
   neighborhoodName: string;
   region?: string; // location suffix on cards; defaults to 'Porto'. Use 'Douro' for quintas.
   type: string; // T2, T3, Moradia…

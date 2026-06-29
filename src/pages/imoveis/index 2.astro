@@ -318,10 +318,10 @@ const quartos = [
       if (sortSel) { sortSel.value = 'recentes'; sortCells(); }
     });
 
-    // Pre-filter from query params (links from the homepage section / Bairros).
+    // Pre-filter from query params (links from the homepage section / Zonas).
     const params = new URLSearchParams(location.search);
     const hasChip = (g: string, v: string) => !!root.querySelector(`[data-group="${g}"][data-value="${v}"]`);
-    const paramToGroup: Record<string, string> = { bairro: 'zona', tipo: 'tipo', preco: 'preco', quartos: 'quartos' };
+    const paramToGroup: Record<string, string> = { zona: 'zona', tipo: 'tipo', preco: 'preco', quartos: 'quartos' };
     let applied = false;
     Object.entries(paramToGroup).forEach(([param, group]) => {
       const v = params.get(param);

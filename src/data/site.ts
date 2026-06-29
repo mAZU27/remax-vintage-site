@@ -40,7 +40,7 @@ export interface NavItem {
 
 export const nav: NavItem[] = [
   { label: 'Imóveis', href: '/imoveis' },
-  { label: 'Bairros', href: '/#bairros' },
+  { label: 'Zonas', href: '/#zonas' },
   { label: 'Método', href: '/#metodo' },
   { label: 'Vender', href: '/#vender', highlight: true },
   { label: 'Alugar', href: '/alugar' },
@@ -52,10 +52,10 @@ export const nav: NavItem[] = [
 
 export const primaryCta = { label: 'Pedir avaliação', href: '/#vender' } as const;
 
-// Bairros section data. `x`/`y` are pin positions as % of the map box.
+// Zonas section data. `x`/`y` are pin positions as % of the map box.
 // `num` is the roman numeral shown on the pin and card.
 // NOTE(price): "Sob consulta" é um placeholder honesto — não inventamos €/m².
-// Substituir por preço médio real por bairro quando a equipa o fornecer e validar.
+// Substituir por preço médio real por zona quando a equipa o fornecer e validar.
 export const neighborhoods = [
   {
     slug: 'foz-do-douro',
@@ -143,12 +143,12 @@ export const stats = [
   { value: 'RE/MAX', label: 'Collection®', note: 'Rede global, equipa local' },
 ] as const;
 
-// Stats bar under the Bairros map. Honest, brand-true content — NO invented
+// Stats bar under the Zonas map. Honest, brand-true content — NO invented
 // market figures. `countTo` (optional) enables a count-up only where the number
-// is real & verifiable (4 bairros). When the team supplies real, defensible
+// is real & verifiable (4 zonas). When the team supplies real, defensible
 // metrics (e.g. nº de imóveis, valorização média a 3 anos), swap them in here.
-export const bairrosStats = [
-  { icon: 'pin', value: '4', countTo: 4, label: 'Bairros selecionados' },
+export const zonasStats = [
+  { icon: 'pin', value: '4', countTo: 4, label: 'Zonas selecionadas' },
   { icon: 'diamond', value: 'Curadoria', label: 'Imóveis por seleção' },
   { icon: 'shield-check', value: 'Confidencial', label: 'Em cada etapa' },
   { icon: 'sparkle', value: 'Vintage', label: 'Carácter raro' },
