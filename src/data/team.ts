@@ -122,11 +122,8 @@ const REAL_TEAM: { name: string; role: string }[] = [
   { name: 'Tiago Almeida', role: 'Agente Associado' },
   { name: 'Tiago Mogadouro Aguiar', role: 'Agente Associado' },
   { name: 'Vinicius Torinelli', role: 'Designer Gráfico' },
-  { name: 'Alex Prazeres', role: 'Agente em Formação' },
   { name: 'Pedro Couto', role: 'Gestor(a) de Acompanhamento' },
-  { name: 'Salviano Cruz', role: 'Agente em Formação' },
   { name: 'Sónia Santos', role: 'Gestor(a) de Recursos Humanos' },
-  { name: 'Tiago Quintas', role: 'Agente em Formação' },
 ];
 
 // AI placeholder portraits — NOT the real people (see header). Used to keep
@@ -151,7 +148,7 @@ const REAL_PHOTOS: Record<string, { image: string; hasWebp: boolean }> = {
 
 // People the official roster shows WITHOUT a photo (RE/MAX-balloon placeholder)
 // → our dignified gold-monogram here, faithful to the source screenshots.
-const NO_PHOTO = new Set(['Frederico Pinto', 'Alex Prazeres', 'Salviano Cruz']);
+const NO_PHOTO = new Set(['Frederico Pinto']);
 
 let aiCursor = 0;
 export const consultants: Consultant[] = REAL_TEAM.map((p) => {

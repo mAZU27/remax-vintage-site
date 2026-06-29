@@ -14,13 +14,13 @@ import { faqs } from './faqs';
 
 export const assistant = {
   name: 'Assistente Collection Vintage',
-  status: 'Assistente digital · sem compromisso',
+  status: 'Assistente digital · resposta 24/7',
   // Shown as the first bubble when the panel opens.
   welcome:
-    'Olá. Sou o assistente digital da RE/MAX Collection Vintage. Posso ajudá-lo a comprar, vender, arrendar ou avaliar um imóvel no Porto. Como posso ajudar?',
+    'Bem-vindo à RE/MAX Collection Vintage 👋\n\nSou o assistente digital da Collection — aqui para ajudá-lo com perguntas sobre compra, venda, arrendamento, avaliação ou qualquer dúvida sobre a Collection.\n\nComo posso ajudar?',
   // Used whenever the user asks if they are talking to a person.
   humanNote:
-    'Sou o assistente digital da Collection Vintage. Para um acompanhamento personalizado, posso encaminhá-lo para a nossa equipa.',
+    'Sou o assistente digital da Collection Vintage. Para um acompanhamento completamente personalizado e conversas mais aprofundadas, a nossa equipa está disponível via WhatsApp, email ou telefone.',
 };
 
 // Mandatory fallback (verbatim from the brief) when nothing reliable is found.

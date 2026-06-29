@@ -35,7 +35,10 @@ export type IntentId =
   | 'equipa'
   | 'empresa'
   | 'reconhecimento'
-  | 'humano';
+  | 'humano'
+  | 'preco'
+  | 'urgente'
+  | 'problema';
 
 export interface Intent {
   id: IntentId;
@@ -56,40 +59,44 @@ export function normalize(text: string): string {
 
 // Order matters: more specific intents first so they win ties.
 export const intents: Intent[] = [
-  { id: 'agradecimento', keywords: ['obrigado', 'obrigada', 'agradecido', 'grato'], phrases: ['muito obrigado'] },
-  { id: 'saudacao', keywords: ['ola', 'bom dia', 'boa tarde', 'boa noite', 'hello', 'hey', 'viva'] },
-  { id: 'humano', keywords: ['humano', 'pessoa', 'alguem', 'consultor', 'equipa', 'atendimento', 'falar'], phrases: ['falar com alguem', 'falar com a equipa', 'falar com um consultor', 'preciso de falar'] },
+  { id: 'agradecimento', keywords: ['obrigado', 'obrigada', 'agradecido', 'grato'], phrases: ['muito obrigado', 'obrigada'] },
+  { id: 'saudacao', keywords: ['ola', 'bom dia', 'boa tarde', 'boa noite', 'hello', 'hey', 'viva', 'oi'] },
+  { id: 'humano', keywords: ['humano', 'pessoa', 'alguem', 'consultor', 'equipa', 'atendimento', 'falar'], phrases: ['falar com alguem', 'falar com a equipa', 'falar com um consultor', 'preciso de falar', 'falar com um humano'] },
 
-  { id: 'processo_venda', keywords: [], phrases: ['processo de venda', 'como funciona a venda', 'como vendo', 'passos para vender'] },
+  { id: 'urgente', keywords: ['urgente', 'rapido', 'pressa', 'ja', 'hoje', 'amanha', 'imediato', 'asap'], phrases: ['preciso urgente', 'nao tenho tempo', 'e urgente'] },
+  { id: 'problema', keywords: ['problema', 'problemas', 'erro', 'nao funciona', 'quebrado', 'falha', 'nao consigo', 'ajuda', 'socorro'], phrases: ['tem um problema', 'nao esta a funcionar', 'preciso de ajuda', 'pode ajudar'] },
+
+  { id: 'processo_venda', keywords: [], phrases: ['processo de venda', 'como funciona a venda', 'como vendo', 'passos para vender', 'como vender'] },
   { id: 'processo_compra', keywords: [], phrases: ['processo de compra', 'como funciona a compra', 'como comprar', 'passos para comprar'] },
   { id: 'processo_arrendamento', keywords: [], phrases: ['processo de arrendamento', 'como funciona o arrendamento', 'como arrendo'] },
 
-  { id: 'pedir_avaliacao', keywords: [], phrases: ['pedir avaliacao', 'como pedir avaliacao', 'quero avaliacao', 'solicitar avaliacao', 'marcar avaliacao'] },
-  { id: 'avaliacao', keywords: ['avaliacao', 'avaliar', 'valor', 'vale', 'quanto vale', 'estimativa'], phrases: ['avaliar o meu imovel', 'quanto vale a minha casa'] },
+  { id: 'pedir_avaliacao', keywords: [], phrases: ['pedir avaliacao', 'como pedir avaliacao', 'quero avaliacao', 'solicitar avaliacao', 'marcar avaliacao', 'avaliar imovel'] },
+  { id: 'avaliacao', keywords: ['avaliacao', 'avaliar', 'valor', 'vale', 'quanto vale', 'estimativa', 'preco do imovel'], phrases: ['avaliar o meu imovel', 'quanto vale a minha casa'] },
 
-  { id: 'comissao', keywords: ['comissao', 'comissoes', 'honorarios', 'percentagem'], phrases: ['quanto custa vender', 'custo de vender', 'quanto cobram', 'taxa de mediacao'] },
+  { id: 'preco', keywords: ['preco', 'precos', 'valor', 'custa', 'custam', 'quanto', 'investimento', 'custo'], phrases: ['quanto custa', 'qual o preco', 'qual e o preco', 'preço de venda'] },
+  { id: 'comissao', keywords: ['comissao', 'comissoes', 'honorarios', 'percentagem', 'taxa'], phrases: ['quanto custa vender', 'custo de vender', 'quanto cobram', 'taxa de mediacao'] },
   { id: 'documentos', keywords: ['documentos', 'documentacao', 'papeis', 'caderneta', 'certidao', 'licenca', 'certificado'], phrases: ['documentos para vender', 'que documentos'] },
-  { id: 'confidencialidade', keywords: ['confidencial', 'confidencialidade', 'discricao', 'privacidade', 'discreto'] },
+  { id: 'confidencialidade', keywords: ['confidencial', 'confidencialidade', 'discricao', 'privacidade', 'discreto', 'sigilo'] },
 
-  { id: 'vender', keywords: ['vender', 'venda', 'vendo'], phrases: ['vender o meu imovel', 'vender a minha casa', 'quero vender'] },
-  { id: 'comprar', keywords: ['comprar', 'compra', 'adquirir'], phrases: ['comprar casa', 'comprar um imovel', 'quero comprar', 'procuro casa'] },
-  { id: 'alugar', keywords: ['alugar', 'arrendar', 'arrendamento', 'aluguer', 'renda', 'inquilino', 'senhorio'], phrases: ['alugar casa', 'quero arrendar'] },
+  { id: 'vender', keywords: ['vender', 'venda', 'vendo', 'vendedor'], phrases: ['vender o meu imovel', 'vender a minha casa', 'quero vender', 'interessado em vender'] },
+  { id: 'comprar', keywords: ['comprar', 'compra', 'adquirir', 'comprador', 'procuro'], phrases: ['comprar casa', 'comprar um imovel', 'quero comprar', 'procuro casa', 'estou a procura'] },
+  { id: 'alugar', keywords: ['alugar', 'arrendar', 'arrendamento', 'aluguel', 'renda', 'inquilino', 'senhorio'], phrases: ['alugar casa', 'quero arrendar', 'procuro para arrendar'] },
 
-  { id: 'visita', keywords: ['visita', 'visitar', 'agendar', 'agendamento', 'marcacao'], phrases: ['marcar visita', 'marcar uma visita', 'agendar visita', 'ver o imovel'] },
+  { id: 'visita', keywords: ['visita', 'visitar', 'agendar', 'agendamento', 'marcacao', 'ver'], phrases: ['marcar visita', 'marcar uma visita', 'agendar visita', 'ver o imovel', 'agendar visita'] },
 
-  { id: 'contacto', keywords: ['contacto', 'contactos', 'telefone', 'telemovel', 'email', 'mail', 'whatsapp', 'numero'], phrases: ['como vos contacto', 'qual o contacto', 'qual e o contacto'] },
-  { id: 'localizacao', keywords: ['onde', 'morada', 'localizacao', 'endereco', 'escritorio', 'sede', 'ficam', 'ficais', 'mapa'], phrases: ['onde ficam', 'onde estao', 'onde fica'] },
-  { id: 'horario', keywords: ['horario', 'horarios', 'aberto', 'abrem', 'fecham', 'funciona'], phrases: ['a que horas', 'horario de funcionamento'] },
+  { id: 'contacto', keywords: ['contacto', 'contactos', 'telefone', 'telemovel', 'email', 'mail', 'whatsapp', 'numero', 'como contactar'], phrases: ['como vos contacto', 'qual o contacto', 'qual e o contacto', 'dados de contacto'] },
+  { id: 'localizacao', keywords: ['onde', 'morada', 'localizacao', 'endereco', 'escritorio', 'sede', 'ficam', 'ficais', 'mapa'], phrases: ['onde ficam', 'onde estao', 'onde fica', 'qual a morada'] },
+  { id: 'horario', keywords: ['horario', 'horarios', 'aberto', 'abrem', 'fecham', 'funciona', 'atende'], phrases: ['a que horas', 'horario de funcionamento', 'quando abrem'] },
 
-  { id: 'zonas', keywords: ['zona', 'zonas', 'foz', 'boavista', 'ribeira', 'cedofeita', 'area', 'areas'], phrases: ['que zonas', 'em que zonas'] },
-  { id: 'imoveis', keywords: ['imoveis', 'imovel', 'casas', 'casa', 'apartamento', 'apartamentos', 'moradia', 'moradias', 'catalogo', 'listagem', 'disponivel', 'disponiveis', 't2', 't3', 't4'], phrases: ['imoveis disponiveis', 'que imoveis', 'tem casas', 'tem apartamentos'] },
+  { id: 'zonas', keywords: ['zona', 'zonas', 'foz', 'boavista', 'ribeira', 'cedofeita', 'area', 'areas'], phrases: ['que zonas', 'em que zonas', 'quais sao as zonas'] },
+  { id: 'imoveis', keywords: ['imoveis', 'imovel', 'casas', 'casa', 'apartamento', 'apartamentos', 'moradia', 'moradias', 'catalogo', 'listagem', 'disponivel', 'disponiveis', 't2', 't3', 't4'], phrases: ['imoveis disponiveis', 'que imoveis', 'tem casas', 'tem apartamentos', 'ver imoveis'] },
 
-  { id: 'servicos', keywords: ['servico', 'servicos', 'ajudam', 'fazem', 'prestam', 'oferecem'], phrases: ['que servicos', 'o que fazem'] },
-  { id: 'blog', keywords: ['blog', 'artigo', 'artigos', 'insights', 'noticias', 'guia', 'guias', 'mercado'] },
-  { id: 'carreiras', keywords: ['carreira', 'carreiras', 'emprego', 'trabalhar', 'vaga', 'vagas', 'recrutamento', 'candidatura', 'consultora', 'consultor'], phrases: ['trabalhar convosco', 'quero trabalhar', 'candidatar'] },
-  { id: 'equipa', keywords: ['equipa', 'consultores', 'quem sao', 'agentes'], phrases: ['quem e a equipa', 'a vossa equipa'] },
-  { id: 'reconhecimento', keywords: ['premio', 'premios', 'reconhecimento', 'experiencia', 'galardao', 'distincao'] },
-  { id: 'empresa', keywords: ['remax', 'collection', 'vintage', 'agencia', 'empresa', 'marca', 'quem'], phrases: ['quem sao voces', 'o que e a', 're max'] },
+  { id: 'servicos', keywords: ['servico', 'servicos', 'ajudam', 'fazem', 'prestam', 'oferecem'], phrases: ['que servicos', 'o que fazem', 'que servicos oferecem'] },
+  { id: 'blog', keywords: ['blog', 'artigo', 'artigos', 'insights', 'noticias', 'guia', 'guias', 'mercado', 'conteudo'], phrases: ['artigos', 'blog de', 'ver artigos'] },
+  { id: 'carreiras', keywords: ['carreira', 'carreiras', 'emprego', 'trabalhar', 'vaga', 'vagas', 'recrutamento', 'candidatura', 'consultora', 'consultor', 'job'], phrases: ['trabalhar convosco', 'quero trabalhar', 'candidatar', 'oportunidades de trabalho'] },
+  { id: 'equipa', keywords: ['equipa', 'consultores', 'quem sao', 'agentes', 'team', 'staff'], phrases: ['quem e a equipa', 'a vossa equipa', 'conhecer equipa'] },
+  { id: 'reconhecimento', keywords: ['premio', 'premios', 'reconhecimento', 'experiencia', 'galardao', 'distincao', 'award'], phrases: ['premios recebidos', 'reconhecimento'] },
+  { id: 'empresa', keywords: ['remax', 'collection', 'vintage', 'agencia', 'empresa', 'marca', 'quem'], phrases: ['quem sao voces', 'o que e a', 're max', 'sobre vos', 'historia da'] },
 ];
 
 export function detectIntent(text: string): IntentId | null {

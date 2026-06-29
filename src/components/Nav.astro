@@ -169,16 +169,18 @@ const isActive = (href: string) => {
       0 30px 70px -28px rgba(6, 13, 26, 0.85),
       inset 0 1px 0 rgba(255, 255, 255, 0.14),
       inset 0 0 26px -12px rgba(150, 185, 235, 0.3);
-    padding: 14px 20px 24px;
-    display: flex; flex-direction: column; gap: 18px;
+    padding: 10px 16px 16px;
+    display: flex; flex-direction: column; gap: 12px;
+    max-height: calc(100svh - 180px);
+    overflow-y: auto;
     transform: translateY(-12px); opacity: 0;
     transition: transform var(--t-med), opacity var(--t-med);
   }
   .nav[data-open] .nav__drawer { transform: translateY(0); opacity: 1; pointer-events: auto; }
   .nav__drawer-links { display: flex; flex-direction: column; }
   .nav__drawer-link {
-    font-family: var(--font-serif); font-size: 24px; font-weight: 500; color: var(--cream);
-    text-decoration: none; padding: 11px 0; border-bottom: 1px solid var(--hairline-light);
+    font-family: var(--font-serif); font-size: 18px; font-weight: 500; color: var(--cream);
+    text-decoration: none; padding: 9px 0; border-bottom: 1px solid rgba(176, 198, 230, 0.14);
     transition: color var(--t-fast); letter-spacing: -0.01em;
   }
   .nav__drawer-link:hover, .nav__drawer-link.is-active { color: var(--gold-light); }

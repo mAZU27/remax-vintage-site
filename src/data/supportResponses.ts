@@ -152,10 +152,16 @@ function list(items: string[]): string {
 function replyFor(intent: IntentId): BotReply {
   switch (intent) {
     case 'saudacao':
-      return { text: 'Olá! Em que posso ajudar hoje — comprar, vender, arrendar ou avaliar um imóvel?', chips: NAV_CHIPS };
+      return {
+        text: 'Bem-vindo à Collection Vintage! Sou o assistente digital da equipa.\n\nComo posso ajudar?\n• Procura comprar ou vender um imóvel?\n• Quer conhecer as zonas onde operamos?\n• Tem dúvidas sobre os nossos processos?',
+        chips: [...NAV_CHIPS, { label: 'Conhecer a equipa', send: 'quem sao voces' }]
+      };
 
     case 'agradecimento':
-      return { text: 'Ao seu dispor. Se precisar de mais alguma coisa, estou aqui.', chips: NAV_CHIPS };
+      return {
+        text: 'Fico feliz em ajudar! 😊\n\nSe tiver mais perguntas ou precisar de falar diretamente com alguém da equipa, estou aqui.',
+        chips: NAV_CHIPS
+      };
 
     case 'vender':
       return {
@@ -200,7 +206,7 @@ function replyFor(intent: IntentId): BotReply {
 
     case 'contacto':
       return {
-        text: `Pode falar connosco por:\n• Telefone: ${contacts.phone}\n• Email: ${contacts.email}\n• WhatsApp (resposta imediata)\n\nRespondemos normalmente em 24h.`,
+        text: `Pode contactar-nos de várias formas:\n\n📞 Telefone: ${contacts.phone}\n💬 WhatsApp: resposta imediata\n📧 Email: ${contacts.email}\n\n⏰ Respondemos normalmente em 24h. Fora do horário, deixe mensagem que retornamos assim que possível.`,
         chips: humanChips,
       };
 
@@ -300,7 +306,26 @@ function replyFor(intent: IntentId): BotReply {
 
     case 'humano':
       return {
-        text: 'Com certeza. Pode falar diretamente com a nossa equipa por aqui:',
+        text: 'Com certeza! Pode falar diretamente com a nossa equipa. Estamos aqui para ajudar:',
+        chips: humanChips,
+      };
+
+    case 'preco':
+      return {
+        text: 'Os valores dos imóveis dependem da localização, tipologia, tamanho e características.\n\nOs preços variam conforme o mercado atual no Porto. Veja o catálogo ou peça uma avaliação personalizada.',
+        cta: { label: 'Ver catálogo de imóveis', href: '/imoveis' },
+        chips: [{ label: 'Pedir avaliação', flow: 'avaliacao' }, { label: 'Comprar', flow: 'comprar' }],
+      };
+
+    case 'urgente':
+      return {
+        text: 'Entendo que tem pressa! A nossa equipa está disponível para atender urgências.\n\nFale connosco por WhatsApp para uma resposta imediata:',
+        chips: [{ label: 'WhatsApp (urgente)', href: contacts.whatsappHref, external: true }, { label: 'Ligar', href: contacts.phoneHref }],
+      };
+
+    case 'problema':
+      return {
+        text: 'Peço desculpa por qualquer inconveniente. A nossa equipa está aqui para resolver a situação.\n\nPode contactar-nos diretamente e resolveremos o mais rápido possível:',
         chips: humanChips,
       };
 
