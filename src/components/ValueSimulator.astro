@@ -236,35 +236,50 @@ const TOTAL = 6;
   .vsim[hidden] { display: none; }
 
   .vsim__overlay {
-    position: absolute; inset: 0; background: rgba(6, 14, 26, 0.72);
-    -webkit-backdrop-filter: blur(6px); backdrop-filter: blur(6px);
-    opacity: 0; transition: opacity var(--t-med);
+    position: absolute; inset: 0;
+    background:
+      radial-gradient(120% 90% at 50% 40%, rgba(184, 153, 104, 0.08), transparent 60%),
+      linear-gradient(180deg, rgba(6, 14, 26, 0.66) 0%, rgba(4, 10, 20, 0.86) 100%);
+    -webkit-backdrop-filter: blur(14px) saturate(120%); backdrop-filter: blur(14px) saturate(120%);
+    opacity: 0; transition: opacity 480ms var(--t-ease-emph);
   }
   .vsim.is-open .vsim__overlay { opacity: 1; }
 
   .vsim__dialog {
     position: relative; width: min(640px, 100%); max-height: min(85vh, 720px);
     display: flex; flex-direction: column; overflow: hidden; color: var(--cream);
-    background: linear-gradient(180deg, #122c49 0%, var(--navy-ink) 88%);
+    background: linear-gradient(180deg, #142f4f 0%, var(--navy-ink) 88%);
     border: 1px solid var(--hairline-gold); border-radius: var(--radius-lg);
-    box-shadow: var(--shadow-float);
-    opacity: 0; transform: translateY(16px) scale(0.985);
-    transition: opacity var(--t-med), transform var(--t-med) var(--t-ease-emph);
+    box-shadow:
+      0 40px 90px -30px rgba(0, 0, 0, 0.7),
+      0 0 0 1px rgba(184, 153, 104, 0.12),
+      0 0 60px -10px rgba(184, 153, 104, 0.18);
+    opacity: 0; transform: translateY(24px) scale(0.965);
+    transition: opacity 520ms var(--t-ease-emph), transform 560ms var(--t-ease-emph);
   }
   .vsim.is-open .vsim__dialog { opacity: 1; transform: none; }
   .vsim__dialog::before {
     content: ''; position: absolute; inset: 0; pointer-events: none;
-    background: radial-gradient(80% 50% at 50% 0%, rgba(184, 153, 104, 0.14), transparent 70%);
+    background: radial-gradient(80% 50% at 50% 0%, rgba(184, 153, 104, 0.16), transparent 70%);
+  }
+  .vsim__dialog::after {
+    content: ''; position: absolute; inset: 0; pointer-events: none; border-radius: inherit;
+    box-shadow: inset 0 1px 0 rgba(212, 187, 133, 0.18);
   }
 
   .vsim__x {
-    position: absolute; top: 14px; right: 14px; z-index: 2;
-    width: 40px; height: 40px; display: grid; place-items: center; border-radius: 50%;
-    background: rgba(11, 26, 46, 0.5); color: var(--cream);
+    position: absolute; top: 16px; right: 16px; z-index: 3;
+    width: 44px; height: 44px; display: grid; place-items: center; border-radius: 50%;
+    background: rgba(11, 26, 46, 0.55); color: var(--cream);
     border: 1px solid var(--hairline-gold);
-    transition: background var(--t-fast), color var(--t-fast), border-color var(--t-fast);
+    -webkit-backdrop-filter: blur(8px); backdrop-filter: blur(8px);
+    transition: background var(--t-fast), color var(--t-fast), border-color var(--t-fast), transform var(--t-fast);
   }
-  .vsim__x:hover { background: rgba(11, 26, 46, 0.8); border-color: var(--gold); color: var(--gold-light); }
+  .vsim__x:hover {
+    background: rgba(11, 26, 46, 0.85); border-color: var(--gold); color: var(--gold-light);
+    transform: rotate(90deg);
+  }
+  .vsim__x:focus-visible { box-shadow: var(--ring); outline: none; }
 
   .vsim__head {
     position: relative; flex-shrink: 0; padding: clamp(26px, 3vw, 36px) clamp(24px, 3vw, 40px) 20px;
@@ -613,9 +628,46 @@ const TOTAL = 6;
         return;
       }
 
-      // TODO(backend): enviar o lead para o serviço de email/CRM.
-      // Payload disponível = { ...lead fields, estimativa: estimateRange(input) }.
-      // Definir o ENDPOINT/handler real e tratar resposta/erros antes do lançamento.
+      // Send the lead to the same-origin /api/lead proxy, which forwards to
+      // the Novus ingest with the token kept server-side. No token in the
+      // browser. Server-side ingest is fail-soft, so a lead is never lost.
+      const p4 = panelByName('4');
+      const val = (n: string) =>
+        p4.querySelector<HTMLInputElement>(`input[name="${n}"]`)?.value.trim() ?? '';
+      const est = estimateRange({
+        zone: getRadio('vsim-zone'),
+        type: getRadio('vsim-type'),
+        area: getArea(),
+        typology: getRadio('vsim-typology'),
+        condition: getRadio('vsim-condition'),
+        extras: getExtras(),
+      });
+      const utm: Record<string, string> = {};
+      new URLSearchParams(location.search).forEach((v, k) => {
+        if (k.startsWith('utm_')) utm[k] = v;
+      });
+      fetch('/api/lead', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          full_name: val('nome'),
+          email: val('email'),
+          phone: val('telefone'),
+          property_type: getRadio('vsim-type'),
+          property_location: getRadio('vsim-zone'),
+          area_m2: getArea(),
+          typology: getRadio('vsim-typology'),
+          condition: getRadio('vsim-condition'),
+          extras: getExtras(),
+          estimate_low: est.low,
+          estimate_high: est.high,
+          form: 'value-simulator',
+          utm,
+          consent: { type: 'avaliacao_imovel', text_version: 'v1' },
+        }),
+        keepalive: true,
+      }).catch((e) => console.error('[lead]', e));
+
       showDone();
     };
 

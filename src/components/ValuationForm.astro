@@ -152,7 +152,25 @@ const tipologias = ['T0', 'T1', 'T2', 'T3', 'T4', 'T5+', 'Moradia', 'Outro'];
         return;
       }
 
-      // Valid — front-end only: reveal the success state.
+      // Send to the same-origin lead proxy (token stays server-side).
+      const g = (n: string) =>
+        form.querySelector<HTMLInputElement | HTMLSelectElement | HTMLTextAreaElement>(`[name="${n}"]`)?.value.trim() ?? '';
+      fetch('/api/lead', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          full_name: g('nome'),
+          email: g('email'),
+          phone: g('telefone'),
+          property_location: g('zona'),
+          typology: g('tipologia'),
+          mensagem: g('mensagem'),
+          form: 'valuation-form',
+          consent: { type: 'avaliacao_imovel', text_version: 'v1' },
+        }),
+        keepalive: true,
+      }).catch((err) => console.error('[lead]', err));
+
       if (body) body.hidden = true;
       if (success) success.hidden = false;
       success?.scrollIntoView({ behavior: 'smooth', block: 'center' });
