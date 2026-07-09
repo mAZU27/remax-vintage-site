@@ -85,7 +85,7 @@ export const promocao = [
 // B4 · The power of sharing. ALL numbers need confirmation.
 export const forcaPartilha = {
   intro:
-    'Um consultor dedicado — e todos os consultores do Grupo RE/MAX Dragão a trabalhar o seu imóvel.',
+    'Um consultor dedicado — e toda a equipa da agência a trabalhar o seu imóvel.',
   pontos: [
     { text: '10.000 consultores em Portugal na rede RE/MAX', confirmar: true },
     {
@@ -159,7 +159,7 @@ export const exclusividadeGarante = [
   },
   { text: 'Orientação, se necessário, na melhoria da apresentação do imóvel', confirmar: false },
   {
-    text: 'MaxFinance Dragão a apoiar os compradores na obtenção de financiamento',
+    text: 'MaxFinance a apoiar os compradores na obtenção de financiamento',
     confirmar: true,
   },
 ] as const;

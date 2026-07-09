@@ -226,7 +226,7 @@ export const parceiros = [
     text: 'Construção chave na mão.',
   },
   {
-    name: 'MDS Finance / MaxFinance Dragão',
+    name: 'MDS Finance / MaxFinance',
     text: 'Apoio à obtenção de financiamento.',
   },
 ] as const;
