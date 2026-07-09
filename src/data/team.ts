@@ -127,10 +127,12 @@ const REAL_TEAM: { name: string; role: string }[] = [
 // AI placeholder portraits — NOT the real people (see header). Used to keep
 // every card filled until real headshots arrive: 51 numbered + 5 hand-picked.
 const AI_PORTRAITS: { image: string; hasWebp: boolean }[] = [
+  // team-49 excluded: it was the same face as sonia-santos.jpg (a real
+  // person's photo leaked into the placeholder pool → duplicated face).
   ...Array.from({ length: 51 }, (_, i) => ({
     image: `/images/team/team-${String(i + 1).padStart(2, '0')}`,
     hasWebp: false,
-  })),
+  })).filter((p) => !p.image.endsWith('team-49')),
   { image: '/images/team/jose-vieira', hasWebp: true },
   { image: '/images/team/ligia-mofreita', hasWebp: true },
   { image: '/images/team/lubna-braylih', hasWebp: true },
@@ -155,6 +157,8 @@ export const consultants: Consultant[] = REAL_TEAM.map((p) => {
   if (real) return { ...base, image: real.image, hasWebp: real.hasWebp, placeholder: false };
   if (NO_PHOTO.has(p.name)) return { ...base, image: null, hasWebp: false, placeholder: true };
   const face = AI_PORTRAITS[aiCursor++];
+  // Pool exhausted → gold-monogram fallback (never repeat a face).
+  if (!face) return { ...base, image: null, hasWebp: false, placeholder: true };
   return { ...base, image: face.image, hasWebp: face.hasWebp, placeholder: true };
 });
 
