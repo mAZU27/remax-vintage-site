@@ -44,35 +44,50 @@ The whole site is in **European Portuguese**.
 
 ## 2. Tech stack & how to run it
 
-- **Plain static site.** No framework, no build step. HTML + CSS + a little vanilla JS.
-- Fonts: **Cormorant Garamond** (serif display) + **Jost** (sans), via Google Fonts.
-- Preview locally with any static server, e.g.:
-  ```bash
-  python3 -m http.server 8000
-  # then open http://localhost:8000
-  ```
-  (Just double-clicking index.html also mostly works, but a server avoids path quirks.)
+- **Astro 5** (migrated from the original static page), Vercel adapter; pages
+  prerender statically, only `src/pages/api/lead.ts` runs on-demand (keeps the
+  lead-ingest token server-side).
+- Fonts: **Cormorant Garamond** (serif display) + **Jost** (sans).
+- Run locally: `npm run dev` → http://localhost:4321. Build: `npm run build`.
+  QA: `/mobile-preview` renders any page in a phone frame (dev-only).
 
 ### Structure
 ```
-index.html        — the whole page (12 sections), inline behaviour script at the bottom
-styles.css        — full design system + all section styles (~2900 lines)
-lib/
-  image-slot.js   — custom <image-slot> web component (SEE THE CAVEAT in §5)
-assets/
-  remax-vintage-horizontal.png        — LIVE: logo in nav + footer
-  hero-ribeira.png                    — LIVE: hero background
-  hero-porto-douro.png                — spare: alternate hero (not referenced)
-  remax-collection-vintage-logo.png   — spare (not referenced)
-  remax-vintage-logo.svg              — BROKEN placeholder (empty <image>, no href)
-  remax-collection-vintage-logo.svg   — BROKEN placeholder (empty <image>, no href)
+src/pages/       index (homepage) · comprar · vender · alugar · sobre-nos ·
+                 contacto · apoio · carreiras · insights/ · privacidade ·
+                 mobile-preview · api/lead.ts
+src/components/  Nav, Footer, Hero, PageHero, Button, Icon, SectionEyebrow,
+                 StructureDiagram, FaqAccordion, ValuationForm, ValueSimulator,
+                 Neighborhoods, Testimonials, AwardsBelt/Grid, Careers*, …
+src/content/     metodo-comprar.ts · metodo-vender.ts · rede.ts — method-page
+                 content transcribed from the OFFICIAL printed guides (Grupo
+                 RE/MAX Dragão); items flagged confirmar:true await agency
+                 sign-off (rendered with <!-- CONFIRMAR COM AGÊNCIA -->).
+src/data/        site.ts (nav/journeys/zones/about) · faqs · awards · team ·
+                 carreiras · insights · support* (AI assistant) · valuation-config
+src/lib/         site.config.ts — EXTERNAL_LISTINGS_URL (single source for the
+                 official RE/MAX agency listings page; ALL property CTAs point
+                 there, target=_blank rel=noopener)
+src/i18n/        PT→EN client-side toggle dictionaries
+legacy/          the original static site (kept for reference)
+_archive/        retired property catalog (properties.ts + photos) — the site
+                 NO LONGER lists properties internally (business decision):
+                 /imoveis and /imoveis/[slug] were removed; search happens on
+                 the official RE/MAX site via EXTERNAL_LISTINGS_URL.
 ```
 
-> **index.html must stay at the project root.** The `<image-slot>` component assumes it.
+### Key rules in force
+- The homepage carries EXACTLY **10 conversion CTAs** (map documented at the
+  top of `src/pages/index.astro`). Only #1 (hero card → simulator) and #7
+  (estudo de mercado banner) are full gold buttons.
+- Method content comes EXCLUSIVELY from the printed guides — never invent
+  facts, numbers or services. `[CONFIRMAR]` items stay flagged until the
+  agency confirms them in writing.
+- Nav has 7 items (Comprar · Vender · Imóveis↗ · Arrendar · Sobre nós · Blog ·
+  Contacto) + the "Pedir avaliação" button; Carreiras lives in the footer.
+- Never repeat the same image across different heros/sections.
 
----
-
-## 3. Design system (already defined in styles.css `:root`)
+## 3. Design system (defined in src/styles/global.css `:root`)
 
 This is the **RE/MAX Collection** palette — gold + navy + cream. Note: this is *gold*,
 not the standard RE/MAX red. Gold is correct for the Collection (luxury) sub-brand — do

@@ -1,0 +1,51 @@
+---
+// Privacy-policy page. The footer and every form consent label link here —
+// before this page existed those links 404'd. The FULL legal text must be
+// provided/validated by the agency's legal counsel before launch; this page
+// carries only honest, non-invented interim content.
+// <!-- CONFIRMAR COM AGÊNCIA: texto jurídico completo da política de privacidade -->
+import Base from '../layouts/Base.astro';
+import SectionEyebrow from '../components/SectionEyebrow.astro';
+import { site } from '../data/site';
+---
+<Base
+  title="Política de Privacidade"
+  description="Política de privacidade da RE/MAX Collection Vintage."
+>
+  <Fragment set:html={'<!-- CONFIRMAR COM AGÊNCIA: texto jurídico completo desta página -->'} />
+  <section class="section section--cream priv">
+    <div class="container container--narrow">
+      <SectionEyebrow text="Privacidade" />
+      <h1 class="h2 priv__title" data-reveal>
+        Política de <em class="em-gold serif-it">Privacidade</em>.
+      </h1>
+      <div class="priv__body" data-reveal style="--reveal-delay:120ms">
+        <p class="lede">
+          Os dados pessoais recolhidos através dos formulários deste site são
+          utilizados exclusivamente para responder ao seu pedido de contacto,
+          avaliação ou informação, e são tratados de forma confidencial pela
+          equipa da {site.name}.
+        </p>
+        <p class="lede">
+          Pode, a qualquer momento, exercer os seus direitos de acesso,
+          retificação ou eliminação dos seus dados — basta contactar-nos
+          através de <a href={`mailto:${site.email}`}>{site.email}</a>.
+        </p>
+        <p class="priv__note">
+          O texto integral desta política encontra-se em preparação e será
+          publicado antes do lançamento do site.
+        </p>
+      </div>
+    </div>
+  </section>
+</Base>
+
+<style>
+  .priv { min-height: 60vh; padding-top: calc(var(--nav-h) + clamp(40px, 6vw, 80px)); }
+  .priv__title { margin-top: 16px; }
+  .priv__body { margin-top: 28px; display: flex; flex-direction: column; gap: 18px; }
+  .priv__body a { color: var(--gold-deep); }
+  .priv__note {
+    margin-top: 10px; font-size: 13px; color: var(--ink-40); letter-spacing: 0.02em;
+  }
+</style>
