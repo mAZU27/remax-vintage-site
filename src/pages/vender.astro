@@ -1,0 +1,594 @@
+---
+// /vender — "O método de venda" (seller guide, Fase 2).
+// Every claim on this page comes from src/content/metodo-vender.ts —
+// the transcription of the official printed seller guide. This template
+// only arranges that content; it never invents copy, numbers or services.
+// Items flagged `confirmar: true` in the data render normally and carry an
+// adjacent <!-- CONFIRMAR COM AGÊNCIA --> comment for the launch review.
+import Base from '../layouts/Base.astro';
+import PageHero from '../components/PageHero.astro';
+import SectionEyebrow from '../components/SectionEyebrow.astro';
+import Button from '../components/Button.astro';
+import Icon from '../components/Icon.astro';
+import {
+  acoes,
+  marketing,
+  promocao,
+  forcaPartilha,
+  tabelaExclusividade,
+  exclusividadeGarante,
+  venderSozinho,
+  documentos,
+  faqAngariacao,
+} from '../content/metodo-vender';
+
+// Hero subtitle = the guide's own framing sentence (first sentence of the
+// "selling alone" intro) — kept verbatim, derived from the single source.
+const heroSubtitle = venderSozinho.enquadramento.split('.')[0] + '.';
+
+// Thin-line icons for the marketing cards — presentation only, text is data.
+const marketingIcons: string[] = ['document', 'building', 'key', 'users', 'device', 'globe'];
+
+// Raw HTML markers for `confirmar` items. Injected via <Fragment set:html>:
+// literal comments written inside a component slot (or a .map() expression)
+// are stripped by the Astro compiler, so they would never reach the output.
+const CONFIRMAR = '<!-- CONFIRMAR COM AGÊNCIA -->';
+const CONFIRMAR_HERO =
+  '<!-- CONFIRMAR COM AGÊNCIA: headline alternativa do guia «Vendido em 15 dias» aguarda confirmação para uso público -->';
+
+// "Sem exclusividade" cell: false → not guaranteed, 'pontual' → occasional.
+const semLabel = (v: boolean | 'pontual'): string =>
+  v === 'pontual' ? 'Pontual' : v ? 'Incluído' : 'Não garantido';
+
+const lastPromocao = promocao.length - 1;
+---
+<Base
+  title="Vender"
+  description="O método de venda da RE/MAX Collection Vintage — estudo de mercado gratuito, marketing planeado, partilha com toda a rede e acompanhamento do primeiro contacto à escritura."
+>
+  <!-- S1 · Hero -->
+  <Fragment set:html={CONFIRMAR_HERO} />
+  <PageHero
+    eyebrow="O método · Vender"
+    title='O método para vender <em class="em-gold serif-it">rápido e pelo melhor valor</em>.'
+    subtitle={heroSubtitle}
+    image="/images/porto/porto-douro-entardecer.webp"
+  />
+
+  <!-- S2 · O que fazemos para vender o seu imóvel -->
+  <section class="section section--cream" id="o-que-fazemos">
+    <div class="container">
+      <header class="shead">
+        <SectionEyebrow text="O nosso trabalho" />
+        <h2 class="h2 shead__title" data-reveal style="--reveal-delay:80ms">
+          O que fazemos para vender o <em class="em-gold serif-it">seu imóvel</em>.
+        </h2>
+      </header>
+      <ol class="acoes">
+        {acoes.map((a, i) => (
+          <li class="acoes__item" data-reveal style={`--reveal-delay:${(i % 3) * 90}ms`}>
+            {a.confirmar && <Fragment set:html={CONFIRMAR} />}
+            <span class="acoes__num" aria-hidden="true">{String(i + 1).padStart(2, '0')}</span>
+            <p class="acoes__text">{a.text}</p>
+          </li>
+        ))}
+      </ol>
+    </div>
+  </section>
+
+  <!-- S3 · Estratégia de marketing planeada -->
+  <section class="section section--navy on-navy" id="marketing">
+    <div class="container">
+      <header class="shead shead--center">
+        <SectionEyebrow text="Marketing" center />
+        <h2 class="h2 shead__title" data-reveal style="--reveal-delay:80ms">
+          Uma estratégia de marketing <em class="em-gold serif-it">planeada</em>.
+        </h2>
+      </header>
+      <ul class="mkt">
+        {marketing.map((m, i) => (
+          <li class="mkt__card" data-reveal style={`--reveal-delay:${(i % 3) * 90}ms`}>
+            {m.confirmar && <Fragment set:html={CONFIRMAR} />}
+            <span class="mkt__ic"><Icon name={marketingIcons[i] ?? 'sparkle'} size={20} stroke={1.4} /></span>
+            <p class="mkt__text">{m.text}</p>
+          </li>
+        ))}
+      </ul>
+    </div>
+  </section>
+
+  <!-- S4 · Passo a passo da promoção -->
+  <section class="section section--cream" id="promocao">
+    <div class="container container--narrow">
+      <header class="shead">
+        <SectionEyebrow text="Passo a passo" />
+        <h2 class="h2 shead__title" data-reveal style="--reveal-delay:80ms">
+          A promoção do imóvel, <em class="em-gold serif-it">passo a passo</em>.
+        </h2>
+      </header>
+      <ol class="tl">
+        {promocao.map((p, i) => {
+          const final = i === lastPromocao;
+          return (
+            <li class:list={['tl__item', { 'tl__item--final': final }]} data-reveal>
+              {p.confirmar && <Fragment set:html={CONFIRMAR} />}
+              <span class="tl__num" aria-hidden="true">
+                {final ? <Icon name="check" size={17} stroke={2} /> : i + 1}
+              </span>
+              <span class="tl__label">{p.label}</span>
+            </li>
+          );
+        })}
+      </ol>
+    </div>
+  </section>
+
+  <!-- S5 · A força da partilha -->
+  <section class="section section--ink on-navy" id="partilha">
+    <div class="container container--narrow partilha">
+      <SectionEyebrow text="A rede" center />
+      <h2 class="h2 partilha__title" data-reveal style="--reveal-delay:80ms">
+        A força da <em class="em-gold serif-it">partilha</em>.
+      </h2>
+      <p class="partilha__intro" data-reveal style="--reveal-delay:160ms">{forcaPartilha.intro}</p>
+      <ul class="partilha__points">
+        {forcaPartilha.pontos.map((p, i) => (
+          <li data-reveal style={`--reveal-delay:${i * 110}ms`}>
+            {p.confirmar && <Fragment set:html={CONFIRMAR} />}
+            <span class="partilha__pt-ic"><Icon name={i === 0 ? 'users' : 'globe'} size={19} stroke={1.4} /></span>
+            <p>{p.text}</p>
+          </li>
+        ))}
+      </ul>
+    </div>
+  </section>
+
+  <!-- S6 · Vantagens da exclusividade — tabela comparativa -->
+  <section class="section section--cream" id="exclusividade">
+    <div class="container container--narrow">
+      <header class="shead">
+        <SectionEyebrow text="Exclusividade" />
+        <h2 class="h2 shead__title" data-reveal style="--reveal-delay:80ms">
+          As vantagens da <em class="em-gold serif-it">exclusividade</em>.
+        </h2>
+      </header>
+      <div
+        class="texcl"
+        role="region"
+        aria-label="Tabela comparativa: com exclusividade e sem exclusividade"
+        tabindex="0"
+        data-reveal
+      >
+        <table class="texcl__table">
+          <thead>
+            <tr>
+              <th scope="col">Serviço</th>
+              <th scope="col">Com exclusividade</th>
+              <th scope="col">Sem exclusividade</th>
+            </tr>
+          </thead>
+          {tabelaExclusividade.grupos.map((g) => (
+            <tbody>
+              <tr class="texcl__group">
+                <th colspan={3} scope="colgroup">{g.titulo}</th>
+              </tr>
+              {g.linhas.map((l) => (
+                <tr>
+                  <th scope="row">{l.item}</th>
+                  <td class="texcl__com">
+                    {l.com ? (
+                      <span class="texcl__yes"><Icon name="check" size={13} stroke={2.2} />Incluído</span>
+                    ) : (
+                      'Não garantido'
+                    )}
+                  </td>
+                  <td class="texcl__sem">{semLabel(l.sem)}</td>
+                </tr>
+              ))}
+            </tbody>
+          ))}
+        </table>
+      </div>
+    </div>
+  </section>
+
+  <!-- S7 · A exclusividade garante-lhe -->
+  <section class="section section--cream-soft" id="garantias">
+    <div class="container">
+      <header class="shead shead--center">
+        <SectionEyebrow text="As garantias" center />
+        <h2 class="h2 shead__title" data-reveal style="--reveal-delay:80ms">
+          O que a exclusividade lhe <em class="em-gold serif-it">garante</em>.
+        </h2>
+      </header>
+      <ul class="gar">
+        {exclusividadeGarante.map((g, i) => (
+          <li class="gar__item" data-reveal style={`--reveal-delay:${(i % 3) * 90}ms`}>
+            {g.confirmar && <Fragment set:html={CONFIRMAR} />}
+            <span class="gar__check"><Icon name="check" size={14} stroke={2} /></span>
+            <p>{g.text}</p>
+          </li>
+        ))}
+      </ul>
+    </div>
+  </section>
+
+  <!-- S8 · Pensa em vender sozinho? -->
+  <section class="section section--navy on-navy" id="vender-sozinho">
+    <div class="container container--narrow vs">
+      <SectionEyebrow text="Vender por conta própria" center />
+      <h2 class="h2 vs__title" data-reveal style="--reveal-delay:80ms">
+        Pensa em vender <em class="em-gold serif-it">sozinho</em>?
+      </h2>
+      <p class="lede lede--light vs__lede" data-reveal style="--reveal-delay:160ms">
+        {venderSozinho.enquadramento}
+      </p>
+      <p class="vs__lead" data-reveal>Connosco, está a:</p>
+      <ul class="vs__points">
+        {venderSozinho.pontos.map((p, i) => (
+          <li data-reveal style={`--reveal-delay:${(i % 2) * 90}ms`}>
+            <span class="vs__check"><Icon name="check" size={14} stroke={2} /></span>
+            {p}
+          </li>
+        ))}
+      </ul>
+      <p class="vs__fecho" data-reveal>{venderSozinho.fecho}</p>
+    </div>
+  </section>
+
+  <!-- S9 · Documentos necessários -->
+  <section class="section section--cream" id="documentos">
+    <div class="container container--narrow">
+      <header class="shead">
+        <SectionEyebrow text="Documentação" />
+        <h2 class="h2 shead__title" data-reveal style="--reveal-delay:80ms">
+          Documentos <em class="em-gold serif-it">necessários</em>.
+        </h2>
+        <p class="lede shead__lede" data-reveal style="--reveal-delay:160ms">
+          Os documentos a reunir para avançar com a venda, organizados por situação.
+        </p>
+      </header>
+      <div class="docs" data-reveal>
+        {documentos.map((d) => (
+          <details class="docs__cat">
+            <summary class="docs__summary">
+              <span class="docs__title">{d.categoria}</span>
+              <span class="docs__ic" aria-hidden="true"><Icon name="chevron" size={16} stroke={1.8} /></span>
+            </summary>
+            <ul class="docs__list">
+              {d.itens.map((item) => (
+                <li>{item}</li>
+              ))}
+            </ul>
+          </details>
+        ))}
+      </div>
+    </div>
+  </section>
+
+  <!-- S10 · Perguntas frequentes — angariação em aberto vs exclusiva -->
+  <section class="section section--cream-soft" id="faq-angariacao">
+    <div class="container container--narrow">
+      <header class="shead">
+        <SectionEyebrow text="Perguntas frequentes" />
+        <h2 class="h2 shead__title" data-reveal style="--reveal-delay:80ms">
+          Angariação em aberto ou <em class="em-gold serif-it">em exclusivo</em>?
+        </h2>
+        <p class="lede shead__lede" data-reveal style="--reveal-delay:160ms">
+          A mesma pergunta, duas respostas — conforme o regime de angariação.
+        </p>
+      </header>
+      <div class="faqx" data-reveal>
+        {faqAngariacao.map((f) => (
+          <details class="faqx__item">
+            <summary class="faqx__summary">
+              <span class="faqx__q">{f.q}</span>
+              <span class="faqx__ic" aria-hidden="true"><Icon name="chevron" size={16} stroke={1.8} /></span>
+            </summary>
+            <div class="faqx__cols">
+              <div class="faqx__col">
+                <span class="faqx__tag">Em aberto</span>
+                <p>{f.aberto}</p>
+              </div>
+              <div class="faqx__col faqx__col--excl">
+                <span class="faqx__tag faqx__tag--gold">Em exclusivo</span>
+                <p>{f.exclusivo}</p>
+              </div>
+            </div>
+          </details>
+        ))}
+      </div>
+    </div>
+  </section>
+
+  <!-- S11 · Cross-link editorial — método de compra -->
+  <section class="section section--tight xlink" aria-label="Ligação ao método de compra">
+    <div class="container container--narrow xlink__inner" data-reveal>
+      <p class="xlink__text">Vai comprar depois de vender?</p>
+      <a class="btn-link" href="/comprar">
+        <span>Conheça o método de compra</span>
+        <Icon name="arrow" size={14} stroke={1.8} />
+      </a>
+    </div>
+  </section>
+
+  <!-- S12 · CTA final — estudo de mercado gratuito -->
+  <section class="section section--navy on-navy fcta">
+    <div class="container container--narrow fcta__inner">
+      <SectionEyebrow text="O primeiro passo" center />
+      <h2 class="h2 fcta__title" data-reveal style="--reveal-delay:80ms">
+        Comece pelo estudo de mercado — <em class="em-gold serif-it">gratuito</em>.
+      </h2>
+      <p class="lede lede--light fcta__lede" data-reveal style="--reveal-delay:160ms">
+        Uma leitura fundamentada do valor do seu imóvel, sem qualquer custo.
+      </p>
+      <div class="fcta__cta" data-reveal style="--reveal-delay:240ms">
+        <Button href="/contacto?assunto=estudo-mercado" variant="gold" arrow>
+          Pedir estudo de mercado gratuito
+        </Button>
+      </div>
+    </div>
+  </section>
+</Base>
+
+<style>
+  /* ---------- Section headers (same editorial pattern as the homepage) ---------- */
+  .shead { margin-bottom: clamp(36px, 4vw, 60px); }
+  .shead__title { margin-top: 16px; max-width: 24ch; }
+  .shead__lede { margin-top: 18px; }
+  .shead--center { text-align: center; }
+  .shead--center .shead__title,
+  .shead--center .shead__lede { margin-inline: auto; }
+
+  /* ---------- S2 · Ações — numbered editorial grid ---------- */
+  .acoes {
+    list-style: none; margin: 0; padding: 0;
+    display: grid; grid-template-columns: repeat(3, 1fr);
+    gap: clamp(30px, 3.4vw, 48px) clamp(26px, 3vw, 52px);
+  }
+  .acoes__item { border-top: 1px solid var(--hairline-gold); padding-top: 22px; }
+  .acoes__num {
+    display: block; font-family: var(--font-serif); font-style: italic; font-weight: 400;
+    font-size: clamp(26px, 2.4vw, 34px); line-height: 1; color: var(--gold-deep);
+    letter-spacing: -0.01em;
+  }
+  .acoes__text { margin: 14px 0 0; font-size: 15px; line-height: 1.62; color: var(--ink-60); max-width: 36ch; }
+  @media (max-width: 900px) { .acoes { grid-template-columns: 1fr 1fr; } }
+  @media (max-width: 560px) { .acoes { grid-template-columns: 1fr; gap: 26px; } }
+
+  /* ---------- S3 · Marketing — icon-led cards on navy ---------- */
+  .mkt {
+    list-style: none; margin: 0; padding: 0;
+    display: grid; grid-template-columns: repeat(3, 1fr); gap: clamp(16px, 2vw, 28px);
+    max-width: 1080px; margin-inline: auto;
+  }
+  .mkt__card {
+    border: 1px solid var(--hairline-light); border-radius: var(--radius-lg);
+    background: var(--navy-soft); padding: clamp(24px, 2.4vw, 34px);
+    display: flex; flex-direction: column; align-items: flex-start; gap: 16px;
+  }
+  .mkt__ic {
+    width: 46px; height: 46px; flex-shrink: 0; display: grid; place-items: center;
+    border: 1px solid var(--hairline-gold); border-radius: 50%; color: var(--gold-light);
+  }
+  .mkt__text { margin: 0; font-size: 15px; line-height: 1.6; color: var(--white-90); }
+  @media (max-width: 900px) { .mkt { grid-template-columns: 1fr 1fr; } }
+  @media (max-width: 560px) { .mkt { grid-template-columns: 1fr; } }
+
+  /* ---------- S4 · Promoção — vertical timeline on a hairline spine ---------- */
+  .tl { list-style: none; margin: 0; padding: 0; position: relative; max-width: 680px; }
+  .tl::before {
+    content: ""; position: absolute; left: 20px; top: 22px; bottom: 22px;
+    width: 1px; background: var(--hairline-gold);
+  }
+  .tl__item { position: relative; display: flex; align-items: center; gap: 22px; padding-block: 12px; }
+  .tl__num {
+    position: relative; z-index: 1; flex-shrink: 0;
+    width: 41px; height: 41px; display: grid; place-items: center;
+    border: 1px solid var(--hairline-gold-strong); border-radius: 50%;
+    background: var(--cream);
+    font-family: var(--font-serif); font-size: 17px; color: var(--gold-deep);
+  }
+  .tl__label { font-size: 15.5px; letter-spacing: 0.01em; color: var(--ink); line-height: 1.45; }
+  /* Final milestone — «Vendido» in gold */
+  .tl__item--final { padding-top: 20px; }
+  .tl__item--final .tl__num { background: var(--gold); border-color: var(--gold); color: var(--navy-ink); }
+  .tl__item--final .tl__label {
+    font-family: var(--font-serif); font-style: italic; font-weight: 400;
+    font-size: clamp(23px, 2.2vw, 29px); color: var(--gold-deep); letter-spacing: -0.01em;
+  }
+
+  /* ---------- S5 · A força da partilha — navy statement band ---------- */
+  .partilha { text-align: center; }
+  .partilha__title { margin-top: 16px; }
+  .partilha__intro {
+    margin: 28px auto 0; font-family: var(--font-serif); font-style: italic; font-weight: 400;
+    font-size: clamp(24px, 3vw, 38px); line-height: 1.3; letter-spacing: -0.012em;
+    color: var(--cream); max-width: 26ch; text-wrap: balance;
+  }
+  .partilha__points {
+    list-style: none; margin: clamp(44px, 5vw, 68px) 0 0; padding: 0;
+    display: grid; grid-template-columns: 1fr 1fr; gap: clamp(26px, 3vw, 48px);
+    text-align: left;
+  }
+  .partilha__points li {
+    border-top: 1px solid var(--hairline-light); padding-top: 24px;
+    display: flex; align-items: flex-start; gap: 16px;
+  }
+  .partilha__pt-ic {
+    flex-shrink: 0; width: 42px; height: 42px; display: grid; place-items: center;
+    border: 1px solid var(--hairline-gold); border-radius: 50%; color: var(--gold-light);
+  }
+  .partilha__points p { margin: 0; font-size: 15px; line-height: 1.65; color: var(--white-70); }
+  @media (max-width: 720px) { .partilha__points { grid-template-columns: 1fr; } }
+
+  /* ---------- S6 · Tabela da exclusividade ---------- */
+  .texcl {
+    overflow-x: auto; border: 1px solid var(--ink-10); border-radius: var(--radius-lg);
+    background: var(--cream-soft);
+  }
+  .texcl__table { width: 100%; min-width: 640px; border-collapse: collapse; font-size: 14.5px; }
+  .texcl__table thead th {
+    font-family: var(--font-sans); font-size: 11px; font-weight: 500;
+    letter-spacing: 0.18em; text-transform: uppercase; color: var(--ink-60);
+    text-align: left; padding: 20px 22px 14px;
+    border-bottom: 1px solid var(--hairline-gold-strong);
+  }
+  .texcl__table thead th:first-child { width: 46%; }
+  .texcl__group th {
+    font-family: var(--font-serif); font-style: italic; font-weight: 400; font-size: 19px;
+    color: var(--gold-deep); text-align: left; letter-spacing: -0.01em;
+    padding: 28px 22px 12px; border-bottom: 1px solid var(--ink-10);
+  }
+  .texcl__table tbody th[scope="row"] {
+    font-weight: 400; text-align: left; color: var(--ink); line-height: 1.5;
+    padding: 13px 22px; border-bottom: 1px solid var(--ink-10);
+  }
+  .texcl__table td { padding: 13px 22px; border-bottom: 1px solid var(--ink-10); vertical-align: middle; }
+  .texcl__yes { display: inline-flex; align-items: center; gap: 8px; color: var(--gold-deep); font-weight: 500; white-space: nowrap; }
+  .texcl__yes :global(.icon) { color: var(--gold); flex-shrink: 0; }
+  .texcl__sem { color: var(--ink-40); white-space: nowrap; }
+  .texcl__table tbody:last-child tr:last-child th,
+  .texcl__table tbody:last-child tr:last-child td { border-bottom: none; }
+
+  /* ---------- S7 · Garantias — check grid ---------- */
+  .gar {
+    list-style: none; margin: 0; padding: 0;
+    display: grid; grid-template-columns: repeat(3, 1fr);
+    gap: clamp(26px, 3vw, 42px) clamp(26px, 3vw, 52px);
+    max-width: 1180px; margin-inline: auto;
+  }
+  .gar__item { display: flex; align-items: flex-start; gap: 14px; }
+  .gar__check {
+    flex-shrink: 0; width: 26px; height: 26px; display: grid; place-items: center;
+    border: 1px solid var(--hairline-gold); border-radius: 50%;
+    background: var(--cream); color: var(--gold-deep); margin-top: 2px;
+  }
+  .gar__item p { margin: 0; font-size: 15px; line-height: 1.6; color: var(--ink-60); }
+  @media (max-width: 900px) { .gar { grid-template-columns: 1fr 1fr; } }
+  @media (max-width: 600px) { .gar { grid-template-columns: 1fr; } }
+
+  /* ---------- S8 · Vender sozinho ---------- */
+  .vs { text-align: center; }
+  .vs__title { margin-top: 16px; }
+  .vs__lede { margin: 22px auto 0; }
+  .vs__lead {
+    margin: clamp(38px, 4vw, 54px) 0 0; font-size: 12px; font-weight: 500;
+    letter-spacing: 0.24em; text-transform: uppercase; color: var(--gold-light);
+  }
+  .vs__points {
+    list-style: none; margin: 24px 0 0; padding: 0;
+    display: grid; grid-template-columns: 1fr 1fr; gap: 15px 44px; text-align: left;
+  }
+  .vs__points li {
+    display: flex; align-items: flex-start; gap: 13px;
+    font-size: 15px; line-height: 1.55; color: var(--white-90);
+  }
+  .vs__check {
+    flex-shrink: 0; width: 24px; height: 24px; display: grid; place-items: center;
+    border: 1px solid var(--hairline-gold); border-radius: 50%;
+    color: var(--gold-light); margin-top: 1px;
+  }
+  .vs__fecho {
+    margin: clamp(46px, 5vw, 68px) auto 0;
+    font-family: var(--font-serif); font-style: italic; font-weight: 400;
+    font-size: clamp(26px, 3.4vw, 42px); line-height: 1.25; letter-spacing: -0.012em;
+    color: var(--gold-light); max-width: 22ch; text-wrap: balance;
+  }
+  @media (max-width: 640px) { .vs__points { grid-template-columns: 1fr; } }
+
+  /* ---------- S9 · Documentos — native <details> accordions ---------- */
+  .docs { border-top: 1px solid var(--ink-10); }
+  .docs__cat { border-bottom: 1px solid var(--ink-10); }
+  .docs__summary {
+    list-style: none; cursor: pointer;
+    display: flex; align-items: center; justify-content: space-between; gap: 24px;
+    padding: clamp(20px, 2.2vw, 26px) 4px;
+  }
+  .docs__summary::-webkit-details-marker { display: none; }
+  .docs__title {
+    font-family: var(--font-serif); font-weight: 500; font-size: clamp(19px, 1.8vw, 24px);
+    letter-spacing: -0.01em; color: var(--ink); transition: color var(--t-fast);
+  }
+  .docs__summary:hover .docs__title { color: var(--gold-deep); }
+  .docs__ic {
+    flex-shrink: 0; width: 38px; height: 38px; display: grid; place-items: center;
+    border: 1px solid var(--hairline-gold); border-radius: 50%; color: var(--gold-deep);
+    transition: transform var(--t-med) var(--t-ease-emph), background var(--t-fast), color var(--t-fast);
+  }
+  .docs__cat[open] .docs__ic {
+    transform: rotate(180deg); background: var(--gold); border-color: var(--gold); color: var(--navy-ink);
+  }
+  .docs__list {
+    list-style: none; margin: 0; padding: 2px 4px clamp(22px, 2.2vw, 28px);
+    display: flex; flex-direction: column; gap: 10px;
+  }
+  .docs__list li {
+    position: relative; padding-left: 28px;
+    font-size: 15px; line-height: 1.6; color: var(--ink-60); max-width: 68ch;
+  }
+  .docs__list li::before {
+    content: ""; position: absolute; left: 2px; top: 0.72em;
+    width: 14px; height: 1px; background: var(--gold);
+  }
+
+  /* ---------- S10 · FAQ angariação — comparative accordions ---------- */
+  .faqx { border-top: 1px solid var(--ink-10); }
+  .faqx__item { border-bottom: 1px solid var(--ink-10); }
+  .faqx__summary {
+    list-style: none; cursor: pointer;
+    display: flex; align-items: center; justify-content: space-between; gap: 24px;
+    padding: clamp(20px, 2.2vw, 26px) 4px;
+  }
+  .faqx__summary::-webkit-details-marker { display: none; }
+  .faqx__q {
+    font-family: var(--font-serif); font-weight: 500; font-size: clamp(18px, 1.7vw, 23px);
+    letter-spacing: -0.01em; line-height: 1.25; color: var(--ink); transition: color var(--t-fast);
+  }
+  .faqx__summary:hover .faqx__q { color: var(--gold-deep); }
+  .faqx__ic {
+    flex-shrink: 0; width: 38px; height: 38px; display: grid; place-items: center;
+    border: 1px solid var(--hairline-gold); border-radius: 50%; color: var(--gold-deep);
+    transition: transform var(--t-med) var(--t-ease-emph), background var(--t-fast), color var(--t-fast);
+  }
+  .faqx__item[open] .faqx__ic {
+    transform: rotate(180deg); background: var(--gold); border-color: var(--gold); color: var(--navy-ink);
+  }
+  .faqx__cols {
+    display: grid; grid-template-columns: 1fr 1fr; gap: 14px;
+    padding: 2px 4px clamp(24px, 2.4vw, 32px);
+  }
+  .faqx__col { border: 1px solid var(--ink-10); border-radius: var(--radius); padding: 20px 22px; }
+  .faqx__col--excl { border-color: var(--hairline-gold-strong); background: var(--cream-warm); }
+  .faqx__tag {
+    display: inline-block; font-size: 10.5px; font-weight: 500;
+    letter-spacing: 0.2em; text-transform: uppercase; color: var(--ink-40); margin-bottom: 10px;
+  }
+  .faqx__tag--gold { color: var(--gold-deep); }
+  .faqx__col p { margin: 0; font-size: 14.5px; line-height: 1.65; color: var(--ink-60); }
+  .faqx__col--excl p { color: var(--ink); }
+  @media (max-width: 640px) { .faqx__cols { grid-template-columns: 1fr; } }
+
+  /* ---------- S11 · Cross-link aside ---------- */
+  .xlink { background: var(--cream-warm); }
+  .xlink__inner {
+    display: flex; flex-wrap: wrap; align-items: baseline; justify-content: center;
+    gap: 16px 26px; text-align: center;
+  }
+  .xlink__text {
+    margin: 0; font-family: var(--font-serif); font-style: italic; font-weight: 400;
+    font-size: clamp(20px, 2vw, 26px); letter-spacing: -0.01em; color: var(--ink);
+  }
+
+  /* ---------- S12 · CTA final ---------- */
+  .fcta__inner { text-align: center; }
+  .fcta__title { margin-top: 16px; }
+  .fcta__lede { margin: 20px auto 0; }
+  .fcta__cta { margin-top: 32px; }
+
+  /* ---------- Reduced motion — no transform state changes ---------- */
+  @media (prefers-reduced-motion: reduce) {
+    .docs__cat[open] .docs__ic,
+    .faqx__item[open] .faqx__ic { transform: none; }
+  }
+</style>
