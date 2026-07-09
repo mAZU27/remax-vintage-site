@@ -59,7 +59,7 @@ export const faqs: Faq[] = [
   },
   {
     q: 'Trabalham apenas no Porto?',
-    a: 'Somos especializados em imóveis de carácter no Porto — especialmente em Foz do Douro, Boavista, Ribeira e Cedofeita. Para imóveis fora destas zonas, a rede RE/MAX Collection® tem representação a nível nacional e internacional.',
+    a: 'Somos especializados em imóveis de carácter no Porto — em oito zonas de eleição, da Foz do Douro à Baixa e Aliados. Para imóveis fora destas zonas, a rede RE/MAX Collection® tem representação a nível nacional e internacional.',
   },
   {
     q: 'Posso agendar uma visita a um imóvel sem compromisso?',

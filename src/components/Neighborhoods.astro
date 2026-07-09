@@ -2,12 +2,20 @@
 // Zonas — self-contained premium section.
 // Centered header + interactive SVG Porto map (glowing numbered pins + floating
 // tooltip) framed by four glass neighbourhood cards, plus an honest stats bar.
-// Data-driven from `neighborhoods` / `zonasStats` in site.ts.
-// Interaction (hover/focus/keyboard sync, tooltip, count-up) lives in the
-// the client script below; all motion is guarded by prefers-reduced-motion.
-import { neighborhoods, zonasStats } from '../data/site';
+// Data-driven from `zonas` (src/content/zonas.ts) / `zonasStats` in site.ts.
+// Zones I–IV (the house signature) flank the map; V–VIII sit in a band right
+// below it — SAME card, same hierarchy. Interaction (hover/focus/keyboard
+// sync, tooltip, count-up) lives in the client script below; all motion is
+// guarded by prefers-reduced-motion.
+import { zonas } from '../content/zonas';
+import { zonasStats } from '../data/site';
+import { EXTERNAL_LISTINGS_URL } from '../lib/site.config';
 import Icon from './Icon.astro';
 import SectionEyebrow from './SectionEyebrow.astro';
+
+// First four flank the map (grid areas cardI–cardIV); the rest form the band.
+const principais = zonas.slice(0, 4);
+const faixa = zonas.slice(4);
 ---
 <section class="zonas section section--navy on-navy" id="zonas" data-zonas>
   <div class="zonas__glow zonas__glow--a" aria-hidden="true"></div>
@@ -27,22 +35,22 @@ import SectionEyebrow from './SectionEyebrow.astro';
     </header>
 
     <div class="zonas__stage">
-      {neighborhoods.map((n, i) => (
+      {principais.map((n, i) => (
         <article
           class="bcard"
           data-slug={n.slug}
           data-reveal
-          style={`grid-area: card${n.num}; --reveal-delay:${260 + i * 90}ms`}
+          style={`grid-area: card${n.numeral}; --reveal-delay:${260 + i * 90}ms`}
         >
           <div class="bcard__top">
-            <span class="bcard__num">{n.num}</span>
-            <span class="bcard__glyph"><Icon name={n.glyph} size={26} stroke={1.4} /></span>
+            <span class="bcard__num">{n.numeral}</span>
+            <span class="bcard__glyph"><Icon name={n.icone} size={26} stroke={1.4} /></span>
           </div>
-          <h3 class="bcard__name">{n.name}</h3>
-          <span class="bcard__ctx">{n.context}</span>
-          <p class="bcard__blurb">{n.blurb}</p>
+          <h3 class="bcard__name">{n.nome}</h3>
+          <span class="bcard__ctx">{n.kicker}</span>
+          <p class="bcard__blurb">{n.descricao}</p>
           <ul class="bcard__features">
-            {n.features.map((f) => (
+            {n.tags.map((f) => (
               <li><Icon name={f.icon} size={14} stroke={1.5} /> {f.label}</li>
             ))}
           </ul>
@@ -57,6 +65,10 @@ import SectionEyebrow from './SectionEyebrow.astro';
               <path class="district" pathLength="1" d="M556 112 L800 122 L862 252 L700 322 L650 210 Z" />
               <path class="district" pathLength="1" d="M150 282 L320 250 L408 350 L330 470 L182 442 Z" />
               <path class="district" pathLength="1" d="M408 350 L556 332 L650 432 L600 540 L444 540 L330 470 Z" />
+              <path class="district" pathLength="1" d="M96 148 L360 132 L320 250 L150 282 L96 220 Z" />
+              <path class="district" pathLength="1" d="M120 470 L182 442 L330 470 L444 540 L290 586 L150 546 Z" />
+              <path class="district" pathLength="1" d="M862 252 L950 300 L920 440 L810 372 L700 322 Z" />
+              <path class="district" pathLength="1" d="M650 432 L700 322 L810 372 L770 490 L600 540 Z" />
             </g>
             <g class="zonas__avenues">
               <path class="avenue" d="M320 250 L650 432" />
@@ -67,22 +79,27 @@ import SectionEyebrow from './SectionEyebrow.astro';
           </svg>
 
           <div class="zonas__pins">
-            {neighborhoods.map((n, i) => (
-              <button
-                type="button"
-                class="pin"
-                data-slug={n.slug}
-                data-x={n.x}
-                data-y={n.y}
-                data-name={n.name}
-                data-price={n.price}
-                data-demand={n.demand}
-                style={`left:${n.x}%; top:${n.y}%; --pin-delay:${i * 150}ms`}
-                aria-label={`Ver zona ${n.name}`}
-              >
-                <span class="pin__pulse" aria-hidden="true"></span>
-                <span class="pin__dot"><span class="pin__num">{n.num}</span></span>
-              </button>
+            {zonas.map((n, i) => (
+              <>
+                {n.confirmarProcura && (
+                  <Fragment set:html={'<!-- CONFIRMAR COM AGÊNCIA: rótulo de procura desta zona -->'} />
+                )}
+                <button
+                  type="button"
+                  class="pin"
+                  data-slug={n.slug}
+                  data-x={n.x}
+                  data-y={n.y}
+                  data-name={n.nome}
+                  data-price={n.preco}
+                  data-demand={n.procura}
+                  style={`left:${n.x}%; top:${n.y}%; --pin-delay:${i * 120}ms`}
+                  aria-label={`Zona ${n.numeral} — ${n.nome}`}
+                >
+                  <span class="pin__pulse" aria-hidden="true"></span>
+                  <span class="pin__dot"><span class="pin__num">{n.numeral}</span></span>
+                </button>
+              </>
             ))}
 
             <div class="zonas__tip" data-tip role="status" aria-live="polite">
@@ -91,15 +108,49 @@ import SectionEyebrow from './SectionEyebrow.astro';
                 <div><dt>Preço médio</dt><dd data-tip-price></dd></div>
                 <div><dt>Procura</dt><dd data-tip-demand></dd></div>
               </dl>
+              <a
+                class="zonas__tip-link"
+                href={EXTERNAL_LISTINGS_URL}
+                target="_blank"
+                rel="noopener noreferrer"
+              >
+                Ver imóveis <Icon name="arrow" size={13} stroke={1.8} />
+              </a>
             </div>
           </div>
         </div>
 
         <span class="zonas__cue" aria-hidden="true">
           <Icon name="chevron" size={15} stroke={1.6} />
-          Passe sobre uma zona para explorar
+          <span class="zonas__cue-hover">Passe sobre uma zona para explorar</span>
+          <span class="zonas__cue-touch">Toque numa zona para explorar</span>
         </span>
       </div>
+    </div>
+
+    <!-- V–VIII — the newer territories, same card, same hierarchy -->
+    <div class="zonas__band">
+      {faixa.map((n, i) => (
+        <article
+          class="bcard"
+          data-slug={n.slug}
+          data-reveal
+          style={`--reveal-delay:${i * 90}ms`}
+        >
+          <div class="bcard__top">
+            <span class="bcard__num">{n.numeral}</span>
+            <span class="bcard__glyph"><Icon name={n.icone} size={26} stroke={1.4} /></span>
+          </div>
+          <h3 class="bcard__name">{n.nome}</h3>
+          <span class="bcard__ctx">{n.kicker}</span>
+          <p class="bcard__blurb">{n.descricao}</p>
+          <ul class="bcard__features">
+            {n.tags.map((f) => (
+              <li><Icon name={f.icon} size={14} stroke={1.5} /> {f.label}</li>
+            ))}
+          </ul>
+        </article>
+      ))}
     </div>
 
     <div class="zonas__stats" data-zonas-stats data-reveal>
@@ -167,6 +218,10 @@ import SectionEyebrow from './SectionEyebrow.astro';
   .district:nth-child(2) { transition-delay: 0.2s; }
   .district:nth-child(3) { transition-delay: 0.35s; }
   .district:nth-child(4) { transition-delay: 0.5s; }
+  .district:nth-child(5) { transition-delay: 0.65s; }
+  .district:nth-child(6) { transition-delay: 0.8s; }
+  .district:nth-child(7) { transition-delay: 0.95s; }
+  .district:nth-child(8) { transition-delay: 1.1s; }
 
   .avenue { fill: none; stroke: var(--gold-light); stroke-width: 1; stroke-dasharray: 2 8; stroke-linecap: round; opacity: 0; transition: opacity 0.9s ease 0.7s; }
   .zonas__mapwrap.is-in .avenue { opacity: 0.24; }
@@ -233,6 +288,15 @@ import SectionEyebrow from './SectionEyebrow.astro';
   .zonas__tip-meta div { display: flex; align-items: baseline; justify-content: space-between; gap: 14px; }
   .zonas__tip-meta dt { font-size: 11px; color: var(--white-50); letter-spacing: 0.04em; }
   .zonas__tip-meta dd { margin: 0; font-size: 13px; color: var(--cream); font-weight: 500; }
+  .zonas__tip-link {
+    display: inline-flex; align-items: center; gap: 7px; margin-top: 14px; padding-top: 12px;
+    border-top: 1px solid var(--hairline-light);
+    font-size: 10.5px; letter-spacing: 0.16em; text-transform: uppercase; color: var(--gold-light);
+    text-decoration: none; font-weight: 500;
+  }
+  .zonas__tip-link :global(.arrow) { transition: transform var(--t-fast); }
+  .zonas__tip-link:hover :global(.arrow) { transform: translateX(4px); }
+  .zonas__tip-link:focus-visible { outline: 2px solid var(--gold-light); outline-offset: 3px; border-radius: 2px; }
 
   /* Scroll/explore cue */
   .zonas__cue {
@@ -240,6 +304,11 @@ import SectionEyebrow from './SectionEyebrow.astro';
     font-size: 11px; letter-spacing: 0.16em; text-transform: uppercase;
   }
   .zonas__cue :global(.icon) { color: var(--gold-light); }
+  .zonas__cue-touch { display: none; }
+  @media (hover: none) {
+    .zonas__cue-hover { display: none; }
+    .zonas__cue-touch { display: inline; }
+  }
 
   /* Cards */
   .bcard {
@@ -266,6 +335,19 @@ import SectionEyebrow from './SectionEyebrow.astro';
     padding: 5px 10px; border: 1px solid var(--hairline-light); border-radius: 999px;
   }
   .bcard__features :global(.icon) { color: var(--gold-light); }
+
+  /* Band V–VIII — same cards, editorial breathing room */
+  .zonas__band {
+    margin-top: clamp(28px, 3.4vw, 44px);
+    display: grid; grid-template-columns: repeat(4, 1fr);
+    gap: clamp(16px, 1.8vw, 26px);
+  }
+  @media (max-width: 1024px) {
+    .zonas__band { grid-template-columns: 1fr 1fr; }
+  }
+  @media (max-width: 560px) {
+    .zonas__band { grid-template-columns: 1fr; gap: clamp(14px, 2.2vw, 18px); }
+  }
 
   /* Stats bar */
   .zonas__stats {
@@ -410,6 +492,7 @@ import SectionEyebrow from './SectionEyebrow.astro';
     .district { stroke-dashoffset: 0 !important; transition: none; }
     .avenue { opacity: 0.24; transition: none; }
     .zonas__tip { transition: opacity var(--t-fast); }
+    .zonas__tip-link:hover :global(.arrow) { transform: none; }
   }
 </style>
 

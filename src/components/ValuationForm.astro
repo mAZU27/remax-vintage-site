@@ -1,7 +1,7 @@
 ---
 // Seller lead capture. Front-end only for now (no backend) — see CLAUDE.md P5.
 // Validates client-side and shows an inline success state.
-import { neighborhoods } from '../data/site';
+import { zonas } from '../content/zonas';
 import Button from './Button.astro';
 import Icon from './Icon.astro';
 const tipologias = ['T0', 'T1', 'T2', 'T3', 'T4', 'T5+', 'Moradia', 'Outro'];
@@ -27,7 +27,7 @@ const tipologias = ['T0', 'T1', 'T2', 'T3', 'T4', 'T5+', 'Moradia', 'Outro'];
         <label for="v-zona">Localização do imóvel</label>
         <select id="v-zona" name="zona" required>
           <option value="" selected disabled>Selecione a zona</option>
-          {neighborhoods.map((n) => <option value={n.slug}>{n.name}</option>)}
+          {zonas.map((z) => <option value={z.slug}>{z.nome}</option>)}
           <option value="outra">Outra zona do Porto</option>
         </select>
         <span class="field__err" data-err hidden>Selecione a zona.</span>

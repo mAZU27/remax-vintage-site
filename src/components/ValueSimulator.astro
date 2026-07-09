@@ -5,7 +5,7 @@
 // data/valuation-config.ts) then captures the lead. No backend yet — the submit
 // reveals a success state and leaves a clear TODO for the email/CRM endpoint.
 import Icon from './Icon.astro';
-import { neighborhoods } from '../data/site';
+import { zonas } from '../content/zonas';
 import {
   typeOptions,
   typologyOptions,
@@ -14,7 +14,7 @@ import {
 } from '../data/valuation-config';
 
 const zoneOptions = [
-  ...neighborhoods.map((n) => ({ value: n.slug, label: n.name, note: n.context })),
+  ...zonas.map((z) => ({ value: z.slug, label: z.nome, note: z.kicker })),
   { value: 'outra', label: 'Outra zona do Porto', note: 'Porto' },
 ];
 const typeSub: Record<string, string> = {
@@ -460,7 +460,7 @@ const TOTAL = 6;
 
 <script>
   import { estimateRange, formatEUR, typeOptions, conditionOptions } from '../data/valuation-config';
-  import { neighborhoods } from '../data/site';
+  import { zonas } from '../content/zonas';
 
   const root = document.querySelector<HTMLElement>('[data-vsim]');
   if (root) {
@@ -481,7 +481,7 @@ const TOTAL = 6;
     const TOTAL = 6;
 
     const zoneLabels: Record<string, string> = {
-      ...Object.fromEntries(neighborhoods.map((n) => [n.slug, n.name])),
+      ...Object.fromEntries(zonas.map((z) => [z.slug, z.nome])),
       outra: 'Outra zona do Porto',
     };
     const typeLabels: Record<string, string> = Object.fromEntries(typeOptions.map((o) => [o.value, o.label]));

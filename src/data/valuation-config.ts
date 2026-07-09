@@ -24,7 +24,7 @@ export const valuationUpdatedAt = '2026-06-26';
 
 export const valuationConfig = {
   /**
-   * Base €/m² by neighbourhood (keys match `neighborhoods[].slug` in site.ts,
+   * Base €/m² by neighbourhood (keys match `zonas[].slug` in src/content/zonas.ts,
    * plus `outra` for "Outra zona do Porto").
    * TODO(agência): substituir por €/m² reais e defensáveis por zona.
    */

@@ -8,7 +8,8 @@ import Icon from '../components/Icon.astro';
 import TeamShowcase from '../components/TeamShowcase.astro';
 import AwardsGrid from '../components/AwardsGrid.astro';
 import TestimonialCard from '../components/TestimonialCard.astro';
-import { neighborhoods, testimonials, primaryCta } from '../data/site';
+import { testimonials, primaryCta } from '../data/site';
+import { zonas } from '../content/zonas';
 
 // Section 2 — three real facts about the agency (no invented metrics).
 const facts = [
@@ -30,7 +31,7 @@ const aboutTestimonials = testimonials.slice(0, 3);
 ---
 <Base
   title="Sobre nós"
-  description="A RE/MAX Collection Vintage — desde 2014 a apresentar o Porto ao mundo. Especialistas em imóveis premium e vintage em Foz do Douro, Boavista, Ribeira e Cedofeita."
+  description="A RE/MAX Collection Vintage — desde 2014 a apresentar o Porto ao mundo. Especialistas em imóveis premium e vintage em oito zonas de eleição, da Foz do Douro à Baixa."
   image="/images/porto/editorial-entrada.webp"
   overHeroNav
 >
@@ -38,7 +39,7 @@ const aboutTestimonials = testimonials.slice(0, 3);
   <PageHero
     eyebrow="Porto · Desde 2014"
     title='Imóveis distintos merecem uma <em class="em-gold serif-it">apresentação distinta</em>.'
-    subtitle="Especialistas em imóveis premium e vintage em Foz do Douro, Boavista, Ribeira e Cedofeita."
+    subtitle="Especialistas em imóveis premium e vintage em oito zonas de eleição — da Foz do Douro à Baixa."
     image="/media/hero-poster.jpg"
     video={{ webm: '/media/hero.webm', mp4: '/media/hero.mp4' }}
     ctas={[
@@ -138,18 +139,18 @@ const aboutTestimonials = testimonials.slice(0, 3);
       </header>
 
       <ul class="ab-hood-grid">
-        {neighborhoods.map((n, i) => (
+        {zonas.map((n, i) => (
           <li class="ab-hood" data-reveal style={`--reveal-delay:${i * 80}ms`}>
             <div class="ab-hood__top">
-              <span class="ab-hood__num" aria-hidden="true">{n.num}</span>
+              <span class="ab-hood__num" aria-hidden="true">{n.numeral}</span>
               <div>
-                <h3 class="ab-hood__name">{n.name}</h3>
-                <span class="ab-hood__ctx">{n.context}</span>
+                <h3 class="ab-hood__name">{n.nome}</h3>
+                <span class="ab-hood__ctx">{n.kicker}</span>
               </div>
             </div>
-            <p class="ab-hood__blurb">{n.blurb}</p>
+            <p class="ab-hood__blurb">{n.descricao}</p>
             <ul class="ab-hood__chips">
-              {n.features.map((f) => (
+              {n.tags.map((f) => (
                 <li><Icon name={f.icon} size={14} stroke={1.5} /> {f.label}</li>
               ))}
             </ul>

@@ -32,7 +32,9 @@ English.
 
 A premium one-page website for **The RE/MAX Collection Vintage** — the luxury/vintage
 property arm of a RE/MAX agency in **Porto, Portugal**. The site sells distinctive,
-"vintage" properties in Foz, Cedofeita, Boavista and Ribeira, and captures two kinds of
+"vintage" properties across 8 curated Porto zones (Foz do Douro, Boavista, Ribeira,
+Cedofeita, Nevogilde, Lordelo do Ouro & Massarelos, Bonfim, Baixa & Aliados — data in
+src/content/zonas.ts, two optional zones prepared but disabled), and captures two kinds of
 leads: buyers/renters searching, and **sellers requesting a valuation** ("Pedir avaliação").
 
 **Register / aesthetic:** *Heightened reality — Vintage Editorial.* Premium but grounded,

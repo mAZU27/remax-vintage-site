@@ -10,7 +10,8 @@ import { EXTERNAL_LISTINGS_URL } from '../lib/site.config';
 // This module is imported by both the Astro frontmatter (build) and the
 // client-side chat controller (bundled by Vite) — keep it framework-free.
 // ============================================================
-import { site, neighborhoods, methodSteps } from './site';
+import { site, methodSteps } from './site';
+import { zonas as zonasAtivas } from '../content/zonas';
 import { faqs } from './faqs';
 
 export const assistant = {
@@ -47,11 +48,11 @@ export const contacts = {
     encodeURIComponent(site.address.join(', ')),
 };
 
-// Zonas of the collection (from site.ts neighborhoods — real curated areas).
-export const zonas = neighborhoods.map((n) => ({
-  name: n.name,
+// Zonas of the collection (from src/content/zonas — real curated areas).
+export const zonas = zonasAtivas.map((n) => ({
+  name: n.nome,
   slug: n.slug,
-  blurb: n.blurb,
+  blurb: n.descricao,
   href: EXTERNAL_LISTINGS_URL,
 }));
 

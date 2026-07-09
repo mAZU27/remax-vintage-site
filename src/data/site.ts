@@ -14,7 +14,7 @@ export const site = {
   logo: '/assets/remax-vintage-horizontal.png',
   tagline: 'A coleção mais rara do Porto.',
   description:
-    'Imóveis vintage e premium no Porto — Foz, Cedofeita, Boavista e Ribeira. Avaliação confidencial e uma apresentação à altura de cada imóvel distinto.',
+    'Imóveis vintage e premium no Porto — oito zonas de eleição, da Foz do Douro à Baixa. Avaliação confidencial e uma apresentação à altura de cada imóvel distinto.',
   // TODO(contacto): substituir pelos contactos reais antes do lançamento.
   phone: '+351 220 000 000',
   phoneHref: 'tel:+351220000000',
@@ -57,84 +57,7 @@ export const nav: NavItem[] = [
 
 export const primaryCta = { label: 'Pedir avaliação', href: '/#vender' } as const;
 
-// Zonas section data. `x`/`y` are pin positions as % of the map box.
-// `num` is the roman numeral shown on the pin and card.
-// NOTE(price): "Sob consulta" é um placeholder honesto — não inventamos €/m².
-// Substituir por preço médio real por zona quando a equipa o fornecer e validar.
-export const neighborhoods = [
-  {
-    slug: 'foz-do-douro',
-    num: 'I',
-    name: 'Foz do Douro',
-    context: 'Porto · Atlântico',
-    glyph: 'compass',
-    blurb: 'Privacidade, proximidade ao mar e uma procura naturalmente seletiva.',
-    price: 'Sob consulta',
-    demand: 'Seletiva',
-    features: [
-      { icon: 'eye', label: 'Vista mar' },
-      { icon: 'diamond', label: 'Luxo discreto' },
-      { icon: 'compass', label: 'Baixa densidade' },
-    ],
-    x: 28,
-    y: 60,
-    image: '/images/porto/porto-foz-promenade.webp',
-  },
-  {
-    slug: 'boavista',
-    num: 'II',
-    name: 'Boavista',
-    context: 'Porto · Centro',
-    glyph: 'building',
-    blurb: 'Centralidade, conveniência e imóveis com forte potencial residencial e empresarial.',
-    price: 'Sob consulta',
-    demand: 'Elevada',
-    features: [
-      { icon: 'pin', label: 'Central' },
-      { icon: 'building', label: 'Infraestruturas' },
-      { icon: 'users', label: 'Forte procura' },
-    ],
-    x: 70,
-    y: 34,
-    image: '/images/porto/porto-aliados.webp',
-  },
-  {
-    slug: 'ribeira',
-    num: 'III',
-    name: 'Ribeira',
-    context: 'Porto · Histórico',
-    glyph: 'diamond',
-    blurb: 'História, vista rio e imóveis com carácter difícil de replicar.',
-    price: 'Sob consulta',
-    demand: 'Património',
-    features: [
-      { icon: 'award', label: 'Património' },
-      { icon: 'compass', label: 'Turismo seletivo' },
-      { icon: 'briefcase', label: 'Investimento' },
-    ],
-    x: 55,
-    y: 72,
-    image: '/images/porto/porto-ribeira-barcos.webp',
-  },
-  {
-    slug: 'cedofeita',
-    num: 'IV',
-    name: 'Cedofeita',
-    context: 'Porto · Cultural',
-    glyph: 'sparkle',
-    blurb: 'Identidade urbana, cultura e procura crescente por imóveis distintos.',
-    price: 'Sob consulta',
-    demand: 'Crescente',
-    features: [
-      { icon: 'sparkle', label: 'Cultura' },
-      { icon: 'diamond', label: 'Design' },
-      { icon: 'heart', label: 'Estilo de vida' },
-    ],
-    x: 50,
-    y: 45,
-    image: '/images/porto/porto-rua-classica.webp',
-  },
-] as const;
+// Zonas moved to src/content/zonas.ts (single content source).
 
 // Trust strip (homepage). HONEST by design — qualitative, brand-true claims,
 // NO invented track-record figures. When the team supplies real, verifiable
@@ -150,10 +73,10 @@ export const stats = [
 
 // Stats bar under the Zonas map. Honest, brand-true content — NO invented
 // market figures. `countTo` (optional) enables a count-up only where the number
-// is real & verifiable (4 zonas). When the team supplies real, defensible
+// is real & verifiable (8 zonas). When the team supplies real, defensible
 // metrics (e.g. nº de imóveis, valorização média a 3 anos), swap them in here.
 export const zonasStats = [
-  { icon: 'pin', value: '4', countTo: 4, label: 'Zonas selecionadas' },
+  { icon: 'pin', value: '8', countTo: 8, label: 'Zonas selecionadas' },
   { icon: 'diamond', value: 'Curadoria', label: 'Imóveis por seleção' },
   { icon: 'shield-check', value: 'Confidencial', label: 'Em cada etapa' },
   { icon: 'sparkle', value: 'Vintage', label: 'Carácter raro' },
