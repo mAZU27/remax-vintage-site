@@ -1,0 +1,141 @@
+---
+// Radial "structure around the client" diagram (buyer guide A1).
+// Desktop: 10 nodes on a hairline ring around a central "O Cliente"
+// medallion, subtle gold hover. Mobile (≤860px): 2-column grid — the
+// radial never renders illegible on small screens.
+// Reused by the homepage and /comprar. Data: metodo-comprar.ts.
+import Icon from './Icon.astro';
+import { estrutura } from '../content/metodo-comprar';
+
+// Precompute node positions: start at the top (-90°), step 36°.
+const R = 41; // ring radius, % of the container box
+const nodes = estrutura.map((item, i) => {
+  const angle = (-90 + i * 36) * (Math.PI / 180);
+  const x = 50 + R * Math.cos(angle);
+  const y = 50 + R * Math.sin(angle);
+  return { ...item, x: x.toFixed(2), y: y.toFixed(2) };
+});
+---
+<div class="sdiag" data-reveal>
+  <!-- Desktop: radial -->
+  <div class="sdiag__radial" aria-hidden="false">
+    <span class="sdiag__ring" aria-hidden="true"></span>
+    <div class="sdiag__center">
+      <span class="sdiag__center-eyebrow">No centro</span>
+      <span class="sdiag__center-name">O Cliente</span>
+    </div>
+    {nodes.map((n) => (
+      <div class="sdiag__node" style={`left:${n.x}%;top:${n.y}%`}>
+        <span class="sdiag__node-ic"><Icon name={n.icon} size={20} stroke={1.4} /></span>
+        <span class="sdiag__node-label">{n.label}</span>
+      </div>
+    ))}
+  </div>
+
+  <!-- Mobile: 2-column grid -->
+  <div class="sdiag__grid">
+    <div class="sdiag__center sdiag__center--grid">
+      <span class="sdiag__center-eyebrow">No centro</span>
+      <span class="sdiag__center-name">O Cliente</span>
+    </div>
+    {estrutura.map((n) => (
+      <div class="sdiag__cell">
+        <span class="sdiag__node-ic"><Icon name={n.icon} size={18} stroke={1.4} /></span>
+        <span class="sdiag__node-label">{n.label}</span>
+      </div>
+    ))}
+  </div>
+</div>
+
+<style>
+  .sdiag { width: 100%; }
+
+  /* ---- Radial (desktop) ---- */
+  .sdiag__radial {
+    position: relative;
+    width: min(760px, 100%);
+    aspect-ratio: 1 / 0.94;
+    margin-inline: auto;
+    display: block;
+  }
+  .sdiag__ring {
+    position: absolute; inset: 9%;
+    border: 1px solid var(--ink-10);
+    border-radius: 50%;
+    pointer-events: none;
+  }
+  .sdiag__center {
+    position: absolute; left: 50%; top: 50%;
+    transform: translate(-50%, -50%);
+    width: clamp(150px, 24%, 190px); aspect-ratio: 1;
+    border: 1px solid var(--gold);
+    border-radius: 50%;
+    background: var(--navy-ink);
+    display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 4px;
+    text-align: center;
+    box-shadow: 0 18px 44px -22px rgba(11, 26, 46, 0.55);
+  }
+  .sdiag__center-eyebrow {
+    font-size: 10px; letter-spacing: 0.22em; text-transform: uppercase; color: var(--gold-light);
+  }
+  .sdiag__center-name {
+    font-family: var(--font-serif); font-size: clamp(22px, 2.2vw, 27px); color: var(--cream);
+    font-style: italic; letter-spacing: 0.01em;
+  }
+
+  .sdiag__node {
+    position: absolute;
+    transform: translate(-50%, -50%);
+    width: clamp(120px, 17%, 150px);
+    display: flex; flex-direction: column; align-items: center; gap: 8px;
+    text-align: center;
+  }
+  .sdiag__node-ic {
+    width: 46px; height: 46px; flex-shrink: 0;
+    display: grid; place-items: center;
+    border: 1px solid var(--ink-20);
+    border-radius: 50%;
+    background: var(--cream-soft);
+    color: var(--gold-deep);
+    transition: border-color var(--t-fast), box-shadow var(--t-fast), transform var(--t-fast);
+  }
+  .sdiag__node-label {
+    font-size: 11.5px; line-height: 1.4; letter-spacing: 0.02em; color: var(--ink-60);
+    max-width: 17ch;
+  }
+  .sdiag__node:hover .sdiag__node-ic {
+    border-color: var(--gold);
+    box-shadow: 0 10px 24px -14px rgba(154, 126, 80, 0.8);
+    transform: translateY(-2px);
+  }
+  @media (prefers-reduced-motion: reduce) {
+    .sdiag__node:hover .sdiag__node-ic { transform: none; }
+  }
+
+  /* ---- Grid (mobile) ---- */
+  .sdiag__grid { display: none; }
+
+  @media (max-width: 860px) {
+    .sdiag__radial { display: none; }
+    .sdiag__grid {
+      display: grid; grid-template-columns: 1fr 1fr; gap: 12px;
+    }
+    .sdiag__center--grid {
+      position: static; transform: none;
+      grid-column: 1 / -1;
+      width: 100%; aspect-ratio: auto;
+      border-radius: 14px;
+      padding: 18px 16px;
+    }
+    .sdiag__cell {
+      display: flex; flex-direction: column; align-items: flex-start; gap: 10px;
+      padding: 14px;
+      border: 1px solid var(--ink-10);
+      border-radius: var(--radius-lg);
+      background: var(--cream-soft);
+    }
+    .sdiag__cell .sdiag__node-label {
+      text-align: left; max-width: none; color: var(--ink-60);
+    }
+  }
+</style>

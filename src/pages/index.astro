@@ -4,16 +4,32 @@ import Hero from '../components/Hero.astro';
 import AwardsBelt from '../components/AwardsBelt.astro';
 import SectionEyebrow from '../components/SectionEyebrow.astro';
 import Neighborhoods from '../components/Neighborhoods.astro';
-import DualJourney from '../components/DualJourney.astro';
-import Method from '../components/Method.astro';
+import StructureDiagram from '../components/StructureDiagram.astro';
 import Stats from '../components/Stats.astro';
 import Testimonials from '../components/Testimonials.astro';
 import ValuationForm from '../components/ValuationForm.astro';
 import Crest from '../components/Crest.astro';
 import Icon from '../components/Icon.astro';
+import Button from '../components/Button.astro';
 import FaqAccordion from '../components/FaqAccordion.astro';
 import { about } from '../data/site';
+import { EXTERNAL_LISTINGS_URL } from '../lib/site.config';
+import { essenciaisComprar, miniProcessoComprar } from '../content/metodo-comprar';
+import { essenciaisVender, miniProcessoVender } from '../content/metodo-vender';
+import { redeNumeros } from '../content/rede';
 import type { Faq } from '../data/faqs';
+
+// The homepage carries EXACTLY 10 conversion CTAs (see docs/mission map):
+//  #1 hero card «Avaliar o meu imóvel» → simulator modal   (primary gold)
+//  #2 hero «Explorar a coleção» → external listings
+//  #3 método «Conhecer o método de compra» → /comprar
+//  #4 método «Vender com o método» → /vender
+//  #5 estrutura «Falar com um consultor» → /contacto
+//  #6 como trabalhamos «Agendar uma conversa sem compromisso» → /contacto
+//  #7 banner vendedor «Pedir estudo de mercado gratuito» → /contacto?assunto=estudo-mercado   (primary gold)
+//  #8 vender «Simular o valor da minha casa» → simulator modal
+//  #9 coleção «Ver imóveis disponíveis» → external listings
+// #10 fecho «Iniciar conversa» → /contacto
 
 const sellerPoints = [
   'Avaliação fundamentada no valor real do mercado do Porto.',
@@ -51,6 +67,7 @@ const homeFaqs: Faq[] = [
     sizes: '100vw',
   }}
 >
+  <!-- CTAs #1 + #2 live inside the hero -->
   <Hero />
 
   <!-- Faixa de trust — prémios RE/MAX Portugal (rede) -->
@@ -70,13 +87,105 @@ const homeFaqs: Faq[] = [
     </div>
   </section>
 
-  {/* Coleção — property listings moved to the external RE/MAX site.
-      The new "A Coleção" editorial CTA section is inserted here in Phase 3. */}
+  <!-- A Coleção — os imóveis vivem no site oficial RE/MAX (CTA #9) -->
+  <section class="section section--navy on-navy colecao" id="colecao">
+    <div class="container container--narrow" style="text-align:center">
+      <SectionEyebrow text="A Coleção" center />
+      <h2 class="h2 colecao__title" data-reveal style="--reveal-delay:80ms">
+        Os imóveis disponíveis, no site <em class="em-gold serif-it">oficial RE/MAX</em>.
+      </h2>
+      <p class="lede lede--light colecao__lede" data-reveal style="--reveal-delay:160ms">
+        A carteira da agência é apresentada e atualizada na página oficial da
+        RE/MAX Collection Vintage, com toda a informação de cada imóvel.
+      </p>
+      <div class="colecao__cta" data-reveal style="--reveal-delay:240ms">
+        <Button href={EXTERNAL_LISTINGS_URL} external variant="ghost" arrow>
+          Ver imóveis disponíveis
+        </Button>
+      </div>
+    </div>
+  </section>
 
-  <!-- Zonas (self-contained interactive section, owns its own #zonas anchor) -->
+  <!-- Zonas (informativa — território e conhecimento do Porto) -->
   <Neighborhoods />
 
-  <!-- Método -->
+  <!-- O Método — split Comprar | Vender (CTAs #3 + #4) -->
+  <section class="section section--cream metodo-split" id="caminhos">
+    <div class="container">
+      <header class="shead shead--center">
+        <SectionEyebrow text="O método" center />
+        <h2 class="h2 shead__title" data-reveal style="--reveal-delay:80ms">
+          Um método para comprar.<br />Um método para <em class="em-gold serif-it">vender</em>.
+        </h2>
+        <p class="lede shead__lede" data-reveal style="--reveal-delay:160ms">
+          O mesmo rigor, em dois percursos distintos — cada um com o seu plano,
+          as suas garantias e o seu acompanhamento.
+        </p>
+      </header>
+
+      <div class="msplit">
+        <article class="msplit__card" data-reveal>
+          <span class="msplit__tag">Comprar</span>
+          <h3 class="h3 msplit__title">A sua futura casa, <em class="em-gold serif-it">procurada por nós</em>.</h3>
+          <ul class="msplit__list">
+            {essenciaisComprar.map((e) => (
+              <li>
+                <span class="msplit__ic"><Icon name={e.icon} size={19} stroke={1.4} /></span>
+                <div>
+                  <strong>{e.title}</strong>
+                  <p>{e.text}</p>
+                </div>
+              </li>
+            ))}
+          </ul>
+          <Button href="/comprar" variant="ghost-dark" arrow class="msplit__btn">
+            Conhecer o método de compra
+          </Button>
+        </article>
+
+        <article class="msplit__card" data-reveal style="--reveal-delay:120ms">
+          <span class="msplit__tag">Vender</span>
+          <h3 class="h3 msplit__title">O seu imóvel, <em class="em-gold serif-it">trabalhado a sério</em>.</h3>
+          <ul class="msplit__list">
+            {essenciaisVender.map((e) => (
+              <li>
+                <span class="msplit__ic"><Icon name={e.icon} size={19} stroke={1.4} /></span>
+                <div>
+                  <strong>{e.title}</strong>
+                  <p>{e.text}</p>
+                </div>
+              </li>
+            ))}
+          </ul>
+          <Button href="/vender" variant="ghost-dark" arrow class="msplit__btn">
+            Vender com o método
+          </Button>
+        </article>
+      </div>
+    </div>
+  </section>
+
+  <!-- Estrutura — o cliente no centro, 10 pontos de apoio (CTA #5) -->
+  <section class="section section--warm estrutura">
+    <div class="container">
+      <header class="shead shead--center">
+        <SectionEyebrow text="A equipa por trás de si" center />
+        <h2 class="h2 shead__title" data-reveal style="--reveal-delay:80ms">
+          Uma estrutura inteira a trabalhar <em class="em-gold serif-it">para si</em>.
+        </h2>
+        <p class="lede shead__lede" data-reveal style="--reveal-delay:160ms">
+          Não trabalha com um consultor isolado — tem do seu lado uma equipa
+          completa e toda a rede.
+        </p>
+      </header>
+      <StructureDiagram />
+      <div class="estrutura__cta" data-reveal>
+        <Button href="/contacto" variant="ghost-dark" arrow>Falar com um consultor</Button>
+      </div>
+    </div>
+  </section>
+
+  <!-- Como trabalhamos — dois percursos, 4 marcos cada (CTA #6) -->
   <section class="section section--cream" id="metodo">
     <div class="container">
       <header class="shead">
@@ -84,12 +193,43 @@ const homeFaqs: Faq[] = [
         <h2 class="h2 shead__title" data-reveal style="--reveal-delay:80ms">
           Um método, do primeiro contacto à <em class="em-gold serif-it">escritura</em>.
         </h2>
-        <p class="lede shead__lede" data-reveal style="--reveal-delay:160ms">
-          Cinco passos pensados para um só objetivo: defender o valor do seu imóvel
-          com rigor, discrição e uma apresentação à altura.
-        </p>
       </header>
-      <Method />
+
+      <div class="mproc">
+        <div class="mproc__row" data-reveal>
+          <div class="mproc__head">
+            <span class="mproc__who">Para quem compra</span>
+            <a class="mproc__more" href="/comprar">Ver o processo completo <Icon name="arrow" size={13} stroke={1.8} /></a>
+          </div>
+          <ol class="mproc__steps">
+            {miniProcessoComprar.map((step, i) => (
+              <li class="mproc__step">
+                <span class="mproc__num">{i + 1}</span>
+                <span class="mproc__label">{step}</span>
+              </li>
+            ))}
+          </ol>
+        </div>
+
+        <div class="mproc__row" data-reveal style="--reveal-delay:120ms">
+          <div class="mproc__head">
+            <span class="mproc__who">Para quem vende</span>
+            <a class="mproc__more" href="/vender">Ver o processo completo <Icon name="arrow" size={13} stroke={1.8} /></a>
+          </div>
+          <ol class="mproc__steps">
+            {miniProcessoVender.map((step, i) => (
+              <li class="mproc__step">
+                <span class="mproc__num">{i + 1}</span>
+                <span class="mproc__label">{step}</span>
+              </li>
+            ))}
+          </ol>
+        </div>
+      </div>
+
+      <div class="mproc__cta" data-reveal>
+        <Button href="/contacto" variant="ghost-dark" arrow>Agendar uma conversa sem compromisso</Button>
+      </div>
     </div>
   </section>
 
@@ -109,13 +249,48 @@ const homeFaqs: Faq[] = [
     </div>
   </section>
 
-  <!-- Testemunhos (self-contained premium section: owns its eyebrow, header + carousel) -->
+  <!-- A força da rede (números da rede RE/MAX — não da agência) -->
+  <!-- CONFIRMAR COM AGÊNCIA: todos os números desta faixa -->
+  <section class="section rede section--warm">
+    <div class="container">
+      <div class="rede__inner" data-reveal>
+        <span class="rede__eyebrow">A força da rede</span>
+        <dl class="rede__stats">
+          {redeNumeros.map((n) => (
+            <div class="rede__stat">
+              <dt>{n.label}</dt>
+              <dd>{n.value}</dd>
+            </div>
+          ))}
+        </dl>
+        <p class="rede__note">Números da rede RE/MAX em Portugal.</p>
+      </div>
+    </div>
+  </section>
+
+  <!-- Testemunhos -->
   <Testimonials />
 
-  <!-- Escolha o seu caminho (orientation gateway: vender vs comprar) -->
-  <DualJourney />
+  <!-- Banner de conversão do vendedor — estudo de mercado gratuito (CTA #7) -->
+  <section class="section section--ink on-navy banner-em">
+    <div class="container container--narrow" style="text-align:center">
+      <SectionEyebrow text="Para quem vende" center />
+      <h2 class="h2 banner-em__title" data-reveal style="--reveal-delay:80ms">
+        Comece pelo estudo de mercado — <em class="em-gold serif-it">gratuito</em>.
+      </h2>
+      <p class="lede lede--light banner-em__lede" data-reveal style="--reveal-delay:160ms">
+        Uma leitura fundamentada do valor do seu imóvel, preparada pela nossa
+        equipa. Sem custos e sem compromisso.
+      </p>
+      <div class="banner-em__cta" data-reveal style="--reveal-delay:240ms">
+        <Button href="/contacto?assunto=estudo-mercado" variant="gold" arrow>
+          Pedir estudo de mercado gratuito
+        </Button>
+      </div>
+    </div>
+  </section>
 
-  <!-- Vender -->
+  <!-- Vender / simulador (CTA #8) -->
   <section class="section section--navy on-navy" id="vender">
     <div class="container vender">
       <div class="vender__pitch">
@@ -133,7 +308,7 @@ const homeFaqs: Faq[] = [
           ))}
         </ul>
         <button type="button" class="btn-link vender__sim" data-reveal data-open-simulator style="--reveal-delay:300ms">
-          <span>Simular o valor agora</span><Icon name="arrow" size={14} stroke={1.8} />
+          <span>Simular o valor da minha casa</span><Icon name="arrow" size={14} stroke={1.8} />
         </button>
       </div>
       <div class="vender__form" data-reveal style="--reveal-delay:200ms">
@@ -154,20 +329,154 @@ const homeFaqs: Faq[] = [
       </div>
     </div>
   </section>
+
+  <!-- Contacto final (CTA #10) -->
+  <section class="section section--warm fecho" id="contacto-final">
+    <div class="container container--narrow" style="text-align:center">
+      <SectionEyebrow text="Contacto" center />
+      <h2 class="h2 fecho__title" data-reveal style="--reveal-delay:80ms">
+        Falemos do seu <em class="em-gold serif-it">próximo capítulo</em>.
+      </h2>
+      <p class="lede fecho__lede" data-reveal style="--reveal-delay:160ms">
+        Uma conversa clara, confidencial e sem compromisso — sobre comprar,
+        vender ou simplesmente conhecer o valor do que é seu.
+      </p>
+      <div class="fecho__cta" data-reveal style="--reveal-delay:240ms">
+        <Button href="/contacto" variant="ghost-dark" arrow>Iniciar conversa</Button>
+      </div>
+    </div>
+  </section>
 </Base>
 
 <style>
   /* Section header */
   .shead { margin-bottom: clamp(36px, 4vw, 60px); }
-  .shead__title { margin-top: 16px; max-width: 18ch; }
+  .shead__title { margin-top: 16px; max-width: 22ch; }
   .shead__lede { margin-top: 18px; }
   .shead--center { text-align: center; }
   .shead--center .shead__title { margin-inline: auto; }
-  .shead--between {
-    display: flex; align-items: flex-end; justify-content: space-between; gap: 24px; flex-wrap: wrap;
+  .shead--center .shead__lede { margin-inline: auto; }
+
+  /* Warm cream variant for quiet bands */
+  .section--warm { background: var(--cream-warm); }
+
+  /* A Coleção */
+  .colecao__title { margin-top: 16px; }
+  .colecao__lede { margin: 20px auto 0; }
+  .colecao__cta { margin-top: 32px; }
+
+  /* O Método — split */
+  .msplit {
+    display: grid; grid-template-columns: 1fr 1fr; gap: clamp(20px, 2.6vw, 36px);
+    max-width: 1080px; margin-inline: auto;
   }
-  .shead--between .shead__title { margin-top: 16px; }
-  :global(.shead__link) { flex-shrink: 0; margin-bottom: 6px; }
+  .msplit__card {
+    border: 1px solid var(--ink-10); border-radius: var(--radius-lg);
+    background: var(--cream-soft);
+    padding: clamp(26px, 3vw, 42px);
+    display: flex; flex-direction: column; align-items: flex-start;
+  }
+  .msplit__tag {
+    font-size: 11px; letter-spacing: 0.22em; text-transform: uppercase;
+    color: var(--gold-deep); border: 1px solid var(--hairline-gold);
+    border-radius: 999px; padding: 6px 14px;
+  }
+  .msplit__title { margin-top: 18px; }
+  .msplit__list {
+    list-style: none; margin: 24px 0 28px; padding: 0;
+    display: flex; flex-direction: column; gap: 18px;
+  }
+  .msplit__list li { display: flex; gap: 14px; align-items: flex-start; }
+  .msplit__ic {
+    flex-shrink: 0; width: 42px; height: 42px; display: grid; place-items: center;
+    border: 1px solid var(--ink-10); border-radius: 50%;
+    background: var(--cream); color: var(--gold-deep);
+  }
+  .msplit__list strong {
+    display: block; font-size: 15px; color: var(--ink); font-weight: 500;
+    letter-spacing: 0.01em;
+  }
+  .msplit__list p { margin: 4px 0 0; font-size: 14px; line-height: 1.55; color: var(--ink-60); }
+  :global(.msplit__btn) { margin-top: auto; }
+  @media (max-width: 860px) {
+    .msplit { grid-template-columns: 1fr; }
+  }
+
+  /* Estrutura */
+  .estrutura__cta { margin-top: clamp(32px, 4vw, 48px); text-align: center; }
+
+  /* Como trabalhamos — mini-processos */
+  .mproc { display: flex; flex-direction: column; gap: clamp(28px, 3.4vw, 44px); }
+  .mproc__head {
+    display: flex; align-items: baseline; justify-content: space-between; gap: 16px;
+    margin-bottom: 18px; flex-wrap: wrap;
+  }
+  .mproc__who {
+    font-size: 12px; letter-spacing: 0.2em; text-transform: uppercase; color: var(--gold-deep);
+    font-weight: 500;
+  }
+  .mproc__more {
+    display: inline-flex; align-items: center; gap: 7px;
+    font-size: 11px; letter-spacing: 0.14em; text-transform: uppercase;
+    color: var(--ink-60); text-decoration: none;
+  }
+  .mproc__more:hover { color: var(--gold-deep); }
+  .mproc__more :global(.arrow) { transition: transform var(--t-fast); }
+  .mproc__more:hover :global(.arrow) { transform: translateX(4px); }
+  .mproc__steps {
+    list-style: none; margin: 0; padding: 0;
+    display: grid; grid-template-columns: repeat(4, 1fr); gap: 12px;
+  }
+  .mproc__step {
+    position: relative;
+    display: flex; align-items: center; gap: 12px;
+    border: 1px solid var(--ink-10); border-radius: var(--radius-lg);
+    background: var(--cream-soft); padding: 16px 18px;
+  }
+  .mproc__num {
+    flex-shrink: 0; width: 30px; height: 30px; display: grid; place-items: center;
+    border-radius: 50%; border: 1px solid var(--hairline-gold);
+    font-family: var(--font-serif); font-size: 15px; color: var(--gold-deep);
+  }
+  .mproc__label { font-size: 14px; color: var(--ink); letter-spacing: 0.01em; }
+  .mproc__cta { margin-top: clamp(32px, 4vw, 48px); text-align: center; }
+  @media (max-width: 860px) {
+    .mproc__steps { grid-template-columns: 1fr 1fr; }
+  }
+  @media (max-width: 420px) {
+    .mproc__steps { grid-template-columns: 1fr; }
+  }
+
+  /* A força da rede */
+  .rede { padding-block: clamp(44px, 5vw, 72px); }
+  .rede__inner { text-align: center; }
+  .rede__eyebrow {
+    font-size: 11px; letter-spacing: 0.24em; text-transform: uppercase; color: var(--gold-deep);
+  }
+  .rede__stats {
+    margin: 26px 0 0; display: grid; grid-template-columns: repeat(4, 1fr);
+    gap: clamp(18px, 3vw, 40px);
+  }
+  .rede__stat dd {
+    margin: 0; font-family: var(--font-serif); font-size: clamp(30px, 3.4vw, 44px);
+    color: var(--ink); line-height: 1.1;
+  }
+  .rede__stat dt { font-size: 12.5px; color: var(--ink-60); margin-top: 8px; letter-spacing: 0.03em; }
+  .rede__stat { display: flex; flex-direction: column-reverse; }
+  .rede__note { margin: 26px 0 0; font-size: 11.5px; color: var(--ink-40); letter-spacing: 0.04em; }
+  @media (max-width: 760px) {
+    .rede__stats { grid-template-columns: 1fr 1fr; }
+  }
+
+  /* Banner estudo de mercado */
+  .banner-em__title { margin-top: 16px; }
+  .banner-em__lede { margin: 20px auto 0; }
+  .banner-em__cta { margin-top: 32px; }
+
+  /* Fecho */
+  .fecho__title { margin-top: 16px; }
+  .fecho__lede { margin: 20px auto 0; }
+  .fecho__cta { margin-top: 30px; }
 
   /* FAQ — centre the accordion under the centred header */
   .faq-wrap { display: flex; justify-content: center; text-align: left; margin-top: clamp(40px, 5vw, 64px); }

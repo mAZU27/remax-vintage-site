@@ -2,7 +2,6 @@
 import Button from './Button.astro';
 import { EXTERNAL_LISTINGS_URL } from '../lib/site.config';
 import Icon from './Icon.astro';
-import { primaryCta } from '../data/site';
 
 // Homepage hero — static "RE/MAX Collection Vintage" plaque interior plate.
 // The image is the LCP: a responsive <img> (cover) preloaded in Base via the
@@ -40,8 +39,7 @@ import { primaryCta } from '../data/site';
         verdadeiramente raro.
       </p>
       <div class="hero__ctas" data-reveal style="--reveal-delay: 340ms">
-        <Button href={EXTERNAL_LISTINGS_URL} external variant="gold" arrow>Ver a coleção</Button>
-        <Button href={primaryCta.href} variant="ghost">{primaryCta.label}</Button>
+        <Button href={EXTERNAL_LISTINGS_URL} external variant="ghost" arrow>Explorar a coleção</Button>
       </div>
     </div>
 
@@ -52,7 +50,7 @@ import { primaryCta } from '../data/site';
         Uma avaliação confidencial e fundamentada — pelo valor real do mercado do Porto.
       </p>
       <button type="button" class="btn btn--gold hero__card-btn" data-open-simulator>
-        <span>Simular o valor</span><Icon name="arrow" size={14} stroke={1.8} />
+        <span>Avaliar o meu imóvel</span><Icon name="arrow" size={14} stroke={1.8} />
       </button>
       <ul class="hero__card-meta">
         <li><Icon name="clock" size={15} stroke={1.6} /> Resposta em 24h</li>
