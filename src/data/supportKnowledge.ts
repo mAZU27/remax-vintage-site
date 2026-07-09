@@ -57,7 +57,7 @@ export const zonas = neighborhoods.map((n) => ({
 
 // The agency's services, grounded in the site's method + journeys.
 export const services = [
-  { title: 'Comprar', text: 'Seleção de imóveis distintos, visitas qualificadas e negociação.', href: EXTERNAL_LISTINGS_URL },
+  { title: 'Comprar', text: 'Seleção de imóveis distintos, visitas qualificadas e negociação.', href: '/comprar' },
   { title: 'Vender', text: 'Avaliação, estratégia, apresentação ao mercado e negociação.', href: '/#vender' },
   { title: 'Arrendar', text: 'Arrendamento de imóveis premium, com seleção criteriosa.', href: '/alugar' },
   { title: 'Avaliar', text: 'Avaliação confidencial e sem compromisso do seu imóvel.', href: '/#vender' },

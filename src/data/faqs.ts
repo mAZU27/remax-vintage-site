@@ -1,4 +1,3 @@
-import { EXTERNAL_LISTINGS_URL } from '../lib/site.config';
 // ============================================================
 // Centro de apoio (/apoio) — conteúdo editável fora do markup.
 //
@@ -24,7 +23,7 @@ export interface SupportTopic {
 // `href` aponta para destinos reais já existentes no site; tópicos sem página
 // dedicada enviam para a FAQ (#faq) ou para o contacto.
 export const supportTopics: SupportTopic[] = [
-  { icon: 'key', title: 'Comprar imóvel', text: 'Processo de compra, visitas, propostas e documentação.', href: EXTERNAL_LISTINGS_URL },
+  { icon: 'key', title: 'Comprar imóvel', text: 'Processo de compra, visitas, propostas e documentação.', href: '/comprar' },
   { icon: 'target', title: 'Vender imóvel', text: 'Avaliação, angariação, divulgação e venda.', href: '/#vender' },
   { icon: 'document', title: 'Documentação', text: 'Contratos, certidões e requisitos legais.', href: '#faq' },
   { icon: 'briefcase', title: 'Financiamento', text: 'Crédito habitação, parcerias e simulações.', href: '#faq' },

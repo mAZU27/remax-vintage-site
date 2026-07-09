@@ -42,15 +42,16 @@ export interface NavItem {
   external?: boolean;
 }
 
+// 7 items (owner-approved grouping): the two method pages lead; listings are
+// external; Zonas/Método are on-page sections (reachable by scroll) and
+// Carreiras moved to the footer to keep the menu scannable.
 export const nav: NavItem[] = [
+  { label: 'Comprar', href: '/comprar' },
+  { label: 'Vender', href: '/vender', highlight: true },
   { label: 'Imóveis', href: EXTERNAL_LISTINGS_URL, external: true },
-  { label: 'Zonas', href: '/#zonas' },
-  { label: 'Método', href: '/#metodo' },
-  { label: 'Vender', href: '/#vender', highlight: true },
   { label: 'Arrendar', href: '/alugar' },
   { label: 'Sobre nós', href: '/sobre-nos' },
   { label: 'Blog', href: '/insights' },
-  { label: 'Carreiras', href: '/carreiras' },
   { label: 'Contacto', href: '/contacto' },
 ];
 
