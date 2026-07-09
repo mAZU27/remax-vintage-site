@@ -1,7 +1,7 @@
 ---
 // "A Nossa Equipa" — premium team showcase.
 // Navy zone: editorial header + an infinite right-moving marquee of portrait
-// cards (overlay caption, desktop arc preserved, pauses on hover), then a soft
+// cards (overlay caption, linear row, pauses on hover), then a soft
 // curve into the cream zone with stats + CTA.
 // Each card uses <picture> (webp 400w/600w + jpg fallback). When a portrait is
 // absent or fails to load, a dignified gold-monogram fallback takes over (the
@@ -23,21 +23,10 @@ const initials = (name: string) =>
 // exposed to assistive tech; the rest are decorative duplicates (aria-hidden,
 // links pulled out of the tab order). MARQUEE_COPIES must match the 1/N travel
 // distance in the @keyframes below — keep them in sync (2 copies → -50%).
-// Desktop arc: a repeating 5-card arch (centre high, sides dip). Anchored to the
-// consultant's own index (not DOM position) so every copy carries an identical
-// arc — that keeps the loop seamless even when the list length isn't a multiple
-// of 5. Values match the original arch exactly.
-const ARC = [
-  { y: '16px', r: '-1.3deg' },
-  { y: '4px', r: '-0.6deg' },
-  { y: '-10px', r: '0deg' },
-  { y: '4px', r: '0.6deg' },
-  { y: '16px', r: '1.3deg' },
-];
 const MARQUEE_COPIES = 2;
 const reversedConsultants = [...consultants].reverse();
 const marquee = Array.from({ length: MARQUEE_COPIES }, (_, copy) =>
-  reversedConsultants.map((c, j) => ({ ...c, clone: copy > 0, arc: ARC[j % ARC.length] }))
+  reversedConsultants.map((c) => ({ ...c, clone: copy > 0 }))
 ).flat();
 
 // Keep a constant, premium glide speed regardless of how many consultants there
@@ -67,7 +56,7 @@ const marqueeSeconds = Math.max(20, consultants.length * SECONDS_PER_CARD);
     <div class="ts__marquee ts__marquee--rtl" style={`--ts-speed:${marqueeSeconds}s`}>
       <ul class="ts__track" role="list">
         {marquee.map((c) => (
-          <li class="ts__cell" style={`--arc-y:${c.arc.y};--arc-rot:${c.arc.r}`} aria-hidden={c.clone ? 'true' : undefined}>
+          <li class="ts__cell" aria-hidden={c.clone ? 'true' : undefined}>
             <article class="ts__card">
               <div class:list={['ts__photo', { 'is-missing': !c.image }]}>
                 {c.image && (
@@ -219,7 +208,7 @@ const marqueeSeconds = Math.max(20, consultants.length * SECONDS_PER_CARD);
     --ts-speed: 30s;
     position: relative;
     overflow: hidden;
-    /* Vertical room so the arc lift + hover float-shadow are not clipped. */
+    /* Vertical room so the hover float-shadow is not clipped. */
     padding-block: clamp(24px, 3vw, 40px);
     /* Soft edges so cards dissolve in/out instead of hard-cutting at the seam. */
     -webkit-mask-image: linear-gradient(to right, transparent 0, #000 5%, #000 95%, transparent 100%);
@@ -266,17 +255,6 @@ const marqueeSeconds = Math.max(20, consultants.length * SECONDS_PER_CARD);
     margin-right: var(--ts-gap);
   }
 
-  /* Arc — desktop only: centre card sits highest, sides dip, a whisper of
-     rotation. Per-cell --arc-y / --arc-rot (set inline from the consultant's
-     index) drive it, so every copy is identical and the loop stays seamless.
-     Uses the independent `translate`/`rotate` properties, so it composes with
-     the track's `transform` without fighting. */
-  @media (min-width: 1025px) {
-    .ts__cell {
-      translate: 0 var(--arc-y, 0);
-      rotate: var(--arc-rot, 0deg);
-    }
-  }
 
   .ts__card {
     position: relative;
