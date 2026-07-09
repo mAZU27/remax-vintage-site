@@ -1,0 +1,48 @@
+---
+// PT / EN language toggle. Purely presentational — behaviour + persistence
+// lives in src/i18n/apply.ts (bootstrapped from Base.astro).
+interface Props {
+  variant?: 'nav' | 'drawer';
+}
+const { variant = 'nav' } = Astro.props;
+---
+<div class:list={['lang', `lang--${variant}`]} data-lang-switch data-lang="pt" data-i18n-skip>
+  <button type="button" class="lang__opt" data-lang-value="pt" aria-pressed="true" aria-label="Português">
+    <span>PT</span>
+  </button>
+  <span class="lang__sep" aria-hidden="true">/</span>
+  <button type="button" class="lang__opt" data-lang-value="en" aria-pressed="false" aria-label="English">
+    <span>EN</span>
+  </button>
+</div>
+
+<style>
+  .lang {
+    display: inline-flex; align-items: center; gap: 4px;
+    font-size: 12px; letter-spacing: 0.08em;
+    color: var(--white-70);
+  }
+  .lang__opt {
+    background: transparent; border: 0; padding: 4px 6px;
+    color: inherit; cursor: pointer; letter-spacing: inherit;
+    font-weight: 500; line-height: 1;
+    transition: color var(--t-fast), opacity var(--t-fast);
+    opacity: 0.65;
+  }
+  .lang__opt[aria-pressed='true'] { color: var(--gold-light); opacity: 1; }
+  .lang__opt:hover { color: var(--gold-light); opacity: 1; }
+  .lang__opt:focus-visible { outline: none; box-shadow: var(--ring); border-radius: 4px; }
+  .lang__sep { color: var(--white-30); font-weight: 300; }
+
+  /* Drawer variant — larger for touch, centered under nav links */
+  .lang--drawer {
+    justify-content: center; padding: 10px 0 2px;
+    font-size: 13px;
+  }
+  .lang--drawer .lang__opt { padding: 6px 10px; }
+
+  /* Nav variant hides on small screens — the drawer version takes over there. */
+  @media (max-width: 1120px) {
+    .lang--nav { display: none; }
+  }
+</style>

@@ -48,20 +48,20 @@ export const awards: Award[] = [
 
 // Real, network-level figures used in the credibility strip on /sobre-nos.
 export const awardStats: AwardStat[] = [
-  { value: '26 anos',                 label: 'De liderança no mercado português' },
+  { value: '12 anos',                 label: 'De liderança no mercado português' },
   { value: 'Nº 1',                    label: 'Escolha do Consumidor 2026' },
   { value: '2× Prémio Cinco Estrelas', label: '2025 e 2026' },
 ];
 
 export const awardsBeltCopy = {
   ariaLabel: 'Prémios RE/MAX Portugal',
-  eyebrow: 'RE/MAX Portugal · 26 anos de liderança',
+  eyebrow: 'RE/MAX Portugal · 12 anos de liderança',
   tagline: 'A marca imobiliária mais premiada de Portugal.',
 } as const;
 
 export const awardsGridCopy = {
   eyebrow: 'Reconhecimento',
-  headline: '26 anos a ser escolhidos pelos melhores.',
+  headline: '12 anos a ser escolhidos pelos melhores.',
   subtitle:
     'Os prémios que a RE/MAX Portugal conquistou em 2025 e 2026 refletem o compromisso com a ' +
     'excelência que cada agência da rede representa — incluindo a RE/MAX Collection Vintage no Porto.',

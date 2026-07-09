@@ -9,6 +9,7 @@ import Button from './Button.astro';
 interface Cta {
   label: string;
   href: string;
+  external?: boolean;
   variant?: 'gold' | 'ghost';
   arrow?: boolean;
 }
@@ -59,7 +60,7 @@ const {
     {ctas.length > 0 && (
       <div class="phero__ctas" data-reveal style="--reveal-delay:300ms">
         {ctas.map((c) => (
-          <Button href={c.href} variant={c.variant ?? 'gold'} arrow={c.arrow ?? true}>{c.label}</Button>
+          <Button href={c.href} external={c.external ?? false} variant={c.variant ?? 'gold'} arrow={c.arrow ?? true}>{c.label}</Button>
         ))}
       </div>
     )}

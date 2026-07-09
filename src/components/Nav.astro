@@ -2,6 +2,7 @@
 import { site, nav, primaryCta } from '../data/site';
 import Button from './Button.astro';
 import Icon from './Icon.astro';
+import LangSwitcher from './LangSwitcher.astro';
 interface Props {
   // Homepage sits over a dark video hero → start transparent.
   // Interior pages have no dark hero → start solid.
@@ -26,6 +27,7 @@ const isActive = (href: string) => {
         <a
           href={item.href}
           class:list={['nav__link', { 'nav__link--highlight': item.highlight, 'is-active': isActive(item.href) }]}
+          {...item.external ? { target: '_blank', rel: 'noopener noreferrer' } : {}}
         >
           {item.label}
         </a>
@@ -37,6 +39,7 @@ const isActive = (href: string) => {
         <Icon name="phone" size={16} stroke={1.6} />
         <span>{site.phone}</span>
       </a>
+      <LangSwitcher variant="nav" />
       <Button href={primaryCta.href} variant="gold" class="nav__cta">{primaryCta.label}</Button>
       <button class="nav__toggle" type="button" aria-label="Abrir menu" aria-expanded="false" aria-controls="nav-drawer" data-nav-toggle>
         <span></span><span></span><span></span>
@@ -47,7 +50,11 @@ const isActive = (href: string) => {
   <div class="nav__drawer" id="nav-drawer" data-nav-drawer hidden>
     <nav class="nav__drawer-links" aria-label="Menu móvel">
       {nav.map((item) => (
-        <a href={item.href} class:list={['nav__drawer-link', { 'is-active': isActive(item.href) }]}>
+        <a
+          href={item.href}
+          class:list={['nav__drawer-link', { 'is-active': isActive(item.href) }]}
+          {...item.external ? { target: '_blank', rel: 'noopener noreferrer' } : {}}
+        >
           {item.label}
         </a>
       ))}
@@ -57,6 +64,7 @@ const isActive = (href: string) => {
       <a class="nav__drawer-phone" href={site.phoneHref}>
         <Icon name="phone" size={16} stroke={1.6} /> <span>{site.phone}</span>
       </a>
+      <LangSwitcher variant="drawer" />
     </div>
   </div>
 </header>

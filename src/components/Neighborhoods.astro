@@ -4,10 +4,9 @@
 // tooltip) framed by four glass neighbourhood cards, plus an honest stats bar.
 // Data-driven from `neighborhoods` / `zonasStats` in site.ts.
 // Interaction (hover/focus/keyboard sync, tooltip, count-up) lives in the
-// <script> below; all motion is guarded by prefers-reduced-motion.
+// the client script below; all motion is guarded by prefers-reduced-motion.
 import { neighborhoods, zonasStats } from '../data/site';
 import Icon from './Icon.astro';
-import Button from './Button.astro';
 import SectionEyebrow from './SectionEyebrow.astro';
 ---
 <section class="zonas section section--navy on-navy" id="zonas" data-zonas>
@@ -47,17 +46,10 @@ import SectionEyebrow from './SectionEyebrow.astro';
               <li><Icon name={f.icon} size={14} stroke={1.5} /> {f.label}</li>
             ))}
           </ul>
-          <a class="bcard__link" href={`/imoveis?zona=${n.slug}`}>
-            Explorar zona <Icon name="arrow" size={14} stroke={1.8} />
-          </a>
         </article>
       ))}
 
       <div class="zonas__mapcol" style="grid-area: map">
-        <div class="zonas__mapcta">
-          <Button href="/imoveis" variant="gold" arrow>Ver toda a coleção</Button>
-        </div>
-
         <div class="zonas__mapwrap" data-reveal style="--reveal-delay:200ms">
           <svg class="zonas__map" viewBox="0 0 1000 640" fill="none" aria-hidden="true">
             <g class="zonas__districts">
@@ -85,7 +77,6 @@ import SectionEyebrow from './SectionEyebrow.astro';
                 data-name={n.name}
                 data-price={n.price}
                 data-demand={n.demand}
-                data-href={`/imoveis?zona=${n.slug}`}
                 style={`left:${n.x}%; top:${n.y}%; --pin-delay:${i * 150}ms`}
                 aria-label={`Ver zona ${n.name}`}
               >
@@ -100,9 +91,6 @@ import SectionEyebrow from './SectionEyebrow.astro';
                 <div><dt>Preço médio</dt><dd data-tip-price></dd></div>
                 <div><dt>Procura</dt><dd data-tip-demand></dd></div>
               </dl>
-              <a class="zonas__tip-link" data-tip-link href="/imoveis">
-                Ver imóveis <Icon name="arrow" size={13} stroke={1.8} />
-              </a>
             </div>
           </div>
         </div>
@@ -245,14 +233,6 @@ import SectionEyebrow from './SectionEyebrow.astro';
   .zonas__tip-meta div { display: flex; align-items: baseline; justify-content: space-between; gap: 14px; }
   .zonas__tip-meta dt { font-size: 11px; color: var(--white-50); letter-spacing: 0.04em; }
   .zonas__tip-meta dd { margin: 0; font-size: 13px; color: var(--cream); font-weight: 500; }
-  .zonas__tip-link {
-    display: inline-flex; align-items: center; gap: 7px; margin-top: 14px; padding-top: 12px;
-    border-top: 1px solid var(--hairline-light);
-    font-size: 10.5px; letter-spacing: 0.16em; text-transform: uppercase; color: var(--gold-light);
-    text-decoration: none; font-weight: 500;
-  }
-  .zonas__tip-link :global(.arrow) { transition: transform var(--t-fast); }
-  .zonas__tip-link:hover :global(.arrow) { transform: translateX(4px); }
 
   /* Scroll/explore cue */
   .zonas__cue {
@@ -286,13 +266,6 @@ import SectionEyebrow from './SectionEyebrow.astro';
     padding: 5px 10px; border: 1px solid var(--hairline-light); border-radius: 999px;
   }
   .bcard__features :global(.icon) { color: var(--gold-light); }
-  .bcard__link {
-    margin-top: auto; padding-top: 18px; display: inline-flex; align-items: center; gap: 8px;
-    font-size: 10.5px; letter-spacing: 0.16em; text-transform: uppercase; color: var(--gold-light);
-    text-decoration: none; font-weight: 500;
-  }
-  .bcard__link :global(.arrow) { transition: transform var(--t-fast); }
-  .bcard__link:hover :global(.arrow) { transform: translateX(4px); }
 
   /* Stats bar */
   .zonas__stats {
@@ -374,7 +347,7 @@ import SectionEyebrow from './SectionEyebrow.astro';
     }
 
     /* Conteúdo à esquerda em coluna - com padding para não sobrepor número */
-    .bcard > div:not(.bcard__top):not(.bcard__link) {
+    .bcard > div:not(.bcard__top) {
       grid-column: 1;
       display: flex;
       flex-direction: column;
@@ -449,7 +422,6 @@ import SectionEyebrow from './SectionEyebrow.astro';
     const tipName = root.querySelector<HTMLElement>('[data-tip-name]');
     const tipPrice = root.querySelector<HTMLElement>('[data-tip-price]');
     const tipDemand = root.querySelector<HTMLElement>('[data-tip-demand]');
-    const tipLink = root.querySelector<HTMLAnchorElement>('[data-tip-link]');
 
     const setActive = (slug: string | undefined) => {
       if (!slug) return;
@@ -463,7 +435,6 @@ import SectionEyebrow from './SectionEyebrow.astro';
         if (tipName) tipName.textContent = pin.dataset.name ?? '';
         if (tipPrice) tipPrice.textContent = pin.dataset.price ?? '';
         if (tipDemand) tipDemand.textContent = pin.dataset.demand ?? '';
-        if (tipLink && pin.dataset.href) tipLink.setAttribute('href', pin.dataset.href);
         tip.classList.add('is-on');
       }
     };

@@ -1,10 +1,11 @@
 ---
 import Base from '../layouts/Base.astro';
+import { EXTERNAL_LISTINGS_URL } from '../lib/site.config';
 import Button from '../components/Button.astro';
 import Icon from '../components/Icon.astro';
 ---
 <Base
-  title="Alugar"
+  title="Arrendar"
   description="Arrendamento de imóveis distintos no Porto — selecionados com rigor para quem valoriza localização, conforto e qualidade."
 >
   <!-- Alugar — split editorial: texto à esquerda, imagem premium + cartão navy à direita -->
@@ -13,7 +14,7 @@ import Icon from '../components/Icon.astro';
       <!-- Coluna esquerda — editorial -->
       <div class="alg__panel">
         <div class="alg__panel-inner">
-          <span class="alg__eyebrow" data-reveal>Alugar</span>
+          <span class="alg__eyebrow" data-reveal>Arrendar</span>
           <span class="gold-rule alg__rule" data-reveal="rule" style="--reveal-delay:60ms"></span>
           <h2 class="h2 alg__title" data-reveal style="--reveal-delay:100ms">
             Viver o Porto<br />com a <em class="em-gold serif-it">casa certa.</em>
@@ -23,7 +24,7 @@ import Icon from '../components/Icon.astro';
             localização, conforto e qualidade. Encontre o espaço ideal para o seu próximo capítulo.
           </p>
           <div class="alg__actions" data-reveal style="--reveal-delay:220ms">
-            <Button href="/imoveis" variant="gold" arrow class="alg__btn">Ver imóveis para alugar</Button>
+            <Button href={EXTERNAL_LISTINGS_URL} external variant="gold" arrow class="alg__btn">Ver imóveis para arrendar</Button>
             <Button href="/contacto" variant="ghost-dark" arrow class="alg__btn alg__btn--2">Falar com consultor</Button>
           </div>
           <ul class="alg__benefits" data-reveal style="--reveal-delay:280ms">
@@ -61,7 +62,7 @@ import Icon from '../components/Icon.astro';
           <span class="alg__card-ic" aria-hidden="true"><Icon name="diamond" size={26} stroke={1.3} /></span>
           <h3 class="alg__card-title">À procura de arrendar?</h3>
           <p class="alg__card-text">Diga-nos o que procura e encontramos o imóvel certo para si.</p>
-          <Button href="/imoveis" variant="gold" arrow class="alg__card-btn">Encontrar imóvel</Button>
+          <Button href={EXTERNAL_LISTINGS_URL} external variant="gold" arrow class="alg__card-btn">Encontrar imóvel</Button>
           <div class="alg__card-foot">
             <span class="alg__card-meta"><Icon name="clock" size={15} stroke={1.6} />Resposta em 24h</span>
             <span class="alg__card-div" aria-hidden="true"></span>

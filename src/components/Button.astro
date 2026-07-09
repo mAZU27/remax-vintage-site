@@ -8,6 +8,8 @@ interface Props {
   class?: string;
   ariaLabel?: string;
   reveal?: boolean;
+  /** External destination — opens in a new tab with the security rel attrs. */
+  external?: boolean;
 }
 const {
   href,
@@ -17,6 +19,7 @@ const {
   class: cls = '',
   ariaLabel,
   reveal = false,
+  external = false,
 } = Astro.props;
 const cl = variant === 'link' ? 'btn-link' : `btn btn--${variant}`;
 const Tag = href ? 'a' : 'button';
@@ -24,6 +27,7 @@ const Tag = href ? 'a' : 'button';
 <Tag
   class={`${cl} ${cls}`.trim()}
   {...href ? { href } : { type }}
+  {...href && external ? { target: '_blank', rel: 'noopener noreferrer' } : {}}
   {...ariaLabel ? { 'aria-label': ariaLabel } : {}}
   {...reveal ? { 'data-reveal': '' } : {}}
 >

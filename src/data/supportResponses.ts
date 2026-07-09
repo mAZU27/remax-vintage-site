@@ -1,3 +1,4 @@
+import { EXTERNAL_LISTINGS_URL } from '../lib/site.config';
 // ============================================================
 // Response engine for the Collection Vintage assistant.
 //
@@ -174,7 +175,7 @@ function replyFor(intent: IntentId): BotReply {
       return {
         text: 'Acompanhamo-lo em todo o processo de compra — seleção de imóveis distintos, visitas qualificadas e negociação. Posso ajudá-lo a encontrar o imóvel certo.',
         flow: 'comprar',
-        cta: { label: 'Ver imóveis', href: '/imoveis' },
+        cta: { label: 'Ver imóveis', href: EXTERNAL_LISTINGS_URL, external: true },
       };
 
     case 'alugar':
@@ -232,14 +233,14 @@ function replyFor(intent: IntentId): BotReply {
     case 'imoveis':
       return {
         text: 'Temos uma seleção criteriosa de imóveis distintos no Porto — apartamentos, moradias e imóveis com história. Veja o catálogo atual e filtre por zona, tipologia ou preço.',
-        cta: { label: 'Ver imóveis', href: '/imoveis' },
+        cta: { label: 'Ver imóveis', href: EXTERNAL_LISTINGS_URL, external: true },
         chips: [{ label: 'Comprar', flow: 'comprar' }, { label: 'Arrendar', flow: 'alugar' }, { label: 'Marcar visita', flow: 'visita' }],
       };
 
     case 'processo_compra':
       return {
         text: 'O processo de compra connosco:\n' + list(processes.compra),
-        cta: { label: 'Ver imóveis', href: '/imoveis' },
+        cta: { label: 'Ver imóveis', href: EXTERNAL_LISTINGS_URL, external: true },
         chips: [{ label: 'Quero comprar', flow: 'comprar' }],
       };
 
@@ -313,7 +314,7 @@ function replyFor(intent: IntentId): BotReply {
     case 'preco':
       return {
         text: 'Os valores dos imóveis dependem da localização, tipologia, tamanho e características.\n\nOs preços variam conforme o mercado atual no Porto. Veja o catálogo ou peça uma avaliação personalizada.',
-        cta: { label: 'Ver catálogo de imóveis', href: '/imoveis' },
+        cta: { label: 'Ver imóveis disponíveis', href: EXTERNAL_LISTINGS_URL, external: true },
         chips: [{ label: 'Pedir avaliação', flow: 'avaliacao' }, { label: 'Comprar', flow: 'comprar' }],
       };
 

@@ -97,9 +97,6 @@ const jsonLd = {
     />
 
     <script type="application/ld+json" set:html={JSON.stringify(jsonLd)} />
-
-    <!-- Image optimization: WebP detection and lazy-loading -->
-    <script src="/optimize-images.js" async></script>
   </head>
   <body>
     <a href="#main" class="skip-link">Saltar para o conteúdo</a>
@@ -132,6 +129,11 @@ const jsonLd = {
         );
         items.forEach((el) => io.observe(el));
       }
+    </script>
+
+    <script>
+      import { initI18n } from '../i18n/apply';
+      initI18n();
     </script>
   </body>
 </html>

@@ -1,3 +1,4 @@
+import { EXTERNAL_LISTINGS_URL } from '../lib/site.config';
 // ============================================================
 // Knowledge base for the Collection Vintage digital assistant.
 //
@@ -51,12 +52,12 @@ export const zonas = neighborhoods.map((n) => ({
   name: n.name,
   slug: n.slug,
   blurb: n.blurb,
-  href: `/imoveis?zona=${n.slug}`,
+  href: EXTERNAL_LISTINGS_URL,
 }));
 
 // The agency's services, grounded in the site's method + journeys.
 export const services = [
-  { title: 'Comprar', text: 'Seleção de imóveis distintos, visitas qualificadas e negociação.', href: '/imoveis' },
+  { title: 'Comprar', text: 'Seleção de imóveis distintos, visitas qualificadas e negociação.', href: EXTERNAL_LISTINGS_URL },
   { title: 'Vender', text: 'Avaliação, estratégia, apresentação ao mercado e negociação.', href: '/#vender' },
   { title: 'Arrendar', text: 'Arrendamento de imóveis premium, com seleção criteriosa.', href: '/alugar' },
   { title: 'Avaliar', text: 'Avaliação confidencial e sem compromisso do seu imóvel.', href: '/#vender' },
@@ -91,7 +92,7 @@ export const company = {
     'A RE/MAX Collection® é a linha premium da rede RE/MAX, dedicada a imóveis de alto valor e carácter. "Vintage" é a nossa agência no Porto, especializada em imóveis com história, arquitetura e localização distintas.',
   // Awards belong to the RE/MAX Portugal NETWORK — framed accordingly, never "os nossos prémios".
   recognition:
-    'Fazemos parte da RE/MAX, a marca imobiliária mais premiada de Portugal (26 anos de liderança, Escolha do Consumidor 2026, Prémio Cinco Estrelas 2025 e 2026). A Collection Vintage representa esse padrão no segmento de luxo do Porto.',
+    'Fazemos parte da RE/MAX, a marca imobiliária mais premiada de Portugal (12 anos de liderança, Escolha do Consumidor 2026, Prémio Cinco Estrelas 2025 e 2026). A Collection Vintage representa esse padrão no segmento de luxo do Porto.',
 };
 
 // Careers summary (from carreiras.ts — only the verified open role is named).

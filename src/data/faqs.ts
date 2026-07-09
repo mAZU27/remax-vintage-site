@@ -1,3 +1,4 @@
+import { EXTERNAL_LISTINGS_URL } from '../lib/site.config';
 // ============================================================
 // Centro de apoio (/apoio) — conteúdo editável fora do markup.
 //
@@ -23,7 +24,7 @@ export interface SupportTopic {
 // `href` aponta para destinos reais já existentes no site; tópicos sem página
 // dedicada enviam para a FAQ (#faq) ou para o contacto.
 export const supportTopics: SupportTopic[] = [
-  { icon: 'key', title: 'Comprar imóvel', text: 'Processo de compra, visitas, propostas e documentação.', href: '/imoveis' },
+  { icon: 'key', title: 'Comprar imóvel', text: 'Processo de compra, visitas, propostas e documentação.', href: EXTERNAL_LISTINGS_URL },
   { icon: 'target', title: 'Vender imóvel', text: 'Avaliação, angariação, divulgação e venda.', href: '/#vender' },
   { icon: 'document', title: 'Documentação', text: 'Contratos, certidões e requisitos legais.', href: '#faq' },
   { icon: 'briefcase', title: 'Financiamento', text: 'Crédito habitação, parcerias e simulações.', href: '#faq' },
@@ -108,13 +109,13 @@ export interface QualityCommitment {
 // NOTE(apoio-stats): valores de serviço a confirmar com a equipa.
 // "Até 4h úteis" e "7 dias/semana" são compromissos por validar — este último
 // diverge do horário em site.ts (Seg.–Sex.); confirmar disponibilidade real.
-// "Desde 2007" é facto real (site.established). Render limpo (sem badges),
+// "Desde 2014" é facto real (site.established). Render limpo (sem badges),
 // seguindo a convenção de site.ts (stats ilustrativas só assinaladas em código).
 export const qualityCommitments: QualityCommitment[] = [
   { icon: 'clock', value: 'Até 4h úteis', label: 'Tempo médio de resposta' },
   { icon: 'phone', value: '7 dias/semana', label: 'Disponibilidade' },
   { icon: 'shield-check', value: '100% confidencial', label: 'Segurança e privacidade' },
-  { icon: 'award', value: 'Desde 2007', label: 'Presença no Porto' },
+  { icon: 'award', value: 'Desde 2014', label: 'Presença no Porto' },
 ];
 
 /* ---------- Secção 6 — Guias úteis ---------- */

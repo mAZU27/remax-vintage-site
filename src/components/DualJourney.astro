@@ -123,6 +123,7 @@ import SectionEyebrow from './SectionEyebrow.astro';
           <div class="jcard__ctawrap">
             <Button
               href={j.cta.href}
+              external={'external' in j.cta && j.cta.external}
               variant={j.variant === 'seller' ? 'gold' : 'ghost'}
               arrow
               class="jbtn"

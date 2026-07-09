@@ -1,4 +1,5 @@
 ---
+import { EXTERNAL_LISTINGS_URL } from '../lib/site.config';
 import { site, nav } from '../data/site';
 import Icon from './Icon.astro';
 import FinalBrand from './FinalBrand.astro';
@@ -28,7 +29,11 @@ const year = new Date().getFullYear();
       <h3 class="foot__section-title">Explorar</h3>
       <nav class="foot__section-nav" aria-label="Navegação principal">
         {nav.slice(0, 5).map((item) => (
-          <a href={item.href} class="foot__section-link">
+          <a
+            href={item.href}
+            class="foot__section-link"
+            {...item.external ? { target: '_blank', rel: 'noopener noreferrer' } : {}}
+          >
             {item.label}
           </a>
         ))}
@@ -66,7 +71,7 @@ const year = new Date().getFullYear();
     <section class="foot__section">
       <h3 class="foot__section-title">Serviços</h3>
       <nav class="foot__section-nav" aria-label="Serviços">
-        <a href="/imoveis" class="foot__section-link">Comprar imóvel</a>
+        <a href={EXTERNAL_LISTINGS_URL} class="foot__section-link" target="_blank" rel="noopener noreferrer">Comprar imóvel</a>
         <a href="/#vender" class="foot__section-link">Vender imóvel</a>
         <a href="/alugar" class="foot__section-link">Arrendar</a>
         <a href="/sobre-nos" class="foot__section-link">Sobre nós</a>

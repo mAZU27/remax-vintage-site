@@ -5,6 +5,8 @@
 // rename — the "HEMAX" text in early mockups was AI hallucination.
 // ============================================================
 
+import { EXTERNAL_LISTINGS_URL } from '../lib/site.config';
+
 export const site = {
   name: 'RE/MAX Collection Vintage',
   shortName: 'Collection Vintage',
@@ -22,7 +24,7 @@ export const site = {
   // TODO(contacto): morada e horário reais antes do lançamento.
   address: ['Av. da Boavista 0000', '4100-000 Porto, Portugal'],
   hours: ['Segunda a Sexta', '09:00 – 18:00'],
-  established: 2007,
+  established: 2014,
   // TODO(social): substituir '#' pelos perfis reais antes do lançamento.
   social: [
     { label: 'Instagram', href: '#', icon: 'instagram' },
@@ -36,14 +38,16 @@ export interface NavItem {
   label: string;
   href: string;
   highlight?: boolean;
+  /** Opens in a new tab (target=_blank + security rel). */
+  external?: boolean;
 }
 
 export const nav: NavItem[] = [
-  { label: 'Imóveis', href: '/imoveis' },
+  { label: 'Imóveis', href: EXTERNAL_LISTINGS_URL, external: true },
   { label: 'Zonas', href: '/#zonas' },
   { label: 'Método', href: '/#metodo' },
   { label: 'Vender', href: '/#vender', highlight: true },
-  { label: 'Alugar', href: '/alugar' },
+  { label: 'Arrendar', href: '/alugar' },
   { label: 'Sobre nós', href: '/sobre-nos' },
   { label: 'Blog', href: '/insights' },
   { label: 'Carreiras', href: '/carreiras' },
@@ -325,7 +329,7 @@ export const journeys = [
       { icon: 'eye', label: ['Visitas', 'qualificadas'] },
       { icon: 'handshake', label: ['Negociação', 'e apoio total'] },
     ],
-    cta: { label: 'Explorar imóveis', href: '/imoveis' },
+    cta: { label: 'Explorar imóveis', href: EXTERNAL_LISTINGS_URL, external: true },
     micro: 'Confidencial · Sem compromisso',
   },
 ] as const;

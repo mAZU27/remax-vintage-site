@@ -1,5 +1,6 @@
 ---
 import Base from '../layouts/Base.astro';
+import { EXTERNAL_LISTINGS_URL } from '../lib/site.config';
 import PageHero from '../components/PageHero.astro';
 import SectionEyebrow from '../components/SectionEyebrow.astro';
 import Button from '../components/Button.astro';
@@ -11,7 +12,7 @@ import { neighborhoods, testimonials, primaryCta } from '../data/site';
 
 // Section 2 — three real facts about the agency (no invented metrics).
 const facts = [
-  { value: 'Desde 2007', label: 'Presença no Porto' },
+  { value: 'Desde 2014', label: 'Presença no Porto' },
   { value: 'Porto todo', label: 'Trabalhamos o Porto completo' },
   { value: 'RE/MAX Collection®', label: 'Sub-marca de luxo global' },
 ];
@@ -29,19 +30,19 @@ const aboutTestimonials = testimonials.slice(0, 3);
 ---
 <Base
   title="Sobre nós"
-  description="A RE/MAX Collection Vintage — desde 2007 a apresentar o Porto ao mundo. Especialistas em imóveis premium e vintage em Foz do Douro, Boavista, Ribeira e Cedofeita."
+  description="A RE/MAX Collection Vintage — desde 2014 a apresentar o Porto ao mundo. Especialistas em imóveis premium e vintage em Foz do Douro, Boavista, Ribeira e Cedofeita."
   image="/images/porto/editorial-entrada.webp"
   overHeroNav
 >
   <!-- S1 — Hero (background video moved here from the homepage hero) -->
   <PageHero
-    eyebrow="Porto · Desde 2007"
+    eyebrow="Porto · Desde 2014"
     title='Imóveis distintos merecem uma <em class="em-gold serif-it">apresentação distinta</em>.'
     subtitle="Especialistas em imóveis premium e vintage em Foz do Douro, Boavista, Ribeira e Cedofeita."
     image="/media/hero-poster.jpg"
     video={{ webm: '/media/hero.webm', mp4: '/media/hero.mp4' }}
     ctas={[
-      { label: 'Ver a coleção', href: '/imoveis', variant: 'gold' },
+      { label: 'Ver a coleção', href: EXTERNAL_LISTINGS_URL, external: true, variant: 'gold' },
       { label: 'Falar connosco', href: '/contacto', variant: 'ghost' },
     ]}
   />
@@ -52,10 +53,10 @@ const aboutTestimonials = testimonials.slice(0, 3);
       <div class="ab-origin__grid">
         <div class="ab-origin__text">
           <SectionEyebrow text="A nossa história" />
-          <h2 class="h2 ab-origin__title" data-reveal style="--reveal-delay:80ms">Desde 2007 a apresentar o Porto ao mundo.</h2>
+          <h2 class="h2 ab-origin__title" data-reveal style="--reveal-delay:80ms">Desde 2014 a apresentar o Porto ao mundo.</h2>
           <span class="gold-rule ab-origin__rule" data-reveal="rule" style="--reveal-delay:140ms"></span>
           <p class="lede ab-origin__body" data-reveal style="--reveal-delay:180ms">
-            A RE/MAX Collection Vintage nasceu em 2007 no Porto, com uma convicção simples: imóveis
+            A RE/MAX Collection Vintage nasceu em 2014 no Porto, com uma convicção simples: imóveis
             distintos merecem uma abordagem distinta. Não se trata apenas de vender — trata-se de
             interpretar, posicionar e apresentar cada imóvel com a estratégia e o critério que o seu
             valor exige.

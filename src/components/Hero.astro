@@ -1,5 +1,6 @@
 ---
 import Button from './Button.astro';
+import { EXTERNAL_LISTINGS_URL } from '../lib/site.config';
 import Icon from './Icon.astro';
 import { primaryCta } from '../data/site';
 
@@ -39,7 +40,7 @@ import { primaryCta } from '../data/site';
         verdadeiramente raro.
       </p>
       <div class="hero__ctas" data-reveal style="--reveal-delay: 340ms">
-        <Button href="/imoveis" variant="gold" arrow>Ver a coleção</Button>
+        <Button href={EXTERNAL_LISTINGS_URL} external variant="gold" arrow>Ver a coleção</Button>
         <Button href={primaryCta.href} variant="ghost">{primaryCta.label}</Button>
       </div>
     </div>

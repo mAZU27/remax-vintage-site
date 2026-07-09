@@ -11,7 +11,7 @@ const details = [
   { icon: 'mail', label: 'Email', lines: [site.email], href: `mailto:${site.email}` },
   { icon: 'clock', label: 'Horário', lines: site.hours },
 ];
-const assuntos = ['Comprar um imóvel', 'Vender / avaliação', 'Agendar uma visita', 'Outro assunto'];
+const assuntos = ['Comprar um imóvel', 'Vender / avaliação', 'Estudo de mercado', 'Agendar uma visita', 'Outro assunto'];
 ---
 <Base
   title="Contacto"
@@ -169,13 +169,17 @@ const assuntos = ['Comprar um imóvel', 'Vender / avaliação', 'Agendar uma vis
     const success = form.querySelector<HTMLElement>('[data-success]');
     const emailRe = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
 
-    // Pre-fill when arriving from a property page (/contacto?imovel=REF).
-    const imovel = new URLSearchParams(location.search).get('imovel');
-    if (imovel) {
+    // Pre-fill the subject when arriving from a CTA (/contacto?assunto=<slug>).
+    const ASSUNTO_SLUGS: Record<string, string> = {
+      'comprar': 'Comprar um imóvel',
+      'vender': 'Vender / avaliação',
+      'estudo-mercado': 'Estudo de mercado',
+      'visita': 'Agendar uma visita',
+    };
+    const assuntoSlug = new URLSearchParams(location.search).get('assunto');
+    if (assuntoSlug && ASSUNTO_SLUGS[assuntoSlug]) {
       const assunto = form.querySelector<HTMLSelectElement>('#c-assunto');
-      const msg = form.querySelector<HTMLTextAreaElement>('#c-msg');
-      if (assunto) assunto.value = 'Agendar uma visita';
-      if (msg) msg.value = `Tenho interesse no imóvel ${imovel}. Gostaria de agendar uma visita.`;
+      if (assunto) assunto.value = ASSUNTO_SLUGS[assuntoSlug];
     }
 
     const showErr = (field: HTMLElement, on: boolean) => {
