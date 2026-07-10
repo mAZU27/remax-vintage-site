@@ -148,7 +148,7 @@ em.em-gold, .em-gold { font-family: var(--font-serif); font-style: italic; color
    width when nowrap — the overflow inflated body scrollWidth and let iOS pan
    into an empty band on the right. Let them wrap on small screens. */
 @media (max-width: 560px) {
-  .btn { white-space: normal; text-align: center; }
+  .btn { white-space: normal; text-align: center; padding: 12px 20px; font-size: 12px; gap: 10px; }
 }
 .btn .arrow { transition: transform var(--t-med); }
 .btn:hover .arrow { transform: translateX(4px); }
