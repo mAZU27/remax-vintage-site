@@ -4,9 +4,7 @@ import CareersHero from '../components/CareersHero.astro';
 import CareersCulture from '../components/CareersCulture.astro';
 import CareersWhyJoin from '../components/CareersWhyJoin.astro';
 import CareersBenefits from '../components/CareersBenefits.astro';
-import CareersOpenRoles from '../components/CareersOpenRoles.astro';
 import CareersProcess from '../components/CareersProcess.astro';
-import CareersTeamVoices from '../components/CareersTeamVoices.astro';
 import CareersOfficeLife from '../components/CareersOfficeLife.astro';
 import CareersApplication from '../components/CareersApplication.astro';
 import CareersFinalCTA from '../components/CareersFinalCTA.astro';
@@ -16,13 +14,15 @@ import CareersFinalCTA from '../components/CareersFinalCTA.astro';
   description="Construa carreira na RE/MAX Collection Vintage — Porto. Equipa de excelência em imóveis premium, formação curada, mentoria e crescimento real. Veja as oportunidades abertas."
   overHeroNav
 >
+  {/* CareersOpenRoles e CareersTeamVoices removidos 2026-07-10: a lista de
+      vagas e os testemunhos da equipa eram placeholders fabricados (ver nota
+      de honestidade em src/data/carreiras.ts). Repor apenas com vagas reais e
+      testemunhos autorizados. */}
   <CareersHero />
   <CareersCulture />
   <CareersWhyJoin />
   <CareersBenefits />
-  <CareersOpenRoles />
   <CareersProcess />
-  <CareersTeamVoices />
   <CareersOfficeLife />
   <CareersApplication />
   <CareersFinalCTA />

@@ -217,6 +217,10 @@ const TOTAL = 6;
       </section>
     </div>
 
+    <p class="vsim__error" data-vsim-error hidden role="alert">
+      Não foi possível enviar o pedido. Verifique a ligação e tente novamente — os seus dados foram mantidos.
+    </p>
+
     <footer class="vsim__foot" data-vsim-foot>
       <button type="button" class="vsim__back" data-vsim-back hidden>
         <Icon name="chevron" size={16} stroke={1.7} /> <span>Voltar</span>
@@ -436,6 +440,11 @@ const TOTAL = 6;
   .vsim__next { margin-left: auto; padding: 15px 28px; }
 
   .vsim.is-done .vsim__head, .vsim.is-done .vsim__foot { display: none; }
+  .vsim__error {
+    margin: 0 clamp(20px, 4vw, 40px); padding: 10px 0 0; font-size: 13px; line-height: 1.5;
+    color: var(--error-light); text-align: center;
+  }
+  .vsim__next[disabled] { opacity: 0.6; cursor: progress; }
 
   /* Mobile → bottom sheet */
   @media (max-width: 560px) {
@@ -621,16 +630,23 @@ const TOTAL = 6;
       return true;
     };
 
-    const submit = () => {
+    const errorEl = root.querySelector<HTMLElement>('[data-vsim-error]');
+    let submitting = false;
+    // One id per valuation (minted on open in resetForm) — stable across
+    // retries so the server's Idempotency-Key dedupes a resent lead.
+    let submissionId = crypto.randomUUID();
+
+    const submit = async () => {
       // Contact was already captured + validated at step 4; guard against tampering.
       if (!validateCapture()) {
         show(4);
         return;
       }
+      if (submitting) return; // block double-submit while in flight
 
-      // Send the lead to the same-origin /api/lead proxy, which forwards to
-      // the Novus ingest with the token kept server-side. No token in the
-      // browser. Server-side ingest is fail-soft, so a lead is never lost.
+      // Deliver through the same-origin endpoint. The done panel is shown ONLY
+      // after the server confirms real delivery (delivered:true); on any
+      // failure the captured contact is kept and the user can retry.
       const p4 = panelByName('4');
       const val = (n: string) =>
         p4.querySelector<HTMLInputElement>(`input[name="${n}"]`)?.value.trim() ?? '';
@@ -646,29 +662,48 @@ const TOTAL = 6;
       new URLSearchParams(location.search).forEach((v, k) => {
         if (k.startsWith('utm_')) utm[k] = v;
       });
-      fetch('/api/lead', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({
-          full_name: val('nome'),
-          email: val('email'),
-          phone: val('telefone'),
-          property_type: getRadio('vsim-type'),
-          property_location: getRadio('vsim-zone'),
-          area_m2: getArea(),
-          typology: getRadio('vsim-typology'),
-          condition: getRadio('vsim-condition'),
-          extras: getExtras(),
-          estimate_low: est.low,
-          estimate_high: est.high,
-          form: 'value-simulator',
-          utm,
-          consent: { type: 'avaliacao_imovel', text_version: 'v1' },
-        }),
-        keepalive: true,
-      }).catch((e) => console.error('[lead]', e));
 
-      showDone();
+      const nextSpan = nextBtn.querySelector('span');
+      const prevLabel = nextSpan?.textContent ?? '';
+      submitting = true;
+      nextBtn.disabled = true;
+      if (nextSpan) nextSpan.textContent = 'A enviar…';
+      if (errorEl) errorEl.hidden = true;
+
+      try {
+        const res = await fetch('/api/lead', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({
+            full_name: val('nome'),
+            email: val('email'),
+            phone: val('telefone'),
+            property_type: getRadio('vsim-type'),
+            property_location: getRadio('vsim-zone'),
+            area_m2: getArea(),
+            typology: getRadio('vsim-typology'),
+            condition: getRadio('vsim-condition'),
+            extras: getExtras(),
+            estimate_low: est.low,
+            estimate_high: est.high,
+            form: 'value-simulator',
+            submission_id: submissionId,
+            utm,
+            consent: { type: 'avaliacao_imovel', text_version: 'v1' },
+          }),
+        });
+        const data = await res.json().catch(() => ({}));
+        if (res.ok && data.delivered === true) {
+          showDone();
+          return;
+        }
+        throw new Error('not delivered');
+      } catch {
+        if (errorEl) errorEl.hidden = false;
+        nextBtn.disabled = false;
+        if (nextSpan) nextSpan.textContent = prevLabel;
+        submitting = false;
+      }
     };
 
     const showDone = () => {
@@ -718,6 +753,12 @@ const TOTAL = 6;
       });
       root.querySelectorAll<HTMLElement>('[data-err]').forEach((e) => (e.hidden = true));
       (root.querySelector('.vsim-consent') as HTMLElement | null)?.style.removeProperty('color');
+      // Clear any in-flight/errored state from a previous valuation so a second
+      // valuation in the same session is not stuck behind a disabled button.
+      submitting = false;
+      nextBtn.disabled = false;
+      if (errorEl) errorEl.hidden = true;
+      submissionId = crypto.randomUUID();
     };
 
     const open = () => {

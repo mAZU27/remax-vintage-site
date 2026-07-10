@@ -28,7 +28,7 @@ const year = new Date().getFullYear();
     <section class="foot__section">
       <h3 class="foot__section-title">Explorar</h3>
       <nav class="foot__section-nav" aria-label="Navegação principal">
-        {nav.slice(0, 5).map((item) => (
+        {nav.map((item) => (
           <a
             href={item.href}
             class="foot__section-link"
@@ -48,20 +48,14 @@ const year = new Date().getFullYear();
           <Icon name="phone" size={14} stroke={1.6} />
           {site.phone}
         </a>
-        <a href={`mailto:${site.email}`} class="foot__section-link">
+        <a href="/contacto" class="foot__section-link">
           <Icon name="mail" size={14} stroke={1.6} />
-          {site.email}
+          Formulário de contacto
         </a>
         <div class="foot__section-address">
           <Icon name="pin" size={14} stroke={1.6} />
           <span>
             {site.address[0]}<br />{site.address[1]}
-          </span>
-        </div>
-        <div class="foot__section-hours">
-          <Icon name="clock" size={14} stroke={1.6} />
-          <span>
-            {site.hours[0]}<br />{site.hours[1]}
           </span>
         </div>
       </div>
@@ -70,12 +64,13 @@ const year = new Date().getFullYear();
     <!-- Serviços -->
     <section class="foot__section">
       <h3 class="foot__section-title">Serviços</h3>
+      {/* Carreiras saiu desta coluna: foi promovida ao menu principal
+          (owner ask 2026-07-10) e a coluna «Explorar» já a mostra via nav. */}
       <nav class="foot__section-nav" aria-label="Serviços">
         <a href="/comprar" class="foot__section-link">Comprar imóvel</a>
         <a href="/vender" class="foot__section-link">Vender imóvel</a>
         <a href="/alugar" class="foot__section-link">Arrendar</a>
-        <a href="/carreiras" class="foot__section-link">Carreiras</a>
-        <a href="/insights" class="foot__section-link">Blog & Insights</a>
+        <a href="/apoio" class="foot__section-link">Apoio ao cliente</a>
       </nav>
     </section>
   </div>
@@ -84,22 +79,12 @@ const year = new Date().getFullYear();
   <div class="foot__divider"></div>
 
   <div class="container foot__footer-bar">
-    <div class="foot__social">
-      {site.social.map((s) => (
-        <a class="foot__social-link" href={s.href} aria-label={s.label} target="_blank" rel="noopener noreferrer">
-          <Icon name={s.icon} size={16} stroke={1.6} />
-        </a>
-      ))}
-    </div>
-
     <p class="foot__copy">
-      © {year} {site.brandLine}. Licença AMI 0000 · Cada agência é juridicamente independente.
+      © {year} {site.brandLine} · {site.legalName} · Licença {site.ami} · Cada agência é juridicamente independente.
     </p>
 
     <nav class="foot__legal-links" aria-label="Legal">
       <a href="/privacidade">Política de Privacidade</a>
-      <!-- TODO(legal): repor o link "Termos e Condições" quando a página /termos
-           existir com texto legal real — apontava para um 404. -->
     </nav>
   </div>
 </footer>
@@ -238,26 +223,6 @@ const year = new Date().getFullYear();
     gap: 12px;
   }
 
-  .foot__social-link {
-    display: inline-flex;
-    align-items: center;
-    justify-content: center;
-    width: 38px;
-    height: 38px;
-    border-radius: 50%;
-    color: var(--gold-light);
-    border: 1px solid var(--hairline-gold);
-    background: rgba(244, 237, 222, 0.03);
-    transition: color var(--t-fast), border-color var(--t-fast), background var(--t-fast), transform var(--t-fast);
-  }
-
-  .foot__social-link:hover {
-    color: var(--navy-ink);
-    background: var(--gold-light);
-    border-color: var(--gold-light);
-    transform: translateY(-2px);
-  }
-
   .foot__copy {
     margin: 0;
     font-size: 12px;
@@ -357,11 +322,6 @@ const year = new Date().getFullYear();
       align-items: center;
       gap: clamp(20px, 4vw, 32px);
     }
-
-    .foot__social {
-      order: 1;
-    }
-
     .foot__copy {
       order: 2;
       min-width: auto;

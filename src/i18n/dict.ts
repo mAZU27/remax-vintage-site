@@ -250,7 +250,7 @@ export const en: Record<string, string> = {
   '«Sempre achei que, com exclusividade, só vocês é que podiam vender.»': '“I always thought that, with exclusivity, only you could sell it.”',
   '(PDF ou Word)': '(PDF or Word)',
   '[INSERIR NÚMERO REAL]': '[INSERT REAL NUMBER]',
-  '© 2026 RE/MAX Collection® Vintage. Licença AMI 0000 · Cada agência é juridicamente independente.': '© 2026 RE/MAX Collection® Vintage. AMI Licence 0000 · Each agency is legally independent.',
+  '© 2026 RE/MAX Collection® Vintage · Vintage Patamar - Mediação Imobiliária, Lda · Licença AMI 10092 · Cada agência é juridicamente independente.': '© 2026 RE/MAX Collection® Vintage · Vintage Patamar - Mediação Imobiliária, Lda · AMI Licence 10092 · Each agency is legally independent.',
   '↻ Recarregar': '↻ Reload',
   '1 ano de proteção na compra, numa seleção de imóveis em carteira (Allianz Partners).': '1 year of protection on your purchase, across a selection of properties in our portfolio (Allianz Partners).',
   '10.000 consultores em Portugal na rede RE/MAX': '10,000 agents in Portugal across the RE/MAX network',
@@ -1108,7 +1108,7 @@ export const en: Record<string, string> = {
   'Tabela comparativa: com exclusividade e sem exclusividade': 'Comparison table: with exclusivity and without exclusivity',
   'Tabela comparativa: Mandato de Comprador e Contrato Exclusivo de Comprador': 'Comparison table: Buyer\'s Mandate and Exclusive Buyer Agreement',
   'Tecnologia e processos que libertam o seu tempo.': 'Technology and processes that free up your time.',
-  'Telefonar — +351 220 000 000': 'Call — +351 220 000 000',
+  'Telefonar — +351 226 181 031': 'Call — +351 226 181 031',
   'tem o seu valor.': 'holds its value.',
   'Tem um imóvel distinto para vender no Porto?': 'Do you have a distinctive property to sell in Porto?',
   'Tem um imóvel para vender?': 'Do you have a property to sell?',
@@ -1302,12 +1302,12 @@ export const en: Record<string, string> = {
   'As visitas são sem compromisso e organizadas com total discrição. Posso ajudá-lo a marcar.':
     'Viewings are commitment-free and arranged with complete discretion. I can help you book one.',
   'Pode contactar-nos de várias formas:': 'You can reach us in several ways:',
-  '📞 Telefone: +351 220 000 000': '📞 Phone: +351 220 000 000',
+  '📞 Telefone: +351 226 181 031': '📞 Phone: +351 226 181 031',
   '💬 WhatsApp: resposta imediata': '💬 WhatsApp: immediate reply',
   '⏰ Respondemos normalmente em 24h. Fora do horário, deixe mensagem que retornamos assim que possível.':
     '⏰ We usually reply within 24h. Outside office hours, leave a message and we will get back to you as soon as possible.',
   'Estamos no Porto, Portugal.': 'We are in Porto, Portugal.',
-  '• Morada: Av. da Boavista 0000, 4100-000 Porto, Portugal': '• Address: Av. da Boavista 0000, 4100-000 Porto, Portugal',
+  '• Morada: Avenida da Boavista, 3191/3195, 4100-137 Porto, Portugal': '• Address: Avenida da Boavista, 3191/3195, 4100-137 Porto, Portugal',
   '• Horário: Segunda a Sexta, 09:00 – 18:00': '• Hours: Monday to Friday, 09:00 – 18:00',
   'As visitas ao escritório são com marcação prévia.': 'Office visits are by appointment.',
   'O nosso horário é Segunda a Sexta, 09:00 – 18:00. Fora deste horário pode deixar mensagem por email ou WhatsApp e respondemos assim que possível.':
@@ -1463,4 +1463,15 @@ export const en: Record<string, string> = {
   'Faça a sua avaliação': 'Request your valuation',
   'Abrir avaliação de imóvel': 'Open property valuation',
   'Venha trabalhar connosco': 'Come work with us',
+  // Lead delivery — field notes, error states and chat consent
+  'O ficheiro não é enviado nesta fase. A nossa equipa solicitará o CV durante o contacto.':
+    'The file is not uploaded at this stage. Our team will request your CV during contact.',
+  'Não foi possível enviar o pedido. Verifique a ligação e tente novamente — os seus dados foram mantidos.':
+    "We couldn't send your request. Check your connection and try again — your details have been kept.",
+  'Não foi possível enviar a mensagem. Verifique a ligação e tente novamente — os seus dados foram mantidos.':
+    "We couldn't send your message. Check your connection and try again — your details have been kept.",
+  'Não foi possível enviar a candidatura. Verifique a ligação e tente novamente — os seus dados foram mantidos.':
+    "We couldn't send your application. Check your connection and try again — your details have been kept.",
+  'Autorizo e enviar': 'I consent and send',
+  'Tentar novamente': 'Try again',
 };

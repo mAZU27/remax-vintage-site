@@ -246,7 +246,7 @@ import Icon from './Icon.astro';
 
 <script>
   import { getReply, getWelcome, flows, composeLead, validateAnswer, buildLeadPayload, type BotReply, type Chip, type FlowId } from '../data/supportResponses';
-  import { quickStart } from '../data/supportKnowledge';
+  import { quickStart, contacts } from '../data/supportKnowledge';
 
   const root = document.querySelector<HTMLElement>('[data-cs]');
   if (!root) {
@@ -346,6 +346,7 @@ import Icon from './Icon.astro';
             if (c.answer) b.dataset.answer = '1';
             if (c.flow) b.dataset.flow = c.flow;
             if (c.send) b.dataset.send = c.send;
+            if (c.consent) b.dataset.consent = c.consent;
             row.appendChild(b);
           }
         }
@@ -387,6 +388,12 @@ import Icon from './Icon.astro';
       botSay({ text: step.question, stepChips: step.chips });
     }
 
+    // Pending lead awaiting an explicit consent tap before it is delivered.
+    // submissionId is minted once here and reused across retries so the
+    // server's Idempotency-Key dedupes a resent lead.
+    let pending: { flowId: FlowId; answers: Record<string, string>; summary: string; closing: string; submissionId: string } | null = null;
+    let sending = false;
+
     function answerStep(value: string) {
       if (!flow) return;
       const f = flows[flow.id];
@@ -410,28 +417,83 @@ import Icon from './Icon.astro';
       flow.answers[step.key] = v;
       flow.step += 1;
       if (flow.step < f.steps.length) { askStep(); return; }
-      finishFlow();
+      // All answers collected — hold the lead and ask for explicit consent
+      // (with a link to /privacidade) before sending any personal data.
+      const lead = composeLead(flow.id, flow.answers);
+      pending = {
+        flowId: flow.id,
+        answers: { ...flow.answers },
+        summary: lead.lines.join('\n'),
+        closing: lead.closing,
+        submissionId: crypto.randomUUID(),
+      };
+      flow = null;
+      askConsent();
     }
 
-    // Flow complete → send the lead to the app (Novus) via the same-origin
-    // /api/lead proxy (token stays server-side; fail-soft so the UX never
-    // breaks), then recap + offer an optional WhatsApp hand-off.
-    function finishFlow() {
-      if (!flow) return;
-      const lead = composeLead(flow.id, flow.answers);
-      const payload = buildLeadPayload(flow.id, flow.answers);
-      flow = null;
-      fetch('/api/lead', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify(payload),
-        keepalive: true,
-      }).catch((e) => console.error('[support-lead]', e));
+    function askConsent() {
       botSay({
-        text: lead.closing + '\n\n' + lead.lines.join('\n'),
-        cta: { label: 'Enviar também por WhatsApp', href: lead.waHref, external: true },
-        chips: [{ label: 'Página de contacto', href: '/contacto' }],
+        text:
+          'Só falta a sua autorização. Ao enviar, autoriza o contacto da Collection Vintage sobre este pedido e o tratamento dos seus dados, nos termos da Política de Privacidade.',
+        cta: { label: 'Política de Privacidade', href: '/privacidade' },
+        chips: [
+          { label: 'Autorizo e enviar', consent: 'send' },
+          { label: 'Cancelar', consent: 'cancel' },
+        ],
       });
+    }
+
+    async function handleConsent(action: string, label: string) {
+      if (action === 'cancel') {
+        userSay(label);
+        pending = null;
+        botSay({
+          text: 'Sem problema — não enviámos nada. Se preferir, pode ligar-nos ou usar a página de contacto.',
+          chips: [{ label: 'Ligar', href: contacts.phoneHref }, { label: 'Página de contacto', href: '/contacto' }],
+        });
+        return;
+      }
+      if (action === 'send') userSay(label);
+      await sendLead();
+    }
+
+    // Deliver the chat lead through the same server-side endpoint every form
+    // uses. Uses buildLeadPayload (intelligent name/contact mapping) and adds
+    // the stable submission_id for idempotency. The confirmation is shown ONLY
+    // after the server confirms real delivery (delivered:true); on failure the
+    // pending lead is kept so the user can retry with a single tap.
+    async function sendLead() {
+      if (!pending || sending) return; // block double-send while in flight
+      sending = true;
+      try {
+        const payload = buildLeadPayload(pending.flowId, pending.answers);
+        const res = await fetch('/api/lead', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ ...payload, submission_id: pending.submissionId }),
+        });
+        const data = await res.json().catch(() => ({}));
+        if (res.ok && data.delivered === true) {
+          const done = pending;
+          pending = null;
+          sending = false;
+          botSay({
+            text: done.closing + '\n\n' + done.summary,
+            chips: [{ label: 'Ligar', href: contacts.phoneHref }, { label: 'Página de contacto', href: '/contacto' }],
+          });
+          return;
+        }
+        throw new Error('not delivered');
+      } catch {
+        sending = false;
+        botSay({
+          text: 'Não consegui enviar o seu pedido agora. Pode tentar novamente ou contactar-nos diretamente.',
+          chips: [
+            { label: 'Tentar novamente', consent: 'retry' },
+            { label: 'Ligar', href: contacts.phoneHref },
+          ],
+        });
+      }
     }
 
     function deliver(reply: BotReply) {
@@ -444,6 +506,9 @@ import Icon from './Icon.astro';
       if (!t) return;
       userSay(t);
       clearChips();
+      // A lead is waiting for an explicit consent tap — don't lose it if the
+      // user types instead of tapping; re-present the consent gate.
+      if (pending) { askConsent(); return; }
       if (flow) { answerStep(t); return; }
       deliver(getReply(t));
     }
@@ -466,6 +531,7 @@ import Icon from './Icon.astro';
       if (btn.dataset.answer) { userSay(label); answerStep(label); return; }
       if (btn.dataset.flow) { userSay(label); startFlow(btn.dataset.flow as FlowId); return; }
       if (btn.dataset.send) { userSay(label); deliver(getReply(btn.dataset.send)); return; }
+      if (btn.dataset.consent) { handleConsent(btn.dataset.consent, label); return; }
     });
   }
 </script>

@@ -260,14 +260,12 @@ const notaIcons = ['document', 'bank', 'scale'];
       <div class="vant">
         {vantagensRede.map((v, i) => (
           <article class="vant__card" data-reveal style={`--reveal-delay:${(i % 2) * 100}ms`}>
-            {v.confirmar && <Fragment set:html={'<!-- CONFIRMAR COM AGÊNCIA -->'} />}
             <h3 class="h3 vant__title">{v.title}</h3>
             <p class="vant__text">{v.text}</p>
           </article>
         ))}
       </div>
 
-      <!-- CONFIRMAR COM AGÊNCIA: disponibilidade dos parceiros nesta agência -->
       <div class="parc" data-reveal>
         <span class="parc__label">Parceiros</span>
         <ul class="parc__grid">

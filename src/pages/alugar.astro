@@ -16,9 +16,9 @@ import Icon from '../components/Icon.astro';
         <div class="alg__panel-inner">
           <span class="alg__eyebrow" data-reveal>Arrendar</span>
           <span class="gold-rule alg__rule" data-reveal="rule" style="--reveal-delay:60ms"></span>
-          <h2 class="h2 alg__title" data-reveal style="--reveal-delay:100ms">
+          <h1 class="h2 alg__title" data-reveal style="--reveal-delay:100ms">
             Viver o Porto<br />com a <em class="em-gold serif-it">casa certa.</em>
-          </h2>
+          </h1>
           <p class="lede alg__lede" data-reveal style="--reveal-delay:160ms">
             Arrendamento de imóveis distintos, selecionados com rigor para quem valoriza
             localização, conforto e qualidade. Encontre o espaço ideal para o seu próximo capítulo.
@@ -48,16 +48,27 @@ import Icon from '../components/Icon.astro';
       </div>
 
       <!-- Coluna direita — imagem premium + cartão navy flutuante -->
+      {/* LCP em desktop: variantes responsivas (WebP + JPEG) geradas a partir
+          do original de 2,1 MB (agora em _archive/) — eager + fetchpriority
+          porque a coluna está no primeiro viewport em desktop. */}
       <div class="alg__media" data-reveal style="--reveal-delay:160ms">
-        <img
-          class="alg__img"
-          src="/images/porto/porto-ribeira-loja.jpg"
-          alt="Rua histórica da Ribeira no Porto, com loja premium 'A Pequena Loja' e arquitetura clássica"
-          width="5056"
-          height="3392"
-          loading="lazy"
-          decoding="async"
-        />
+        <picture class="alg__pic">
+          <source
+            type="image/webp"
+            srcset="/images/porto/porto-ribeira-loja-800.webp 800w, /images/porto/porto-ribeira-loja-1200.webp 1200w, /images/porto/porto-ribeira-loja-1600.webp 1600w"
+            sizes="(max-width: 980px) 100vw, 50vw"
+          />
+          <img
+            class="alg__img"
+            src="/images/porto/porto-ribeira-loja-1200.jpg"
+            alt="Rua histórica da Ribeira no Porto, com loja premium 'A Pequena Loja' e arquitetura clássica"
+            width="1200"
+            height="1490"
+            loading="eager"
+            fetchpriority="high"
+            decoding="async"
+          />
+        </picture>
         <aside class="alg__card on-navy">
           <span class="alg__card-ic" aria-hidden="true"><Icon name="diamond" size={26} stroke={1.3} /></span>
           <h3 class="alg__card-title">À procura de arrendar?</h3>
@@ -117,6 +128,7 @@ import Icon from '../components/Icon.astro';
 
   /* Right column — full-bleed image with navy floating card */
   .alg__media { position: relative; min-height: 460px; }
+  .alg__pic { display: block; width: 100%; height: 100%; }
   .alg__img { display: block; width: 100%; height: 100%; object-fit: cover; object-position: center 45%; }
 
   .alg__card {

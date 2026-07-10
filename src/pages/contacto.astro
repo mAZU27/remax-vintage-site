@@ -5,11 +5,12 @@ import Button from '../components/Button.astro';
 import Icon from '../components/Icon.astro';
 import { site } from '../data/site';
 
+// Email e horário: por confirmar com a agência — deliberadamente ausentes
+// (o formulário desta página é o canal escrito; nunca publicar dados fictícios).
 const details = [
   { icon: 'pin', label: 'Morada', lines: site.address },
   { icon: 'phone', label: 'Telefone', lines: [site.phone], href: site.phoneHref },
-  { icon: 'mail', label: 'Email', lines: [site.email], href: `mailto:${site.email}` },
-  { icon: 'clock', label: 'Horário', lines: site.hours },
+  { icon: 'shield-check', label: 'Licença', lines: [`${site.ami} · ${site.legalName}`] },
 ];
 const assuntos = ['Comprar um imóvel', 'Vender / avaliação', 'Estudo de mercado', 'Agendar uma visita', 'Outro assunto'];
 ---
@@ -41,16 +42,8 @@ const assuntos = ['Comprar um imóvel', 'Vender / avaliação', 'Estudo de merca
             </li>
           ))}
         </ul>
-        <div class="contacto__social">
-          <span class="cdetail__label">Seguir</span>
-          <div class="contacto__social-row">
-            {site.social.map((s) => (
-              <a href={s.href} aria-label={s.label} class="contacto__social-link" rel="noopener" target="_blank">
-                <Icon name={s.icon} size={18} stroke={1.6} />
-              </a>
-            ))}
-          </div>
-        </div>
+        {/* Bloco «Seguir» removido 2026-07-10: os links sociais eram '#'
+            (placeholders). Repor quando existirem perfis reais. */}
       </aside>
 
       <form class="cform" data-contact novalidate aria-label="Formulário de contacto">
@@ -91,6 +84,9 @@ const assuntos = ['Comprar um imóvel', 'Vender / avaliação', 'Estudo de merca
           </label>
 
           <Button type="submit" variant="gold" arrow class="cform__submit">Enviar mensagem</Button>
+          <p class="cform__error" data-error hidden role="alert">
+            Não foi possível enviar a mensagem. Verifique a ligação e tente novamente — os seus dados foram mantidos.
+          </p>
           <p class="cform__note">
             <Icon name="shield-check" size={15} stroke={1.6} /> Confidencial · Resposta em 24h · Sem compromisso
           </p>
@@ -120,13 +116,6 @@ const assuntos = ['Comprar um imóvel', 'Vender / avaliação', 'Estudo de merca
   a.cdetail__val { transition: color var(--t-fast); }
   a.cdetail__val:hover { color: var(--gold-deep); }
 
-  .contacto__social { margin-top: 34px; padding-top: 30px; border-top: 1px solid var(--ink-10); }
-  .contacto__social-row { display: flex; gap: 12px; }
-  .contacto__social-link {
-    width: 42px; height: 42px; display: grid; place-items: center; border-radius: 50%; color: var(--navy);
-    border: 1px solid var(--ink-20); transition: background var(--t-fast), color var(--t-fast), border-color var(--t-fast);
-  }
-  .contacto__social-link:hover { background: var(--gold); color: var(--navy-ink); border-color: var(--gold); }
 
   /* Form (mirrors ValuationForm styling) */
   .cform {
@@ -147,6 +136,8 @@ const assuntos = ['Comprar um imóvel', 'Vender / avaliação', 'Estudo de merca
   .cform input:focus, .cform select:focus, .cform textarea:focus { outline: none; border-color: var(--gold); box-shadow: var(--ring); }
   .cform [aria-invalid="true"] { border-color: var(--error); }
   .field__err { font-size: 12px; color: var(--error); }
+  .cform__error { margin: 14px 0 0; font-size: 13px; line-height: 1.5; color: var(--error); text-align: center; }
+  :global(.cform__submit[disabled]) { opacity: 0.6; cursor: progress; }
   .cform__consent { display: flex; gap: 11px; align-items: flex-start; margin-top: 18px; font-size: 13px; line-height: 1.5; color: var(--ink-60); }
   .cform__consent input { width: 18px; height: 18px; margin-top: 1px; flex-shrink: 0; accent-color: var(--gold-deep); }
   :global(.cform__submit) { margin-top: 22px; width: 100%; }
@@ -202,8 +193,17 @@ const assuntos = ['Comprar um imóvel', 'Vender / avaliação', 'Estudo de merca
       control?.addEventListener('change', () => showErr(field, false));
     });
 
-    form.addEventListener('submit', (e) => {
+    const submitBtn = form.querySelector<HTMLButtonElement>('button[type="submit"]');
+    const submitLabel = submitBtn?.querySelector('span');
+    const errorBox = form.querySelector<HTMLElement>('[data-error]');
+    let submitting = false;
+    // One id per fill — stable across retries so the server's Idempotency-Key
+    // dedupes a resent lead; rotated only after a confirmed success.
+    let submissionId = crypto.randomUUID();
+
+    form.addEventListener('submit', async (e) => {
       e.preventDefault();
+      if (submitting) return; // block double-submit while in flight
       let firstInvalid: HTMLElement | null = null;
 
       form.querySelectorAll<HTMLElement>('.field').forEach((field) => {
@@ -227,27 +227,47 @@ const assuntos = ['Comprar um imóvel', 'Vender / avaliação', 'Estudo de merca
 
       if (firstInvalid) { firstInvalid.focus(); return; }
 
-      // Send to the same-origin lead proxy (token stays server-side).
+      // Deliver through the same-origin endpoint. Success is shown ONLY after
+      // the server confirms real delivery (delivered:true); on any failure the
+      // filled data is kept and the user can retry.
       const g = (n: string) =>
         form.querySelector<HTMLInputElement | HTMLSelectElement | HTMLTextAreaElement>(`[name="${n}"]`)?.value.trim() ?? '';
-      fetch('/api/lead', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({
-          full_name: g('nome'),
-          email: g('email'),
-          phone: g('telefone'),
-          assunto: g('assunto'),
-          mensagem: g('mensagem'),
-          form: 'contacto',
-          consent: { type: 'contacto', text_version: 'v1' },
-        }),
-        keepalive: true,
-      }).catch((err) => console.error('[lead]', err));
+      const prevLabel = submitLabel?.textContent ?? 'Enviar mensagem';
+      submitting = true;
+      if (submitBtn) submitBtn.disabled = true;
+      if (submitLabel) submitLabel.textContent = 'A enviar…';
+      if (errorBox) errorBox.hidden = true;
 
-      if (body) body.hidden = true;
-      if (success) success.hidden = false;
-      success?.scrollIntoView({ behavior: 'smooth', block: 'center' });
+      try {
+        const res = await fetch('/api/lead', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({
+            full_name: g('nome'),
+            email: g('email'),
+            phone: g('telefone'),
+            assunto: g('assunto'),
+            mensagem: g('mensagem'),
+            form: 'contacto',
+            submission_id: submissionId,
+            consent: { type: 'contacto', text_version: 'v1' },
+          }),
+        });
+        const data = await res.json().catch(() => ({}));
+        if (res.ok && data.delivered === true) {
+          submissionId = crypto.randomUUID(); // fresh id for any subsequent lead
+          if (body) body.hidden = true;
+          if (success) success.hidden = false;
+          success?.scrollIntoView({ behavior: 'smooth', block: 'center' });
+          return;
+        }
+        throw new Error('not delivered');
+      } catch {
+        if (errorBox) errorBox.hidden = false;
+        if (submitBtn) submitBtn.disabled = false;
+        if (submitLabel) submitLabel.textContent = prevLabel;
+        submitting = false;
+      }
     });
   }
 </script>

@@ -7,9 +7,14 @@ import { articles } from '../../data/insights';
 const feature = articles.find((a) => a.featured) ?? articles[0];
 const rest = articles.filter((a) => a.slug !== feature.slug);
 ---
+{/* noindex (2026-07-10): os 4 artigos são placeholders declarados
+    (src/data/insights.ts). O hub e os artigos ficam acessíveis mas fora do
+    índice, do sitemap e da navegação até existir conteúdo editorial real —
+    nessa altura, remover o noindex e repor sitemap + «Blog» no menu. */}
 <Base
   title="Insights"
   description="Leitura do mercado imobiliário premium do Porto — análises, guias de zona e perspetivas da equipa Collection Vintage."
+  noindex
 >
   <PageHeader
     eyebrow="Insights"

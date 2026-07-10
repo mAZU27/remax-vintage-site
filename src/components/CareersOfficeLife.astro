@@ -1,7 +1,6 @@
 ---
 import SectionEyebrow from './SectionEyebrow.astro';
 import Icon from './Icon.astro';
-import CareersMetrics from './CareersMetrics.astro';
 import { careersOffice as o } from '../data/carreiras';
 ---
 <section class="section section--cream-soft coffice">
@@ -32,9 +31,6 @@ import { careersOffice as o } from '../data/carreiras';
       ))}
     </ul>
 
-    <div class="coffice__metrics" data-reveal>
-      <CareersMetrics metrics={o.metrics} tone="cream" />
-    </div>
   </div>
 </section>
 
@@ -71,7 +67,6 @@ import { careersOffice as o } from '../data/carreiras';
   .ofcard__ic { flex-shrink: 0; width: 42px; height: 42px; display: grid; place-items: center; border-radius: 50%; color: var(--gold-deep); border: 1px solid var(--hairline-gold-strong); }
   .ofcard__title { font-family: var(--font-serif); font-weight: 500; font-size: 17px; margin: 0; }
 
-  .coffice__metrics { margin-top: clamp(40px, 5vw, 64px); }
 
   @media (max-width: 860px) {
     .coffice__grid { grid-template-columns: repeat(2, 1fr); }

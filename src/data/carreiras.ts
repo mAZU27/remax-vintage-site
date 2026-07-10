@@ -40,8 +40,9 @@ export const careersHero = {
   titleEmphasis: 'distinto',
   lede:
     'Junta-te a uma equipa de excelência em propriedades premium no Porto e eleva a tua carreira ao mais alto nível. Aqui, o teu talento encontra propósito, formação de elite e oportunidades sem teto.',
-  primary: { label: 'Ver oportunidades', href: `#${anchors.roles}` },
-  secondary: { label: 'Candidatura espontânea', href: `#${anchors.apply}` },
+  // Secção de vagas removida (placeholders) → CTAs apontam para a candidatura.
+  primary: { label: 'Candidatura espontânea', href: `#${anchors.apply}` },
+  secondary: { label: 'Falar connosco', href: '/contacto' },
   // Cinematic Porto avenue (Aliados) as an aspirational careers backdrop.
   background: '/images/porto/porto-aliados.webp',
   cards: [
@@ -89,7 +90,8 @@ export const careersWhyJoin = {
   ] as CardItem[],
   // Career progression path (illustrative stages, not a contractual promise).
   path: ['Consultor', 'Consultor Sénior', 'Gestor de Equipa', 'Diretor de Sucesso'],
-  cta: { label: 'Ver oportunidades', href: `#${anchors.roles}` },
+  // Roles section is not rendered (placeholders removed) → CTA goes to the form.
+  cta: { label: 'Enviar candidatura', href: `#${anchors.apply}` },
 };
 
 // ---------- 4. Benefícios ----------
@@ -249,7 +251,7 @@ export const careersTeam = {
   ] as Voice[],
   strip: {
     text: 'O próximo testemunho de sucesso pode ser o seu.',
-    cta: { label: 'Ver oportunidades', href: `#${anchors.roles}` },
+    cta: { label: 'Enviar candidatura', href: `#${anchors.apply}` },
   },
 };
 
@@ -273,14 +275,11 @@ export const careersOffice = {
     { icon: 'diamond', title: 'Padrão de excelência' },
     { icon: 'target', title: 'Crescimento contínuo' },
   ] as CardItem[],
-  // Real business KPIs belong here — leave the explicit placeholder until the
-  // client confirms verifiable figures. String values render as-is (no count-up).
-  metrics: [
-    { value: '[INSERIR NÚMERO REAL]', label: 'Consultores especialistas' },
-    { value: '[INSERIR NÚMERO REAL]', label: 'Volume de negócio anual' },
-    { value: '[INSERIR NÚMERO REAL]', label: 'Imóveis exclusivos em carteira' },
-    { value: '[INSERIR NÚMERO REAL]', label: 'Satisfação de clientes' },
-  ] as Metric[],
+  // KPIs: a faixa de métricas foi REMOVIDA do render (2026-07-10) — os tokens
+  // '[INSERIR NÚMERO REAL]' apareciam na página pública. Quando a agência
+  // confirmar números reais e verificáveis, repor aqui e reativar a faixa
+  // em CareersOfficeLife.astro.
+  metrics: [] as Metric[],
 };
 
 // ---------- 9. Candidatura espontânea ----------
@@ -313,7 +312,7 @@ export const careersFinalCta = {
   titleEmphasis: 'aqui',
   text:
     'Estamos sempre à procura de talento, ambição e pessoas que queiram fazer parte de algo verdadeiramente extraordinário. O seu futuro começa agora.',
-  primary: { label: 'Ver oportunidades', href: `#${anchors.roles}` },
+  primary: { label: 'Candidatura espontânea', href: `#${anchors.apply}` },
   secondary: { label: 'Falar com a equipa', href: '/contacto' },
   trust: ['Equipa de excelência', 'Carreira sem limites', 'Marca de prestígio', 'Alcance global'],
 };
