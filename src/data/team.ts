@@ -1,48 +1,37 @@
+import { EXTERNAL_TEAM_URL } from '../lib/site.config';
 // ============================================================
-// Equipa — "A Nossa Equipa" showcase used in /sobre-nos.
+// Equipa — "A Nossa Equipa" carousel used in /sobre-nos.
 //
-// NAMES & ROLES: REAL — taken from the official RE/MAX Collection Vintage
-// roster (the 4 source screenshots G provided). Staff roles keep the exact
-// gender-neutral form used there, e.g. "Gestor(a) de Recursos Humanos".
-// EXCEPTION (owner ask 2026-07-10): the roster's "Agente Associado" is shown
-// gendered — "Consultor Associado" / "Consultora Associada" per person.
+// NAMES, ROLES, ORDER & PHOTOS: OFFICIAL — sourced 2026-07-10 from the same
+// first-party API the official agency page consumes
+// (GET https://api-v2-prod-remaxpt.devscope.net/api/User/GetOfficeAgentsAndStaff?officeNumber=12382,
+// the endpoint https://www.remax.pt/pt/agencia/remax-collection-vintage/12382
+// fetches client-side). Order matches the official page exactly: the agents
+// grid first (alphabetical), then the 5 staff members. Headshots were
+// downloaded from the official CDN (i.maxwork.pt, mxw-650 preset, 650×650)
+// into /public/images/team/official/{slug}.jpg — the slug is the one used by
+// each person's official remax.pt profile URL, so photo↔name↔role pairing is
+// guaranteed by the source system, never guessed.
 //
-// PHOTOS (estado 2026-07-10): os retratos gerados por IA foram REMOVIDOS do
-// site e do repositório — eram enganadores junto a nomes reais. Só a Sónia
-// Santos tem fotografia real (sonia-santos.jpg); todos os restantes usam o
-// monograma dourado até G fornecer cada headshot real (adicionar ficheiro em
-// /public/images/team/ + entrada em REAL_PHOTOS).
+// ROLE DISPLAY (owner ask 2026-07-10): the roster's "Agente Associado" is
+// shown gendered — "Consultor Associado" / "Consultora Associada" per person.
+// Every other role keeps the exact official label (e.g. "Agente em Formação").
 //
-// NOTE: the official roster shows a "Collection" badge on some people and a
-// RE/MAX-balloon placeholder for those without photos. Our card component has
-// neither (no badge; gold-monogram instead of the balloon). Replicating the
-// badge would require new card UI — left out pending G's go-ahead.
+// image: null → dignified gold-monogram fallback (Alex Prazeres has no photo
+// on the official page either). officialUrl: null → the official page renders
+// that person without a personal profile link (the 5 staff members).
 //
-// STATS: the strip below uses honest, qualitative claims (NO invented figures).
-// Swap in real, verifiable numbers when the client confirms them.
+// To refresh the roster, re-query the endpoint above and re-download photos.
 // ============================================================
 
 export interface Consultant {
   name: string;
+  /** Displayed role (official label, with the owner's gendered override). */
   role: string;
-  /**
-   * Base path for the portrait, WITHOUT extension (e.g. '/images/team/jose-vieira').
-   * The card derives <slug>-400.webp, <slug>-600.webp and <slug>.jpg from it.
-   * null → dignified gold-monogram fallback (no broken image).
-   */
+  /** Local path of the official headshot; null → gold-monogram fallback. */
   image: string | null;
-  /** Service area / zona (e.g. 'Foz'). null until confirmed by the client. */
-  zone: string | null;
-  /** Direct phone. null until confirmed by the client. */
-  phone: string | null;
-  /** Direct email. null until confirmed by the client. */
-  email: string | null;
-  /** Optional grouping/filter label, reserved for future use. */
-  category?: string;
-  /** Whether responsive .webp sources exist on disk; false → use .jpg only. */
-  hasWebp?: boolean;
-  /** True while name/role are invented placeholders awaiting the real data. */
-  placeholder?: boolean;
+  /** This person's official remax.pt profile, when the official page links one. */
+  officialUrl: string | null;
 }
 
 export interface TeamStat {
@@ -58,88 +47,70 @@ export const teamShowcase = {
   titleLine2: 'O seu próximo capítulo.',
   intro:
     'Profissionais apaixonados pelo que fazem e dedicados a entregar um serviço excecional e resultados que fazem a diferença.',
-  cta: { label: 'Conhecer toda a equipa', href: '/contacto' },
+  // Opens the official RE/MAX agency page positioned on the team section.
+  cta: { label: 'Ver equipa completa', href: EXTERNAL_TEAM_URL },
 } as const;
 
-// REAL roster — names + roles verbatim from the official RE/MAX Collection
-// Vintage team page (G's 4 screenshots), in the same order shown there:
-// alphabetical by first name, with the 5 trainees / support staff appended last
-// exactly as in the source. 59 people. Photos are assigned in the map below.
-const REAL_TEAM: { name: string; role: string }[] = [
-  { name: 'Alexandrina Magalhães', role: 'Consultora Associada' },
-  { name: 'Alice Miranda', role: 'Gestor(a) Integrador(a)' },
-  { name: 'Ana Paula Pereira', role: 'Consultora Associada' },
-  { name: 'Anabela Amaral', role: 'Consultora Associada' },
-  { name: 'Anabela Dinis', role: 'Consultora Associada' },
-  { name: 'André Mayer', role: 'Diretor(a) de Agência' },
-  { name: 'António Pereira da Silva', role: 'Consultor Associado' },
-  { name: 'Bruno Afonso', role: 'Consultor Associado' },
-  { name: 'Charles Adrien', role: 'Consultor Associado' },
-  { name: 'Cristina Drumond', role: 'Consultora Associada' },
-  { name: 'Elsa Silva', role: 'Consultora Associada' },
-  { name: 'Filipe Vilela', role: 'Designer Gráfico' },
-  { name: 'Frederico Pinto', role: 'Designer Gráfico' },
-  { name: 'Graça Pinto', role: 'Consultora Associada' },
-  { name: 'Gualdino Carvalho', role: 'Consultor Associado' },
-  { name: 'Guilherme Machado', role: 'Consultor Associado' },
-  { name: 'Hugo Araújo', role: 'Consultor Associado' },
-  { name: 'Janete Macêdo', role: 'Consultora Associada' },
-  { name: 'Joana Silva', role: 'Consultora Associada' },
-  { name: 'José Braz', role: 'Consultor Associado' },
-  { name: 'José Cunha Lopes', role: 'Consultor Associado' },
-  { name: 'José Neto', role: 'Consultor Associado' },
-  { name: 'José Vieira', role: 'Consultor Associado' },
-  { name: 'Lígia Mofreita', role: 'Gestor(a) de Processos' },
-  { name: 'Lua Dinis', role: 'Consultora Associada' },
-  { name: 'Lubna Braytih', role: 'Consultora Associada' },
-  { name: 'Luís Abreu', role: 'Consultor Associado' },
-  { name: 'Luís Guedes', role: 'Consultor Associado' },
-  { name: 'Luís Ribeiro', role: 'Consultor Associado' },
-  { name: 'Luís Velo', role: 'Consultor Associado' },
-  { name: 'Luísa Leal', role: 'Consultora Associada' },
-  { name: 'Luiz Souza', role: 'Consultor Associado' },
-  { name: 'Marcelo Silva', role: 'Consultor Associado' },
-  { name: 'Márcia Basto', role: 'Consultora Associada' },
-  { name: 'Maria Neves', role: 'Consultora Associada' },
-  { name: 'Mariana Mata', role: 'Diretor(a) Financeiro(a)' },
-  { name: 'Martin Duran', role: 'Consultor Associado' },
-  { name: 'Maura Sampaio', role: 'Consultora Associada' },
-  { name: 'Nuno Macedo', role: 'Gestor(a) de Equipa Comercial' },
-  { name: 'Nuno Silva', role: 'Consultor Associado' },
-  { name: 'Paulo Pinto', role: 'Diretor(a) de Agência' },
-  { name: 'Pedro Brandão', role: 'Consultor Associado' },
-  { name: 'Rita Alçada Ramos', role: 'Consultora Associada' },
-  { name: 'Sandra Pimenta', role: 'Gestor(a) de Equipa Comercial' },
-  { name: 'Sara Rodrigues', role: 'Coordenador(a)' },
-  { name: 'Silvia Alves Pereira', role: 'Diretor(a) de Agência' },
-  { name: 'Sónia Cerqueira', role: 'Coordenador(a)' },
-  { name: 'Teresa Marques', role: 'Consultora Associada' },
-  { name: 'Teresa Mota', role: 'Consultora Associada' },
-  { name: 'Tiago Almeida', role: 'Consultor Associado' },
-  { name: 'Tiago Mogadouro Aguiar', role: 'Consultor Associado' },
-  { name: 'Vinicius Torinelli', role: 'Designer Gráfico' },
-  { name: 'Pedro Couto', role: 'Gestor(a) de Acompanhamento' },
-  { name: 'Sónia Santos', role: 'Gestor(a) de Recursos Humanos' },
+// OFFICIAL roster — 57 people, verbatim from the official agency page (see header).
+export const consultants: Consultant[] = [
+  { name: 'Alexandrina Magalhães', role: 'Consultora Associada', image: '/images/team/official/alexandrina-magalhaes.jpg', officialUrl: 'https://www.remax.pt/pt/agente/alexandrina-magalhaes/123821036' },
+  { name: 'Alice Miranda', role: 'Gestor(a) Integrador(a)', image: '/images/team/official/alice-miranda.jpg', officialUrl: 'https://www.remax.pt/pt/agente/alice-miranda/123821473' },
+  { name: 'Ana Paula Pereira', role: 'Consultora Associada', image: '/images/team/official/ana-paula-pereira.jpg', officialUrl: 'https://www.remax.pt/pt/agente/ana-paula-pereira/123821435' },
+  { name: 'Anabela Amaral', role: 'Consultora Associada', image: '/images/team/official/anabela-amaral.jpg', officialUrl: 'https://www.remax.pt/pt/agente/anabela-amaral/123821364' },
+  { name: 'Anabela Dinis', role: 'Consultora Associada', image: '/images/team/official/anabela-dinis.jpg', officialUrl: 'https://www.remax.pt/pt/agente/anabela-dinis/123821384' },
+  { name: 'André Mayer', role: 'Diretor(a) de Agência', image: '/images/team/official/andre-mayer.jpg', officialUrl: 'https://www.remax.pt/pt/agente/andre-mayer/123821002' },
+  { name: 'António Pereira da Silva', role: 'Consultor Associado', image: '/images/team/official/antonio-pereira-da-silva.jpg', officialUrl: 'https://www.remax.pt/pt/agente/antonio-pereira-da-silva/123821423' },
+  { name: 'Bruno Afonso', role: 'Consultor Associado', image: '/images/team/official/bruno-afonso.jpg', officialUrl: 'https://www.remax.pt/pt/agente/bruno-afonso/123821478' },
+  { name: 'Charles Adrien', role: 'Consultor Associado', image: '/images/team/official/charles-adrien.jpg', officialUrl: 'https://www.remax.pt/pt/agente/charles-adrien/123821455' },
+  { name: 'Cláudia Granja', role: 'Gestor(a) de Recursos Humanos', image: '/images/team/official/claudia-granja.jpg', officialUrl: 'https://www.remax.pt/pt/agente/claudia-granja/123821301' },
+  { name: 'Cristina Drumond', role: 'Consultora Associada', image: '/images/team/official/cristina-drumond.jpg', officialUrl: 'https://www.remax.pt/pt/agente/cristina-drumond/123821363' },
+  { name: 'Elsa Silva', role: 'Consultora Associada', image: '/images/team/official/elsa-silva.jpg', officialUrl: 'https://www.remax.pt/pt/agente/elsa-silva/123821239' },
+  { name: 'Filipe Vilela', role: 'Designer Gráfico', image: '/images/team/official/filipe-vilela.jpg', officialUrl: 'https://www.remax.pt/pt/agente/filipe-vilela/123821413' },
+  { name: 'Frederico Pinto', role: 'Designer Gráfico', image: '/images/team/official/frederico-pinto.jpg', officialUrl: 'https://www.remax.pt/pt/agente/frederico-pinto/123821464' },
+  { name: 'Gonçalo Matias', role: 'Consultor Associado', image: '/images/team/official/goncalo-matias.jpg', officialUrl: 'https://www.remax.pt/pt/agente/goncalo-matias/123821463' },
+  { name: 'Graça Pinto', role: 'Consultora Associada', image: '/images/team/official/graca-pinto.jpg', officialUrl: 'https://www.remax.pt/pt/agente/graca-pinto/123821211' },
+  { name: 'Gualdino Carvalho', role: 'Consultor Associado', image: '/images/team/official/gualdino-carvalho.jpg', officialUrl: 'https://www.remax.pt/pt/agente/gualdino-carvalho/123821462' },
+  { name: 'Guilherme Machado', role: 'Consultor Associado', image: '/images/team/official/guilherme-machado.jpg', officialUrl: 'https://www.remax.pt/pt/agente/guilherme-machado/123821343' },
+  { name: 'Hugo Araújo', role: 'Consultor Associado', image: '/images/team/official/hugo-araujo.jpg', officialUrl: 'https://www.remax.pt/pt/agente/hugo-araujo/123821476' },
+  { name: 'Janete Macêdo', role: 'Consultora Associada', image: '/images/team/official/janete-macedo.jpg', officialUrl: 'https://www.remax.pt/pt/agente/janete-macedo/123821459' },
+  { name: 'José Braz', role: 'Consultor Associado', image: '/images/team/official/jose-braz.jpg', officialUrl: 'https://www.remax.pt/pt/agente/jose-braz/123821029' },
+  { name: 'José Cunha Lopes', role: 'Consultor Associado', image: '/images/team/official/jose-cunha-lopes.jpg', officialUrl: 'https://www.remax.pt/pt/agente/jose-cunha-lopes/123821031' },
+  { name: 'José Neto', role: 'Consultor Associado', image: '/images/team/official/jose-neto.jpg', officialUrl: 'https://www.remax.pt/pt/agente/jose-neto/123821022' },
+  { name: 'José Vieira', role: 'Consultor Associado', image: '/images/team/official/jose-vieira.jpg', officialUrl: 'https://www.remax.pt/pt/agente/jose-vieira/123821092' },
+  { name: 'Lígia Mofreita', role: 'Gestor(a) de Processos', image: '/images/team/official/ligia-mofreita.jpg', officialUrl: 'https://www.remax.pt/pt/agente/ligia-mofreita/123821230' },
+  { name: 'Lua Dinis', role: 'Consultora Associada', image: '/images/team/official/lua-dinis.jpg', officialUrl: 'https://www.remax.pt/pt/agente/lua-dinis/123821472' },
+  { name: 'Lubna Braytih', role: 'Consultora Associada', image: '/images/team/official/lubna-braytih.jpg', officialUrl: 'https://www.remax.pt/pt/agente/lubna-braytih/123821401' },
+  { name: 'Luís Abreu', role: 'Consultor Associado', image: '/images/team/official/luis-abreu.jpg', officialUrl: 'https://www.remax.pt/pt/agente/luis-abreu/123821251' },
+  { name: 'Luís Guedes', role: 'Consultor Associado', image: '/images/team/official/luis-guedes.jpg', officialUrl: 'https://www.remax.pt/pt/agente/luis-guedes/123821367' },
+  { name: 'Luís Ribeiro', role: 'Consultor Associado', image: '/images/team/official/luis-ribeiro.jpg', officialUrl: 'https://www.remax.pt/pt/agente/luis-ribeiro/123821347' },
+  { name: 'Luís Velo', role: 'Consultor Associado', image: '/images/team/official/luis-velo.jpg', officialUrl: 'https://www.remax.pt/pt/agente/luis-velo/123821111' },
+  { name: 'Luísa Leal', role: 'Consultora Associada', image: '/images/team/official/luisa-leal.jpg', officialUrl: 'https://www.remax.pt/pt/agente/luisa-leal/123821475' },
+  { name: 'Luiz Souza', role: 'Consultor Associado', image: '/images/team/official/luiz-souza.jpg', officialUrl: 'https://www.remax.pt/pt/agente/luiz-souza/123821414' },
+  { name: 'Marcelo Silva', role: 'Consultor Associado', image: '/images/team/official/marcelo-silva.jpg', officialUrl: 'https://www.remax.pt/pt/agente/marcelo-silva/123821465' },
+  { name: 'Maria Neves', role: 'Consultora Associada', image: '/images/team/official/maria-neves.jpg', officialUrl: 'https://www.remax.pt/pt/agente/maria-neves/123821038' },
+  { name: 'Mariana Mata', role: 'Diretor(a) Financeiro(a)', image: '/images/team/official/mariana-mata.jpg', officialUrl: 'https://www.remax.pt/pt/agente/mariana-mata/123821024' },
+  { name: 'Martin Duran', role: 'Consultor Associado', image: '/images/team/official/martin-duran.jpg', officialUrl: 'https://www.remax.pt/pt/agente/martin-duran/123821437' },
+  { name: 'Maura Sampaio', role: 'Consultora Associada', image: '/images/team/official/maura-sampaio.jpg', officialUrl: 'https://www.remax.pt/pt/agente/maura-sampaio/123821371' },
+  { name: 'Nuno Macedo', role: 'Gestor(a) de Equipa Comercial', image: '/images/team/official/nuno-macedo.jpg', officialUrl: 'https://www.remax.pt/pt/agente/nuno-macedo/123821436' },
+  { name: 'Nuno Silva', role: 'Consultor Associado', image: '/images/team/official/nuno-silva.jpg', officialUrl: 'https://www.remax.pt/pt/agente/nuno-silva/123821468' },
+  { name: 'Paulo Pinto', role: 'Diretor(a) de Agência', image: '/images/team/official/paulo-pinto.jpg', officialUrl: 'https://www.remax.pt/pt/agente/paulo-pinto/123821001' },
+  { name: 'Pedro Brandão', role: 'Consultor Associado', image: '/images/team/official/pedro-brandao.jpg', officialUrl: 'https://www.remax.pt/pt/agente/pedro-brandao/123821430' },
+  { name: 'Rita Alçada Ramos', role: 'Consultora Associada', image: '/images/team/official/rita-alcada-ramos.jpg', officialUrl: 'https://www.remax.pt/pt/agente/rita-alcada-ramos/123821412' },
+  { name: 'Sandra Pimenta', role: 'Gestor(a) de Equipa Comercial', image: '/images/team/official/sandra-pimenta.jpg', officialUrl: 'https://www.remax.pt/pt/agente/sandra-pimenta/123821407' },
+  { name: 'Sara Rodrigues', role: 'Coordenador(a)', image: '/images/team/official/sara-rodrigues.jpg', officialUrl: 'https://www.remax.pt/pt/agente/sara-rodrigues/123821340' },
+  { name: 'Silvia Alves Pereira', role: 'Diretor(a) de Agência', image: '/images/team/official/silvia-alves-pereira.jpg', officialUrl: 'https://www.remax.pt/pt/agente/silvia-alves-pereira/123821064' },
+  { name: 'Sónia Cerqueira', role: 'Coordenador(a)', image: '/images/team/official/sonia-cerqueira.jpg', officialUrl: 'https://www.remax.pt/pt/agente/sonia-cerqueira/123821217' },
+  { name: 'Teresa Marques', role: 'Consultora Associada', image: '/images/team/official/teresa-marques.jpg', officialUrl: 'https://www.remax.pt/pt/agente/teresa-marques/123821099' },
+  { name: 'Teresa Mota', role: 'Consultora Associada', image: '/images/team/official/teresa-mota.jpg', officialUrl: 'https://www.remax.pt/pt/agente/teresa-mota/123821431' },
+  { name: 'Tiago Almeida', role: 'Consultor Associado', image: '/images/team/official/tiago-almeida.jpg', officialUrl: 'https://www.remax.pt/pt/agente/tiago-almeida/123821361' },
+  { name: 'Tiago Mogadouro Aguiar', role: 'Consultor Associado', image: '/images/team/official/tiago-mogadouro-aguiar.jpg', officialUrl: 'https://www.remax.pt/pt/agente/tiago-mogadouro-aguiar/123821429' },
+  { name: 'Vinicius Torinelli', role: 'Designer Gráfico', image: '/images/team/official/vinicius-torinelli.jpg', officialUrl: 'https://www.remax.pt/pt/agente/vinicius-torinelli/123821382' },
+  { name: 'Alex Prazeres', role: 'Agente em Formação', image: null, officialUrl: null },
+  { name: 'Pedro Couto', role: 'Gestor(a) de Acompanhamento', image: '/images/team/official/pedro-couto.jpg', officialUrl: null },
+  { name: 'Salviano Cruz', role: 'Agente em Formação', image: '/images/team/official/salviano-cruz.jpg', officialUrl: null },
+  { name: 'Sónia Santos', role: 'Gestor(a) de Recursos Humanos', image: '/images/team/official/sonia-santos.jpg', officialUrl: null },
+  { name: 'Tiago Quintas', role: 'Agente em Formação', image: '/images/team/official/tiago-quintas.jpg', officialUrl: null },
 ];
-
-// AI placeholder portraits: REMOVIDOS (2026-07-10). Retratos gerados por IA
-// junto a nomes de pessoas reais eram enganadores — quem não tem fotografia
-// real em REAL_PHOTOS usa agora o monograma dourado (fallback do componente).
-// Para repor fotografias: colocar o ficheiro real em /public/images/team/ e
-// acrescentar a pessoa a REAL_PHOTOS — nunca voltar a usar caras geradas.
-
-// Real photos we genuinely have on disk (the actual person). Add to this map as
-// G sends each real headshot.
-const REAL_PHOTOS: Record<string, { image: string; hasWebp: boolean }> = {
-  'Sónia Santos': { image: '/images/team/sonia-santos', hasWebp: false },
-};
-
-export const consultants: Consultant[] = REAL_TEAM.map((p) => {
-  const base = { name: p.name, role: p.role, zone: null, phone: null, email: null };
-  const real = REAL_PHOTOS[p.name];
-  if (real) return { ...base, image: real.image, hasWebp: real.hasWebp, placeholder: false };
-  return { ...base, image: null, hasWebp: false, placeholder: true };
-});
 
 // HONEST by design — qualitative, brand-true claims, NO invented figures.
 // When the client confirms real, verifiable numbers (nº de consultores,

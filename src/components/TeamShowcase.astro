@@ -1,15 +1,21 @@
 ---
-// "A Nossa Equipa" — premium team carousel.
-// Navy zone: editorial header + an interactive horizontal carousel of portrait
-// cards (draggable, swipeable, keyboard-navigable, infinite loop), then a soft
-// curve into the cream zone with stats + CTA.
-// Each card uses <picture> (webp 400w/600w + jpg fallback). When a portrait is
-// absent or fails to load, a dignified gold-monogram fallback takes over.
-// Clicks open the official RE/MAX team page. Reveal + motion-safety respected.
+// "A Nossa Equipa" — premium interactive team carousel.
+// Navy zone: editorial header + a horizontal carousel of official portrait
+// cards (drag, swipe, arrows, ArrowLeft/ArrowRight, seamless infinite loop,
+// slow auto-glide while idle), then a soft curve into the cream zone with
+// stats + the "Ver equipa completa" CTA.
+//
+// Data: src/data/team.ts — OFFICIAL roster + headshots (see its header).
+// Every card and the CTA open the official RE/MAX agency page positioned on
+// the team section (EXTERNAL_TEAM_URL), in the SAME tab (owner brief).
+// A real drag/swipe never triggers the link (8px movement threshold).
+//
+// The track holds 3 identical copies of the roster; the MIDDLE copy is the
+// canonical one (focusable, exposed to assistive tech) and is the one on
+// screen — the outer copies exist only so the wrap teleport is invisible.
 import Icon from './Icon.astro';
 import { consultants, teamStats, teamShowcase } from '../data/team';
-
-const REMAX_TEAM_URL = 'https://www.remax.pt/pt/agencia/remax-collection-vintage/12382#:~:text=Equipa';
+import { EXTERNAL_TEAM_URL } from '../lib/site.config';
 
 const initials = (name: string) =>
   name
@@ -20,11 +26,14 @@ const initials = (name: string) =>
     .join('')
     .toUpperCase();
 
-// Infinite carousel: consult list looped for seamless infinite scrolling
-// (visible copy + phantom copy on each end). Drag/swipe/arrow/keyboard controls.
 const LOOP_COPIES = 3;
-const carouselData = Array.from({ length: LOOP_COPIES }, (_, copy) =>
-  consultants.map((c) => ({ ...c, loopCopy: copy }))
+const CANONICAL_COPY = 1; // middle copy = on-screen + accessible
+const loop = Array.from({ length: LOOP_COPIES }, (_, copy) =>
+  consultants.map((c, i) => ({
+    ...c,
+    clone: copy !== CANONICAL_COPY,
+    cell: copy * consultants.length + i,
+  }))
 ).flat();
 ---
 
@@ -46,42 +55,49 @@ const carouselData = Array.from({ length: LOOP_COPIES }, (_, copy) =>
       </div>
     </header>
 
-    <!-- Interactive carousel: drag, swipe, arrow keys, keyboard nav -->
-    <div class="ts__carousel" data-carousel role="region" aria-label="Equipa da Collection Vintage">
-      <div class="ts__marquee">
-        <ul class="ts__track" role="list" data-carousel-track>
-          {carouselData.map((c, idx) => (
-            <li class="ts__cell" data-carousel-item={idx} aria-hidden={c.loopCopy !== 0 ? 'true' : undefined}>
-              <a href={REMAX_TEAM_URL} target="_blank" rel="noopener noreferrer" class="ts__card-link" aria-label={`${c.name}, ${c.role} - Abrir na RE/MAX`}>
+    <div
+      class="ts__carousel"
+      data-carousel
+      data-count={consultants.length}
+      role="region"
+      aria-roledescription="carrossel"
+      aria-label="Equipa RE/MAX Collection Vintage"
+    >
+      <button class="ts__nav ts__nav--prev" type="button" data-carousel-prev aria-label="Anterior" aria-controls="ts-track">
+        <Icon name="chevron-left" size={20} stroke={1.8} />
+      </button>
+
+      <div class="ts__viewport" data-carousel-viewport>
+        <ul id="ts-track" class="ts__track" role="list" data-carousel-track>
+          {loop.map((c) => (
+            <li class="ts__cell" data-cell={c.cell} aria-hidden={c.clone ? 'true' : undefined}>
+              <a
+                class="ts__card-link"
+                href={EXTERNAL_TEAM_URL}
+                tabindex={c.clone ? -1 : undefined}
+                draggable="false"
+              >
                 <article class="ts__card">
                   <div class:list={['ts__photo', { 'is-missing': !c.image }]}>
                     {c.image && (
-                      <picture>
-                        {c.hasWebp !== false && (
-                          <source
-                            type="image/webp"
-                            srcset={`${c.image}-400.webp 400w, ${c.image}-600.webp 600w`}
-                            sizes="(max-width: 700px) 240px, 268px"
-                          />
-                        )}
-                        <img
-                          src={`${c.image}.jpg`}
-                          alt={`${c.name}, ${c.role} — RE/MAX Collection Vintage, Porto`}
-                          loading="lazy"
-                          decoding="async"
-                          width="600"
-                          height="800"
-                          draggable={false}
-                        />
-                      </picture>
+                      <img
+                        src={c.image}
+                        alt={`${c.name}, ${c.role} — RE/MAX Collection Vintage, Porto`}
+                        loading="lazy"
+                        decoding="async"
+                        width="650"
+                        height="650"
+                        draggable="false"
+                      />
                     )}
                     <span class="ts__mono" aria-hidden="true">{initials(c.name)}</span>
                     <div class="ts__scrim" aria-hidden="true"></div>
                     <div class="ts__info">
+                      <span class="ts__name">{c.name}</span>
                       <span class="ts__role">{c.role}</span>
-                      {c.zone && <span class="ts__zone">{c.zone}</span>}
                     </div>
                   </div>
+                  <span class="sr-only">(abre a página oficial RE/MAX)</span>
                 </article>
               </a>
             </li>
@@ -89,21 +105,9 @@ const carouselData = Array.from({ length: LOOP_COPIES }, (_, copy) =>
         </ul>
       </div>
 
-      <!-- Navigation arrows -->
-      <button class="ts__nav ts__nav--prev" data-carousel-prev aria-label="Card anterior" type="button">
-        <Icon name="chevron-left" size={20} stroke={1.8} />
-      </button>
-      <button class="ts__nav ts__nav--next" data-carousel-next aria-label="Próximo card" type="button">
+      <button class="ts__nav ts__nav--next" type="button" data-carousel-next aria-label="Seguinte" aria-controls="ts-track">
         <Icon name="chevron-right" size={20} stroke={1.8} />
       </button>
-    </div>
-
-    <!-- CTA to full team page -->
-    <div class="ts__cta-group" data-reveal style="--reveal-delay:300ms">
-      <a class="ts__cta-link" href={REMAX_TEAM_URL} target="_blank" rel="noopener noreferrer">
-        <span>{teamShowcase.cta.label}</span>
-        <Icon name="arrow" size={15} stroke={1.8} />
-      </a>
     </div>
   </div>
 
@@ -129,6 +133,7 @@ const carouselData = Array.from({ length: LOOP_COPIES }, (_, copy) =>
     <div class="ts-stats__cta" data-reveal style="--reveal-delay:120ms">
       <a class="ts__cta" href={teamShowcase.cta.href}>
         <span>{teamShowcase.cta.label}</span>
+        <span class="sr-only">(abre a página oficial RE/MAX)</span>
         <Icon name="arrow" size={15} stroke={1.8} />
       </a>
     </div>
@@ -220,18 +225,22 @@ const carouselData = Array.from({ length: LOOP_COPIES }, (_, copy) =>
     --ts-card-w: clamp(232px, 21vw, 268px);
     --ts-gap: clamp(14px, 1.5vw, 22px);
     position: relative;
-    overflow: visible;
   }
 
-  .ts__marquee {
-    position: relative;
+  .ts__viewport {
     overflow: hidden;
     /* Vertical room so the hover float-shadow is not clipped. */
     padding-block: clamp(24px, 3vw, 40px);
+    /* The user drags horizontally; the page keeps scrolling vertically. */
+    touch-action: pan-y;
+    cursor: grab;
     /* Soft edges so cards dissolve in/out instead of hard-cutting at the seam. */
     -webkit-mask-image: linear-gradient(to right, transparent 0, #000 5%, #000 95%, transparent 100%);
             mask-image: linear-gradient(to right, transparent 0, #000 5%, #000 95%, transparent 100%);
   }
+  .ts__viewport.is-dragging { cursor: grabbing; }
+  /* No hover-lift mid-drag, and the pointer never “enters” a link while dragging. */
+  .ts__viewport.is-dragging .ts__card-link { pointer-events: none; }
 
   .ts__track {
     list-style: none;
@@ -240,36 +249,30 @@ const carouselData = Array.from({ length: LOOP_COPIES }, (_, copy) =>
     display: flex;
     width: max-content;
     will-change: transform;
-    transition: transform 0.6s cubic-bezier(0.34, 1.56, 0.64, 1);
-    /* No auto-animation; controlled by JavaScript */
-  }
-  .ts__track.is-dragging {
-    transition: none;
+    user-select: none;
+    -webkit-user-select: none;
+    /* No CSS animation — position is owned by the controller script below. */
   }
 
-  /* Fixed card width + uniform right margin keeps the track perfectly periodic. */
+  /* Fixed card width + uniform right margin keeps the track perfectly periodic
+     (margin, not flex `gap`, so 1/3 of the track is exactly one copy). */
   .ts__cell {
     flex: 0 0 var(--ts-card-w);
     width: var(--ts-card-w);
     min-width: 0;
     margin-right: var(--ts-gap);
-    position: relative;
   }
 
   .ts__card-link {
     display: block;
     text-decoration: none;
-    cursor: grab;
-    position: relative;
-    /* Prevent text selection during drag */
-    user-select: none;
-    -webkit-user-select: none;
+    color: inherit;
+    -webkit-user-drag: none;
   }
-  .ts__card-link.is-dragging {
-    cursor: grabbing;
-  }
-  .ts__track.is-dragging .ts__card-link {
-    pointer-events: none;
+  .ts__card-link:focus-visible {
+    outline: 2px solid var(--gold);
+    outline-offset: 4px;
+    border-radius: 2px;
   }
 
   .ts__card {
@@ -278,10 +281,12 @@ const carouselData = Array.from({ length: LOOP_COPIES }, (_, copy) =>
     overflow: hidden;
     border: 1px solid var(--hairline-gold);
     background: var(--navy);
-    transition: transform var(--t-med) var(--t-ease-emph),
-      box-shadow var(--t-med) var(--t-ease-emph), border-color var(--t-med);
+    /* --t-med already carries duration + curve; a second easing token here
+       would make the shorthand invalid-at-computed-value (transition dead). */
+    transition: transform var(--t-med), box-shadow var(--t-med), border-color var(--t-med);
   }
-  .ts__card-link:hover .ts__card {
+  .ts__card-link:hover .ts__card,
+  .ts__card-link:focus-visible .ts__card {
     transform: translateY(-6px);
     border-color: var(--hairline-gold-strong);
     box-shadow: var(--shadow-float);
@@ -293,15 +298,16 @@ const carouselData = Array.from({ length: LOOP_COPIES }, (_, copy) =>
     background: var(--navy);
     overflow: hidden;
   }
-  .ts__photo picture { display: block; width: 100%; height: 100%; }
   .ts__photo img {
     width: 100%;
     height: 100%;
     object-fit: cover;
     object-position: center top;
+    -webkit-user-drag: none;
+    pointer-events: none;
     transition: transform 0.7s var(--t-ease-emph);
   }
-  .ts__card:hover .ts__photo img { transform: scale(1.045); }
+  .ts__card-link:hover .ts__photo img { transform: scale(1.045); }
 
   /* Gold-monogram fallback — shown when a portrait is absent or fails to load */
   .ts__mono {
@@ -315,10 +321,10 @@ const carouselData = Array.from({ length: LOOP_COPIES }, (_, copy) =>
     letter-spacing: 0.04em;
     color: var(--gold);
     opacity: 0.5;
-    transition: opacity var(--t-med) var(--t-ease-emph), transform var(--t-med) var(--t-ease-emph);
+    transition: opacity var(--t-med), transform var(--t-med);
   }
-  .ts__card:hover .ts__mono { opacity: 0.7; transform: scale(1.04); }
-  .ts__photo.is-missing picture { display: none; }
+  .ts__card-link:hover .ts__mono { opacity: 0.7; transform: scale(1.04); }
+  .ts__photo.is-missing img { display: none; }
   .ts__photo.is-missing .ts__mono { display: grid; }
 
   /* Bottom scrim keeps the caption legible over any portrait (transparent -> navy) */
@@ -335,28 +341,31 @@ const carouselData = Array.from({ length: LOOP_COPIES }, (_, copy) =>
     pointer-events: none;
   }
 
+  /* Name + role live in a consistent lower band, clear of the face. */
   .ts__info {
     position: absolute;
     inset: auto 0 0;
     display: flex;
     flex-direction: column;
     align-items: flex-start;
-    gap: 4px;
+    gap: 3px;
     padding: clamp(13px, 1.2vw, 18px);
+  }
+  .ts__name {
+    font-family: var(--font-serif);
+    font-weight: 500;
+    font-size: clamp(16px, 1.3vw, 18px);
+    line-height: 1.15;
+    letter-spacing: -0.01em;
+    color: var(--cream);
   }
   .ts__role {
     font-family: var(--font-sans);
     font-weight: 500;
-    font-size: 11px;
+    font-size: 10.5px;
     letter-spacing: 0.1em;
     text-transform: uppercase;
-    color: var(--gold);
-  }
-  .ts__zone {
-    font-family: var(--font-sans);
-    font-size: 13px;
-    line-height: 1.3;
-    color: var(--white-70);
+    color: var(--gold-light);
   }
 
   /* ---------- Navigation arrows ---------- */
@@ -364,78 +373,31 @@ const carouselData = Array.from({ length: LOOP_COPIES }, (_, copy) =>
     position: absolute;
     top: 50%;
     transform: translateY(-50%);
+    z-index: 5;
     width: 44px;
     height: 44px;
     border-radius: 2px;
     display: grid;
     place-items: center;
-    background: rgba(184, 153, 104, 0.08);
-    border: 1px solid var(--hairline-gold);
-    color: var(--gold-light);
     cursor: pointer;
-    z-index: 10;
-    transition: background var(--t-fast), border-color var(--t-fast), color var(--t-fast), transform var(--t-fast);
-    -webkit-appearance: none;
-    appearance: none;
+    color: var(--gold-light);
+    background: color-mix(in srgb, var(--navy-ink) 72%, transparent);
+    -webkit-backdrop-filter: blur(6px);
+            backdrop-filter: blur(6px);
+    border: 1px solid var(--hairline-gold);
+    transition: background var(--t-fast), border-color var(--t-fast), color var(--t-fast);
   }
   .ts__nav:hover {
-    background: rgba(184, 153, 104, 0.15);
-    border-color: var(--hairline-gold-strong);
     color: var(--cream);
-    transform: translateY(-50%) scale(1.08);
-  }
-  .ts__nav:active {
-    transform: translateY(-50%) scale(0.96);
+    border-color: var(--hairline-gold-strong);
+    background: color-mix(in srgb, var(--navy-ink) 88%, transparent);
   }
   .ts__nav:focus-visible {
     outline: 2px solid var(--gold);
     outline-offset: 2px;
   }
-
-  .ts__nav--prev {
-    left: clamp(12px, 1.2vw, 24px);
-  }
-  .ts__nav--next {
-    right: clamp(12px, 1.2vw, 24px);
-  }
-
-  /* CTA to full team page */
-  .ts__cta-group {
-    text-align: center;
-    margin-top: clamp(28px, 3.5vw, 48px);
-  }
-  .ts__cta-link {
-    display: inline-flex;
-    align-items: center;
-    gap: 12px;
-    padding: 16px 30px;
-    border-radius: var(--radius);
-    background: var(--gold);
-    color: var(--navy-ink);
-    font-family: var(--font-sans);
-    font-weight: 600;
-    font-size: 12.5px;
-    letter-spacing: 0.16em;
-    text-transform: uppercase;
-    text-decoration: none;
-    transition: background var(--t-med), box-shadow var(--t-med), transform var(--t-med);
-    cursor: pointer;
-  }
-  .ts__cta-link:hover {
-    background: var(--gold-deep);
-    box-shadow: var(--shadow-float);
-    transform: translateY(-2px);
-  }
-  .ts__cta-link:focus-visible {
-    outline: 2px solid var(--gold-deep);
-    outline-offset: 3px;
-  }
-  .ts__cta-link :global(.icon) {
-    transition: transform var(--t-med);
-  }
-  .ts__cta-link:hover :global(.icon) {
-    transform: translateX(4px);
-  }
+  .ts__nav--prev { left: clamp(4px, 0.8vw, 14px); }
+  .ts__nav--next { right: clamp(4px, 0.8vw, 14px); }
 
   /* ---------- Curve divider (navy -> cream) ---------- */
   .ts__divider {
@@ -498,8 +460,34 @@ const carouselData = Array.from({ length: LOOP_COPIES }, (_, copy) =>
     color: var(--ink-60);
   }
 
+  .ts-stats__cta { text-align: center; margin-top: clamp(38px, 5vw, 62px); }
+  .ts__cta {
+    display: inline-flex;
+    align-items: center;
+    gap: 12px;
+    padding: 16px 30px;
+    border-radius: var(--radius);
+    background: var(--gold);
+    color: var(--navy-ink);
+    font-family: var(--font-sans);
+    font-weight: 600;
+    font-size: 12.5px;
+    letter-spacing: 0.16em;
+    text-transform: uppercase;
+    text-decoration: none;
+    transition: background var(--t-med), box-shadow var(--t-med), transform var(--t-med);
+  }
+  .ts__cta:hover { background: var(--gold-deep); box-shadow: var(--shadow-float); transform: translateY(-2px); }
+  .ts__cta :global(.icon) { transition: transform var(--t-med); }
+  .ts__cta:hover :global(.icon) { transform: translateX(4px); }
+  .ts__cta:focus-visible { outline: 2px solid var(--gold-deep); outline-offset: 3px; }
 
   /* ---------- Responsive ---------- */
+  @media (max-width: 1024px) {
+    /* Tablet: ~2–3 visible cards (card width floors at 232px via the clamp). */
+    .ts__carousel { --ts-gap: clamp(14px, 1.8vw, 18px); }
+  }
+
   @media (max-width: 760px) {
     .ts__head { grid-template-columns: 1fr; gap: 18px; }
     .ts__bldg { display: none; }
@@ -508,135 +496,366 @@ const carouselData = Array.from({ length: LOOP_COPIES }, (_, copy) =>
     .ts-stat:nth-child(even)::before { display: block; }
   }
 
-  /* Mobile: CTA goes full-width, arrows remain but smaller */
   @media (max-width: 640px) {
-    .ts__cta-link { width: 100%; justify-content: center; }
+    /* Phones: ~1.1–1.3 visible cards so it clearly reads as “there’s more”. */
+    .ts__carousel { --ts-card-w: min(76vw, 300px); --ts-gap: 14px; }
+    .ts__cta { width: 100%; justify-content: center; }
   }
 
   @media (prefers-reduced-motion: reduce) {
-    /* Disable transitions during drag and snap */
     .ts__track { transition: none !important; }
     .ts__card,
     .ts__mono,
     .ts__photo img,
-    .ts__cta-link,
-    .ts__cta-link :global(.icon) { transition: none !important; }
-    .ts__card-link:hover .ts__card { transform: none; }
-    .ts__card:hover .ts__photo img { transform: none; }
-    .ts__card:hover .ts__mono { transform: none; }
+    .ts__cta,
+    .ts__cta :global(.icon) { transition: none !important; }
+    .ts__card-link:hover .ts__card,
+    .ts__card-link:focus-visible .ts__card { transform: none; }
+    .ts__card-link:hover .ts__photo img { transform: none; }
+    .ts__card-link:hover .ts__mono { transform: none; }
   }
 </style>
 
 <script>
-  // Interactive carousel: drag, swipe, arrows, keyboard
-  const carousel = document.querySelector<HTMLElement>('[data-carousel]');
-  const track = carousel?.querySelector<HTMLElement>('[data-carousel-track]');
-  const prevBtn = carousel?.querySelector<HTMLButtonElement>('[data-carousel-prev]');
-  const nextBtn = carousel?.querySelector<HTMLButtonElement>('[data-carousel-next]');
+  // Carousel controller — drag (mouse), swipe (touch/pen), arrows, keyboard,
+  // seamless infinite loop, momentum snap, slow auto-glide while idle.
+  // Position is fully owned here (translate3d on the track); CSS transitions
+  // are applied only for snaps, never during drags or the auto-glide.
+  const root = document.querySelector<HTMLElement>('[data-carousel]');
+  const viewport = root?.querySelector<HTMLElement>('[data-carousel-viewport]');
+  const track = root?.querySelector<HTMLElement>('[data-carousel-track]');
+  const prevBtn = root?.querySelector<HTMLButtonElement>('[data-carousel-prev]');
+  const nextBtn = root?.querySelector<HTMLButtonElement>('[data-carousel-next]');
 
-  if (!carousel || !track) throw new Error('[TeamShowcase] Carousel not found');
+  if (root && viewport && track && prevBtn && nextBtn) {
+    const N = Number(root.dataset.count) || track.children.length / 3;
+    const reduced = window.matchMedia('(prefers-reduced-motion: reduce)');
 
-  let CARD_WIDTH = 0;
-  let CARDS_PER_LOOP = 59; // Default, updated on resize
-  let currentIndex = CARDS_PER_LOOP;
-  let isDragging = false;
-  let startX = 0;
-  let dragX = 0;
-  let lastX = 0;
-  let lastTime = 0;
+    /* ---------- geometry ---------- */
+    let step = 0; // card width + gap
+    let span = 0; // width of one full copy (N cards)
+    let x = 0; // authoritative translateX (px, negative)
+    let targetIdx = N; // card index the track is at / heading to
+    let snapping = false;
 
-  const prefersReducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+    const measure = () => {
+      const cell = track.children[0] as HTMLElement;
+      step = cell.offsetWidth + parseFloat(getComputedStyle(cell).marginRight || '0');
+      span = N * step;
+    };
 
-  function calculateLayout() {
-    const item = track?.children[0] as HTMLElement;
-    if (item) {
-      CARD_WIDTH = item.offsetWidth + 22; // Card width + gap
-    }
+    // Keep x inside the middle copy's band (-2·span, -span] — the outer copies
+    // make the modular teleport invisible.
+    const norm = (v: number) => {
+      while (v > -span) v -= span;
+      while (v <= -2 * span) v += span;
+      return v;
+    };
+
+    const apply = () => {
+      track.style.transform = `translate3d(${x}px, 0, 0)`;
+    };
+    const renderedX = () => {
+      const t = getComputedStyle(track).transform;
+      return t === 'none' ? 0 : new DOMMatrixReadOnly(t).m41;
+    };
+    const noTransition = () => {
+      track.style.transition = 'none';
+    };
+
+    let settleTimer = 0;
+    const settle = () => {
+      snapping = false;
+      window.clearTimeout(settleTimer);
+      noTransition();
+      x = norm(x);
+      targetIdx = Math.round(-x / step);
+      apply();
+    };
+
+    // Animate to an absolute card index (must be within the 3-copy range).
+    const animateTo = (target: number) => {
+      snapping = true;
+      targetIdx = target;
+      window.clearTimeout(settleTimer);
+      if (reduced.matches) {
+        noTransition();
+        x = -(target * step);
+        apply();
+        settle();
+        return;
+      }
+      track.style.transition = 'transform 0.55s cubic-bezier(0.22, 0.61, 0.36, 1)';
+      x = -(target * step);
+      apply();
+      // Watchdog: a retargeted/interrupted transition fires transitioncancel,
+      // not transitionend, and background tabs can drop the event entirely —
+      // so guarantee settle() runs and `snapping` can never stick true.
+      settleTimer = window.setTimeout(() => { if (snapping) settle(); }, 700);
+    };
+
+    // Snap by `offset` cards from the CURRENT rendered position. Re-banding the
+    // start on every call makes arrow-hold / spam impossible to drift off the
+    // copies: each move is ≤ offset cards and always within the renderable band.
+    const snapBy = (offset: number) => {
+      noTransition();
+      x = norm(renderedX());
+      const cur = Math.round(-x / step);
+      apply();
+      void track.offsetWidth; // commit the re-banded start before transitioning
+      animateTo(cur + offset);
+    };
+
+    track.addEventListener('transitionend', (e) => {
+      // Only OUR track transform — never a bubbled card/img hover transition.
+      if (e.target === track && e.propertyName === 'transform' && snapping) settle();
+    });
+
+    /* ---------- auto-glide (pauses on hover/focus/drag, resumes after idle) ---------- */
+    const GLIDE_MS_PER_CARD = 5000;
+    let rafId = 0;
+    let lastT = 0;
+    let resumeTimer = 0;
+    let hovering = false;
+    let focused = false;
+    let dragging = false;
+
+    const glideAllowed = () =>
+      !reduced.matches && !hovering && !focused && !dragging && !snapping && !document.hidden;
+
+    const tick = (t: number) => {
+      if (!glideAllowed()) {
+        rafId = 0;
+        return;
+      }
+      const dt = lastT ? Math.min(t - lastT, 48) : 16;
+      lastT = t;
+      x = norm(x - (step / GLIDE_MS_PER_CARD) * dt);
+      targetIdx = Math.round(-x / step);
+      apply();
+      rafId = requestAnimationFrame(tick);
+    };
+    const startGlide = () => {
+      if (!rafId && glideAllowed()) {
+        noTransition();
+        lastT = 0;
+        rafId = requestAnimationFrame(tick);
+      }
+    };
+    const stopGlide = () => {
+      if (rafId) {
+        cancelAnimationFrame(rafId);
+        rafId = 0;
+      }
+      window.clearTimeout(resumeTimer);
+    };
+    const scheduleGlide = () => {
+      window.clearTimeout(resumeTimer);
+      resumeTimer = window.setTimeout(startGlide, 4000);
+    };
+
+    root.addEventListener('pointerenter', () => {
+      hovering = true;
+      stopGlide();
+    });
+    root.addEventListener('pointerleave', () => {
+      hovering = false;
+      scheduleGlide();
+    });
+    root.addEventListener('focusin', () => {
+      focused = true;
+      stopGlide();
+    });
+    root.addEventListener('focusout', (e) => {
+      if (!root.contains(e.relatedTarget as Node)) {
+        focused = false;
+        scheduleGlide();
+      }
+    });
+    document.addEventListener('visibilitychange', () => {
+      if (document.hidden) stopGlide();
+      else scheduleGlide();
+    });
+    reduced.addEventListener('change', () => {
+      if (reduced.matches) stopGlide();
+      else scheduleGlide();
+    });
+
+    /* ---------- drag / swipe (Pointer Events; touch-action: pan-y keeps
+       vertical page scroll native — we only ever claim horizontal gestures) */
+    const THRESHOLD = 8; // px of movement that separates a click from a drag
+    let maybeDrag = false;
+    let suppressClick = false;
+    let pid = 0;
+    let startX = 0;
+    let startY = 0;
+    let originX = 0;
+    let samples: { t: number; x: number }[] = [];
+
+    const beginDrag = (e: PointerEvent) => {
+      dragging = true;
+      suppressClick = true;
+      snapping = false;
+      originX = norm(renderedX());
+      startX = e.clientX;
+      x = originX;
+      noTransition();
+      apply();
+      viewport.classList.add('is-dragging');
+      try {
+        viewport.setPointerCapture(pid);
+      } catch {
+        /* older engines: document-level fallback below still works */
+      }
+      samples = [];
+    };
+
+    const endDrag = (releaseT: number) => {
+      dragging = false;
+      viewport.classList.remove('is-dragging');
+      try {
+        viewport.releasePointerCapture(pid);
+      } catch {
+        /* noop */
+      }
+      // Momentum from RECENT velocity only: a fast drag that ends held still
+      // (no fresh samples) must snap to the nearest card, not fling 3 cards.
+      const fresh = samples.filter((s) => releaseT - s.t < 100);
+      let v = 0;
+      if (fresh.length >= 2) {
+        const a = fresh[0];
+        const b = fresh[fresh.length - 1];
+        if (b.t > a.t) v = (b.x - a.x) / (b.t - a.t);
+      }
+      const here = Math.round(-x / step);
+      const projected = Math.round(-(x + v * 180) / step);
+      const offset = Math.max(-3, Math.min(3, projected - here)); // controllable flings
+      snapBy(offset);
+      scheduleGlide();
+    };
+
+    viewport.addEventListener('pointerdown', (e) => {
+      if (e.pointerType === 'mouse' && e.button !== 0) return;
+      if (!e.isPrimary || dragging || maybeDrag) return; // ignore a 2nd finger
+      maybeDrag = true;
+      suppressClick = false;
+      pid = e.pointerId;
+      startX = e.clientX;
+      startY = e.clientY;
+      stopGlide();
+    });
+
+    viewport.addEventListener('pointermove', (e) => {
+      if (e.pointerId !== pid) return;
+      if (!dragging) {
+        if (!maybeDrag) return;
+        const dx = Math.abs(e.clientX - startX);
+        const dy = Math.abs(e.clientY - startY);
+        if (dy > dx && dy > THRESHOLD) {
+          maybeDrag = false; // vertical intent → the page scrolls, not us
+          return;
+        }
+        if (dx <= THRESHOLD) return;
+        beginDrag(e);
+      }
+      let nx = originX + (e.clientX - startX);
+      const wrapped = norm(nx);
+      if (wrapped !== nx) originX += wrapped - nx; // keep the formula continuous across wraps
+      x = wrapped;
+      apply();
+      samples.push({ t: e.timeStamp, x: e.clientX });
+      if (samples.length > 6) samples.shift();
+    });
+
+    const onPointerEnd = (e: PointerEvent) => {
+      if (e.pointerId !== pid) return;
+      maybeDrag = false;
+      if (dragging) endDrag(e.timeStamp);
+      else scheduleGlide();
+    };
+    viewport.addEventListener('pointerup', onPointerEnd);
+    viewport.addEventListener('pointercancel', onPointerEnd);
+
+    // A gesture that MOVED is never a click (capture phase beats the link).
+    // Gate on detail>0 so a keyboard Enter (detail===0) is never swallowed by a
+    // stale flag left over from a touch swipe that synthesised no click; always
+    // clear the flag so it can't linger onto a later activation.
+    viewport.addEventListener(
+      'click',
+      (e) => {
+        if (suppressClick && e.detail > 0) {
+          e.preventDefault();
+          e.stopPropagation();
+        }
+        suppressClick = false;
+      },
+      true
+    );
+    // No native ghost-drag of links/images.
+    track.addEventListener('dragstart', (e) => e.preventDefault());
+
+    /* ---------- arrows + keyboard ---------- */
+    const nudge = (dir: number) => {
+      stopGlide();
+      snapBy(dir);
+      scheduleGlide();
+    };
+    prevBtn.addEventListener('click', () => nudge(-1));
+    nextBtn.addEventListener('click', () => nudge(1));
+    root.addEventListener('keydown', (e) => {
+      if (e.key === 'ArrowLeft') {
+        e.preventDefault();
+        nudge(-1);
+      } else if (e.key === 'ArrowRight') {
+        e.preventDefault();
+        nudge(1);
+      }
+    });
+
+    /* ---------- keep tabbed-to cards in view ----------
+       The viewport is overflow:hidden; browsers still auto-scroll it when a
+       card link receives focus. Undo that and align via our own transform. */
+    viewport.addEventListener('scroll', () => {
+      viewport.scrollLeft = 0;
+    });
+    viewport.addEventListener('focusin', (e) => {
+      viewport.scrollLeft = 0;
+      const cell = (e.target as HTMLElement).closest<HTMLElement>('[data-cell]');
+      if (!cell) return;
+      const i = Number(cell.dataset.cell);
+      const left = -norm(snapping ? -(targetIdx * step) : x);
+      const fits =
+        i * step >= left - 1 && (i + 1) * step - parseFloat(getComputedStyle(cell).marginRight || '0') <= left + viewport.clientWidth + 1;
+      if (!fits) animateTo(i);
+    });
+
+    /* ---------- resize ---------- */
+    new ResizeObserver(() => {
+      // Don't re-anchor mid-drag: the drag owns `x`, and repositioning here
+      // (without updating the drag origin) would teleport the next move.
+      if (dragging) { measure(); return; }
+      const idx = targetIdx;
+      measure();
+      window.clearTimeout(settleTimer);
+      noTransition();
+      snapping = false;
+      x = norm(-(idx * step));
+      targetIdx = Math.round(-x / step);
+      apply();
+    }).observe(viewport);
+
+    /* ---------- init ---------- */
+    measure();
+    noTransition();
+    x = -(N * step); // start of the canonical middle copy
+    apply();
+    startGlide();
   }
 
-  function getTranslate(): number {
-    const style = window.getComputedStyle(track!);
-    const transform = style.transform;
-    if (transform === 'none') return 0;
-    const match = transform.match(/matrix3d?\((.+)\)/);
-    if (!match) return 0;
-    const values = match[1].split(', ');
-    return parseInt(values[values.length === 16 ? 12 : 4] || '0', 10);
-  }
-
-  function setTranslate(x: number) {
-    track!.style.transform = `translateX(${x}px)`;
-  }
-
-  function snapToCard(index: number) {
-    let nextIndex = index;
-    // Clamp and loop
-    if (nextIndex < CARDS_PER_LOOP) nextIndex += CARDS_PER_LOOP;
-    if (nextIndex >= CARDS_PER_LOOP * 2) nextIndex -= CARDS_PER_LOOP;
-
-    const targetX = -(nextIndex * CARD_WIDTH);
-    track!.classList.remove('is-dragging');
-    track!.style.transition = prefersReducedMotion ? 'none' : '0.6s cubic-bezier(0.34, 1.56, 0.64, 1)';
-    setTranslate(targetX);
-    currentIndex = nextIndex;
-  }
-
-  function handleDragStart(e: MouseEvent | TouchEvent) {
-    if ((e.target as HTMLElement).closest('a')) return;
-    isDragging = true;
-    startX = 'clientX' in e ? e.clientX : e.touches?.[0].clientX || 0;
-    dragX = 0;
-    lastX = startX;
-    lastTime = Date.now();
-    track!.classList.add('is-dragging');
-    track!.style.transition = 'none';
-  }
-
-  function handleDragMove(e: MouseEvent | TouchEvent) {
-    if (!isDragging) return;
-    const currentX = 'clientX' in e ? e.clientX : e.touches?.[0].clientX || 0;
-    dragX = currentX - startX;
-    setTranslate(getTranslate() + (currentX - lastX));
-    lastX = currentX;
-  }
-
-  function handleDragEnd() {
-    if (!isDragging) return;
-    isDragging = false;
-    const threshold = CARD_WIDTH * 0.15;
-    const newIndex = dragX < -threshold ? currentIndex + 1 : dragX > threshold ? currentIndex - 1 : currentIndex;
-    snapToCard(newIndex);
-  }
-
-  function handleArrowClick(dir: number) {
-    snapToCard(currentIndex + dir);
-  }
-
-  function handleKeyDown(e: KeyboardEvent) {
-    if (e.key === 'ArrowLeft') { e.preventDefault(); handleArrowClick(-1); }
-    if (e.key === 'ArrowRight') { e.preventDefault(); handleArrowClick(1); }
-  }
-
-  // Setup
-  calculateLayout();
-  window.addEventListener('resize', calculateLayout);
-  setTranslate(-(currentIndex * CARD_WIDTH));
-
-  // Events
-  track!.addEventListener('mousedown', (e) => handleDragStart(e));
-  track!.addEventListener('touchstart', (e) => handleDragStart(e));
-  document.addEventListener('mousemove', (e) => handleDragMove(e));
-  track!.addEventListener('touchmove', (e) => handleDragMove(e));
-  document.addEventListener('mouseup', handleDragEnd);
-  track!.addEventListener('touchend', handleDragEnd);
-  prevBtn?.addEventListener('click', () => handleArrowClick(-1));
-  nextBtn?.addEventListener('click', () => handleArrowClick(1));
-  document.addEventListener('keydown', handleKeyDown);
-
-  // Image fallback
-  const photos = carousel?.querySelectorAll<HTMLImageElement>('.ts__photo img');
-  photos?.forEach((img) => {
-    const photo = img.closest('.ts__photo') as HTMLElement;
+  // Swap to the gold-monogram fallback when a portrait fails to load.
+  const photos = document.querySelectorAll<HTMLImageElement>('.ts__photo img');
+  photos.forEach((img) => {
+    const photo = img.closest<HTMLElement>('.ts__photo');
     if (!photo) return;
     const fail = () => photo.classList.add('is-missing');
     img.addEventListener('error', fail);

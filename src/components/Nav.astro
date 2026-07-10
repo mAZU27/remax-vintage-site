@@ -1,7 +1,6 @@
 ---
 import { site, nav, primaryCta } from '../data/site';
 import Button from './Button.astro';
-import Icon from './Icon.astro';
 interface Props {
   // Homepage sits over a dark video hero → start transparent.
   // Interior pages have no dark hero → start solid.
@@ -34,10 +33,6 @@ const isActive = (href: string) => {
     </nav>
 
     <div class="nav__actions">
-      <a class="nav__phone" href={site.phoneHref} aria-label={`Telefonar — ${site.phone}`}>
-        <Icon name="phone" size={16} stroke={1.6} />
-        <span>{site.phone}</span>
-      </a>
       <Button href={primaryCta.href} variant="gold" class="nav__cta">{primaryCta.label}</Button>
       <button class="nav__toggle" type="button" aria-label="Abrir menu" aria-expanded="false" aria-controls="nav-drawer" data-nav-toggle>
         <span></span><span></span><span></span>
@@ -59,9 +54,6 @@ const isActive = (href: string) => {
     </nav>
     <div class="nav__drawer-foot">
       <Button href={primaryCta.href} variant="gold" arrow class="nav__drawer-cta">{primaryCta.label}</Button>
-      <a class="nav__drawer-phone" href={site.phoneHref}>
-        <Icon name="phone" size={16} stroke={1.6} /> <span>{site.phone}</span>
-      </a>
     </div>
   </div>
 </header>
@@ -137,11 +129,6 @@ const isActive = (href: string) => {
   .nav__link--highlight { color: var(--gold-light); }
 
   .nav__actions { display: flex; align-items: center; gap: clamp(12px, 1.2vw, 18px); flex-shrink: 0; }
-  .nav__phone {
-    display: inline-flex; align-items: center; gap: 8px; color: var(--white-70);
-    text-decoration: none; font-size: 13px; letter-spacing: 0.04em; transition: color var(--t-fast);
-  }
-  .nav__phone:hover { color: var(--gold-light); }
   :global(.nav__cta) { padding: 11px 22px; font-size: 12px; border-radius: 999px; }
 
   .nav__toggle {
@@ -191,15 +178,8 @@ const isActive = (href: string) => {
   .nav__drawer-link:hover, .nav__drawer-link.is-active { color: var(--gold-light); }
   .nav__drawer-foot { display: flex; flex-direction: column; gap: 16px; }
   :global(.nav__drawer-cta) { width: 100%; border-radius: 999px; }
-  .nav__drawer-phone {
-    display: inline-flex; align-items: center; gap: 8px; color: var(--white-70);
-    text-decoration: none; font-size: 14px; letter-spacing: 0.04em; justify-content: center;
-  }
 
   /* ---------- Responsive ---------- */
-  @media (max-width: 1180px) {
-    .nav__phone { display: none; }
-  }
   @media (max-width: 1120px) {
     .nav__links { display: none; }
     .nav__toggle { display: flex; }
@@ -221,7 +201,6 @@ const isActive = (href: string) => {
       height: 24px;
       width: auto;
     }
-    .nav__phone { display: none; }
     .nav__actions {
       margin-left: auto;
     }
