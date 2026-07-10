@@ -178,6 +178,8 @@ const aboutTestimonials = testimonials.slice(0, 3);
 
       <div class="ab-about__gallery">
         {Array.from({ length: 9 }, (_, i) => {
+          // Each image used exactly once, in rotation to avoid visual repetition
+          const imageIds = [3, 1, 8, 5, 9, 2, 7, 4, 6];
           const captions = [
             'Missão 2026',
             'Consultores',
@@ -191,7 +193,7 @@ const aboutTestimonials = testimonials.slice(0, 3);
           ];
           return (
             <div class="ab-gal__item" data-reveal style={`--reveal-delay:${100 + i * 50}ms`}>
-              <img src={`/images/equipa-gallery/equipa-${i + 1}.webp`} alt="" loading="lazy" decoding="async" />
+              <img src={`/images/equipa-gallery/equipa-${imageIds[i]}.webp`} alt="" loading="lazy" decoding="async" />
               <span class="ab-gal__cap">{captions[i]}</span>
             </div>
           );
