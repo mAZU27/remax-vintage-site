@@ -105,7 +105,10 @@ a { color: inherit; }
   border-radius: 4px; font-size: 14px; font-weight: 500; letter-spacing: 0.08em;
   text-transform: uppercase; text-decoration: none; transition: top var(--t-fast);
 }
-.skip-link:focus { top: 16px; }
+/* :focus-visible (not :focus): iOS Safari hands links focus on touch/history
+   restores, which paraded the skip link over the nav for regular visitors.
+   Keyboard users still get it — that's the only audience it serves. */
+.skip-link:focus-visible { top: 16px; }
 
 /* ---------- Typography utilities ---------- */
 .serif { font-family: var(--font-serif); font-weight: 500; letter-spacing: -0.012em; }
