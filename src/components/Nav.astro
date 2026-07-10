@@ -104,9 +104,11 @@ const isActive = (href: string) => {
   .nav__brand { display: inline-flex; align-items: center; flex-shrink: 0; }
   .nav__brand img { height: 26px; width: auto; transition: height var(--t-med); }
 
+  /* Centred on the bar itself (absolute) so the links sit dead-centre
+     regardless of the differing brand / CTA widths. */
   .nav__links {
+    position: absolute; left: 50%; top: 50%; transform: translate(-50%, -50%);
     display: flex; align-items: center; gap: clamp(16px, 1.8vw, 30px);
-    margin-left: auto;
   }
   .nav__link {
     position: relative; font-size: 13px; letter-spacing: 0.05em; font-weight: 400;
@@ -128,7 +130,7 @@ const isActive = (href: string) => {
   /* "Vender" highlight — gold text only (dot removed) */
   .nav__link--highlight { color: var(--gold-light); }
 
-  .nav__actions { display: flex; align-items: center; gap: clamp(12px, 1.2vw, 18px); flex-shrink: 0; }
+  .nav__actions { display: flex; align-items: center; gap: clamp(12px, 1.2vw, 18px); flex-shrink: 0; margin-left: auto; }
   :global(.nav__cta) { padding: 11px 22px; font-size: 12px; border-radius: 999px; }
 
   .nav__toggle {
