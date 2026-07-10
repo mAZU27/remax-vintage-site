@@ -3,12 +3,10 @@ import Base from '../layouts/Base.astro';
 import Hero from '../components/Hero.astro';
 import HeroMobile from '../components/HeroMobile.astro';
 import MobileValuationSheet from '../components/MobileValuationSheet.astro';
-import AwardsBelt from '../components/AwardsBelt.astro';
 import SectionEyebrow from '../components/SectionEyebrow.astro';
 import Neighborhoods from '../components/Neighborhoods.astro';
 import StructureDiagram from '../components/StructureDiagram.astro';
 import Stats from '../components/Stats.astro';
-import Testimonials from '../components/Testimonials.astro';
 import ValuationForm from '../components/ValuationForm.astro';
 import Crest from '../components/Crest.astro';
 import Icon from '../components/Icon.astro';
@@ -18,7 +16,6 @@ import { about } from '../data/site';
 import { EXTERNAL_LISTINGS_URL } from '../lib/site.config';
 import { essenciaisComprar, miniProcessoComprar } from '../content/metodo-comprar';
 import { essenciaisVender, miniProcessoVender } from '../content/metodo-vender';
-import { redeNumeros } from '../content/rede';
 import type { Faq } from '../data/faqs';
 
 // The homepage carries EXACTLY 10 conversion CTAs (see docs/mission map):
@@ -87,8 +84,8 @@ const homeFaqs: Faq[] = [
   <HeroMobile />
   <MobileValuationSheet />
 
-  <!-- Faixa de trust — prémios RE/MAX Portugal (rede) -->
-  <AwardsBelt />
+  {/* Faixa de prémios da rede (AwardsBelt): removida 2026-07-10 até a agência
+      aprovar por escrito prémios com nome/ano/atribuição corretos. */}
 
   <!-- Posicionamento -->
   <section class="section section--cream" id="sobre">
@@ -266,27 +263,9 @@ const homeFaqs: Faq[] = [
     </div>
   </section>
 
-  <!-- A força da rede (números da rede RE/MAX — não da agência) -->
-  <Fragment set:html={'<!-- CONFIRMAR COM AGÊNCIA: todos os números desta faixa -->'} />
-  <section class="section rede section--warm">
-    <div class="container">
-      <div class="rede__inner" data-reveal>
-        <span class="rede__eyebrow">A força da rede</span>
-        <dl class="rede__stats">
-          {redeNumeros.map((n) => (
-            <div class="rede__stat">
-              <dt>{n.label}</dt>
-              <dd>{n.value}</dd>
-            </div>
-          ))}
-        </dl>
-        <p class="rede__note">Números da rede RE/MAX em Portugal.</p>
-      </div>
-    </div>
-  </section>
-
-  <!-- Testemunhos -->
-  <Testimonials />
+  {/* «A força da rede» e «Testemunhos»: secções removidas 2026-07-10 — números
+      não confirmados pela agência e testemunhos ilustrativos. Repor apenas com
+      dados/testemunhos reais e autorizados. */}
 
   <!-- Banner de conversão do vendedor — estudo de mercado gratuito (CTA #7) -->
   <section class="section section--ink on-navy banner-em">
@@ -462,27 +441,6 @@ const homeFaqs: Faq[] = [
   }
   @media (max-width: 420px) {
     .mproc__steps { grid-template-columns: 1fr; }
-  }
-
-  /* A força da rede */
-  .rede { padding-block: clamp(44px, 5vw, 72px); }
-  .rede__inner { text-align: center; }
-  .rede__eyebrow {
-    font-size: 11px; letter-spacing: 0.24em; text-transform: uppercase; color: var(--gold-deep);
-  }
-  .rede__stats {
-    margin: 26px 0 0; display: grid; grid-template-columns: repeat(4, 1fr);
-    gap: clamp(18px, 3vw, 40px);
-  }
-  .rede__stat dd {
-    margin: 0; font-family: var(--font-serif); font-size: clamp(30px, 3.4vw, 44px);
-    color: var(--ink); line-height: 1.1;
-  }
-  .rede__stat dt { font-size: 12.5px; color: var(--ink-60); margin-top: 8px; letter-spacing: 0.03em; }
-  .rede__stat { display: flex; flex-direction: column-reverse; }
-  .rede__note { margin: 26px 0 0; font-size: 11.5px; color: var(--ink-40); letter-spacing: 0.04em; }
-  @media (max-width: 760px) {
-    .rede__stats { grid-template-columns: 1fr 1fr; }
   }
 
   /* Banner estudo de mercado */

@@ -81,9 +81,6 @@ const faixa = zonas.slice(4);
           <div class="zonas__pins">
             {zonas.map((n, i) => (
               <>
-                {n.confirmarProcura && (
-                  <Fragment set:html={'<!-- CONFIRMAR COM AGÊNCIA: rótulo de procura desta zona -->'} />
-                )}
                 <button
                   type="button"
                   class="pin"

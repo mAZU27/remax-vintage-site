@@ -18,23 +18,17 @@ export const site = {
   tagline: 'A coleção mais rara do Porto.',
   description:
     'Imóveis vintage e premium no Porto — oito zonas de eleição, da Foz do Douro à Baixa. Avaliação confidencial e uma apresentação à altura de cada imóvel distinto.',
-  // TODO(contacto): substituir pelos contactos reais antes do lançamento.
-  phone: '+351 220 000 000',
-  phoneHref: 'tel:+351220000000',
-  email: 'collection@vintage.pt',
-  whatsappHref: 'https://wa.me/351220000000',
+  // Contactos VERIFICADOS no perfil oficial da agência em remax.pt
+  // (remax.pt/pt/agencia/remax-collection-vintage/12382, consultado 2026-07-10).
+  // Email, horário, redes sociais e WhatsApp: por confirmar com a agência —
+  // deliberadamente ausentes até haver dados reais (nunca inventar).
+  phone: '+351 226 181 031',
+  phoneHref: 'tel:+351226181031',
   city: 'Porto, Portugal',
-  // TODO(contacto): morada e horário reais antes do lançamento.
-  address: ['Av. da Boavista 0000', '4100-000 Porto, Portugal'],
-  hours: ['Segunda a Sexta', '09:00 – 18:00'],
+  address: ['Avenida da Boavista, 3191/3195', '4100-137 Porto, Portugal'],
+  legalName: 'Vintage Patamar - Mediação Imobiliária, Lda',
+  ami: 'AMI 10092',
   established: 2014,
-  // TODO(social): substituir '#' pelos perfis reais antes do lançamento.
-  social: [
-    { label: 'Instagram', href: '#', icon: 'instagram' },
-    { label: 'LinkedIn', href: '#', icon: 'linkedin' },
-    { label: 'YouTube', href: '#', icon: 'youtube' },
-    { label: 'Facebook', href: '#', icon: 'facebook' },
-  ],
 } as const;
 
 export interface NavItem {
@@ -48,13 +42,14 @@ export interface NavItem {
 // 7 items (owner-approved grouping): the two method pages lead; listings are
 // external; Zonas/Método are on-page sections (reachable by scroll) and
 // Carreiras moved to the footer to keep the menu scannable.
+// «Blog» removido temporariamente do menu: os 4 artigos são placeholders
+// declarados (noindex + fora do sitemap) até existir conteúdo editorial real.
 export const nav: NavItem[] = [
   { label: 'Comprar', href: '/comprar' },
   { label: 'Vender', href: '/vender', highlight: true },
   { label: 'Imóveis', href: EXTERNAL_LISTINGS_URL, external: true },
   { label: 'Arrendar', href: '/alugar' },
   { label: 'Sobre nós', href: '/sobre-nos' },
-  { label: 'Blog', href: '/insights' },
   { label: 'Contacto', href: '/contacto' },
 ];
 
@@ -86,130 +81,17 @@ export const zonasStats = [
 ] as const;
 
 export const methodSteps = [
-  { num: '01', name: 'Curação', icon: 'search', text: 'Entendemos o imóvel, o contexto e o seu potencial real.' },
+  { num: '01', name: 'Curadoria', icon: 'search', text: 'Entendemos o imóvel, o contexto e o seu potencial real.' },
   { num: '02', name: 'Avaliação', icon: 'target', text: 'Análise estratégica para posicionar com clareza e confiança.' },
   { num: '03', name: 'Estratégia', icon: 'strategy', text: 'Criamos uma narrativa distinta para o público certo.' },
   { num: '04', name: 'Apresentação', icon: 'camera', text: 'Apresentamos com excelência através de imagem e experiência.' },
   { num: '05', name: 'Negociação', icon: 'handshake', text: 'Gerimos o processo com discrição, rigor e foco no resultado.' },
 ] as const;
 
-// `theme`, `location` and `icon` drive the premium carousel (components/Testimonials.astro):
-//   theme    — short editorial tag rendered as an uppercase pill
-//   location — place tag (uppercased in CSS); `context` is kept for the /sobre-nos grid
-//   icon     — Porto line-art engraving: 'bridge' | 'facade' | 'tower'
-export const testimonials = [
-  {
-    quote:
-      'Venderam a nossa casa da Foz acima do que esperávamos e sem nunca expor a nossa privacidade. Discrição e resultado — foi exatamente o que procurávamos.',
-    name: 'Helena & Rui M.',
-    context: 'Venderam na Foz do Douro',
-    theme: 'Discrição',
-    location: 'Foz do Douro, Porto',
-    icon: 'bridge',
-  },
-  {
-    quote:
-      'Procurávamos algo com carácter e encontraram-no antes sequer de chegar ao mercado. O acompanhamento foi impecável, do primeiro contacto à escritura.',
-    name: 'António V.',
-    context: 'Comprou na Ribeira',
-    theme: 'Exclusividade',
-    location: 'Ribeira, Porto',
-    icon: 'facade',
-  },
-  {
-    quote:
-      'Profissionalismo raro. Cada detalhe da apresentação do imóvel foi pensado — e isso refletiu-se claramente no valor final da negociação.',
-    name: 'Marta S.',
-    context: 'Vendeu na Boavista',
-    theme: 'Apresentação Premium',
-    location: 'Boavista, Porto',
-    icon: 'tower',
-  },
-  {
-    quote:
-      'Mostraram-nos uma casa que nunca chegou a estar anunciada. Era exatamente o que sonhávamos — e nem sabíamos que existia.',
-    name: 'Carolina & Miguel P.',
-    context: 'Compraram em Nevogilde',
-    theme: 'Exclusividade',
-    location: 'Foz do Douro, Porto',
-    icon: 'bridge',
-  },
-  {
-    quote:
-      'A forma como apresentaram o apartamento elevou tudo. Senti que estavam a vender uma história, não apenas metros quadrados.',
-    name: 'Sofia A.',
-    context: 'Vendeu na Foz Velha',
-    theme: 'Apresentação Premium',
-    location: 'Ribeira, Porto',
-    icon: 'facade',
-  },
-  {
-    quote:
-      'Conhecem o mercado do Porto como ninguém. Pouparam-me meses de procura e ajudaram-me a perceber o valor real de cada zona.',
-    name: 'João R.',
-    context: 'Comprou em Lordelo do Ouro',
-    theme: 'Conhecimento de Mercado',
-    location: 'Boavista, Porto',
-    icon: 'tower',
-  },
-  {
-    quote:
-      'Queríamos um imóvel com alma, no coração do Porto. Souberam ouvir o que procurávamos e levaram-nos diretamente a ele.',
-    name: 'Inês & Duarte C.',
-    context: 'Compraram no Centro Histórico',
-    theme: 'Escuta Atenta',
-    location: 'Centro Histórico, Porto',
-    icon: 'facade',
-  },
-  {
-    quote:
-      'Na negociação fizeram toda a diferença. Defenderam o valor da casa com serenidade e firmeza, e o resultado superou as expectativas.',
-    name: 'Teresa F.',
-    context: 'Vendeu na Avenida da Boavista',
-    theme: 'Negociação',
-    location: 'Av. da Boavista, Porto',
-    icon: 'tower',
-  },
-  {
-    quote:
-      'Nunca senti pressão. Deram-me tempo, espaço e informação para decidir com confiança. Uma experiência rara nos dias que correm.',
-    name: 'Luís M.',
-    context: 'Comprou em Miramar',
-    theme: 'Acompanhamento',
-    location: 'Miramar',
-    icon: 'bridge',
-  },
-  {
-    quote:
-      'Aconselharam-me a esperar pelo momento certo em vez de vender à pressa. Esse conselho honesto valeu cada semana de espera.',
-    name: 'Beatriz L.',
-    context: 'Vendeu em Vila Nova de Gaia',
-    theme: 'Aconselhamento',
-    location: 'Vila Nova de Gaia',
-    icon: 'tower',
-  },
-  {
-    quote:
-      'Estávamos a mudar-nos do estrangeiro e trataram de tudo à distância, com uma clareza e um cuidado que nos deram total tranquilidade.',
-    name: 'Pedro & Ana T.',
-    context: 'Compraram no Porto',
-    theme: 'Acompanhamento',
-    location: 'Porto',
-    icon: 'facade',
-  },
-  {
-    quote:
-      'Comunicação impecável do início ao fim. Sempre soube em que ponto estava o processo. Confiança total, sem qualquer reserva.',
-    name: 'Clara M.',
-    context: 'Vendeu em Matosinhos Sul',
-    theme: 'Comunicação',
-    location: 'Matosinhos Sul',
-    icon: 'bridge',
-  },
-] as const;
-// NOTE(testimonials): placeholder — 12 testemunhos ilustrativos. Substituir por
-// testemunhos reais com autorização do cliente; os campos theme/location são
-// editoriais e devem ser revistos quando os testemunhos forem reais.
+// Testemunhos: REMOVIDOS do site (2026-07-10). Os 12 testemunhos anteriores
+// eram ilustrativos (inventados) e não podem ser publicados como reais.
+// Quando existirem testemunhos reais COM AUTORIZAÇÃO ESCRITA do cliente,
+// reintroduzir aqui e repor as secções em index.astro / sobre-nos.astro.
 
 // Editorial "Sobre" moment — the house, not a fabricated individual (no fake headshots).
 export const about = {

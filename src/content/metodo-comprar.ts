@@ -200,9 +200,12 @@ export const vantagensRede = [
     confirmar: false,
   },
   {
-    title: 'O maior «armazém de imóveis» do mercado',
-    text: 'Mais de 400 agências a angariar em Portugal.',
-    confirmar: true, // number needs agency confirmation
+    // Número «+400 agências» e superlativo «o maior» retirados (2026-07-10):
+    // valores por confirmar não podem ser publicados. Repor a formulação do
+    // guia apenas com confirmação escrita da agência.
+    title: 'Um «armazém de imóveis» à escala da rede',
+    text: 'Agências RE/MAX em todo o país a angariar — a sua procura não se limita à carteira de uma só agência.',
+    confirmar: false,
   },
   {
     title: 'Imóveis exclusivos',

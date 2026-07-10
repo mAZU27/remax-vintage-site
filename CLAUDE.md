@@ -205,3 +205,34 @@ the markup. Don't do this prematurely — only when real listings or a CMS force
 
 *Last updated when the project was migrated into Claude Code. Keep this file current — it
 is the source of truth for context and standards.*
+
+---
+
+## 8. Estado — Fase 2A (2026-07-10): integridade SEO/GEO
+
+Implementada a Fase 2A da auditoria (`docs/audits/SEO-GEO-AUDIT-2026-07-10.md`).
+O que mudou (e NÃO deve ser revertido sem dados reais):
+
+- **NAP/AMI reais** em `src/data/site.ts`, verificados no perfil oficial
+  remax.pt (agência 12382): telefone +351 226 181 031, Avenida da Boavista
+  3191/3195, 4100-137 Porto, Vintage Patamar - Mediação Imobiliária, Lda,
+  AMI 10092, fundada em 2014. **Email/horário/redes sociais/WhatsApp: ainda
+  por confirmar — deliberadamente ausentes. NUNCA inventar.**
+- **Removidos do site** (dados fabricados/por confirmar): 12 testemunhos de
+  clientes + 8 vozes de colaboradores (inventados), retratos gerados por IA
+  (ficheiros apagados; monograma dourado como fallback), faixa e grelha de
+  prémios, números da rede (10.000/+400/N.º 1/+60%), tokens
+  `[INSERIR NÚMERO REAL]`, campo de CV sem backend, caixa da «diretora de RH»,
+  lista de vagas fictícia, links sociais `#`.
+- **/insights**: os 4 artigos são placeholders → `noindex, follow`, fora do
+  sitemap e da navegação («Blog» saiu do menu → 6 itens temporariamente).
+- **/apoio** deixou de ser órfã (links no footer) e /alugar ganhou H1 +
+  imagem responsiva (o original de 2,1 MB está em `_archive/images/`).
+- **/privacidade**: política interina factual — requer revisão jurídica antes
+  do lançamento comercial.
+- Comentários internos (`CONFIRMAR COM AGÊNCIA`, TODOs) deixaram de ser
+  emitidos no HTML publicado; as flags `confirmar:` mantêm-se no código.
+- `vercel.json`: regra catch-all movida para PRIMEIRO lugar (a última regra
+  vence no Vercel) + cache imutável para `/media/`.
+
+Lista completa de factos pendentes de G: secção 18 da auditoria.

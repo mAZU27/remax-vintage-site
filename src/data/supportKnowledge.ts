@@ -33,15 +33,13 @@ export const fallbackMessage =
 export const leadClosing =
   'Obrigado. A nossa equipa pode entrar em contacto consigo para dar seguimento.';
 
-// Contacts — single source of truth is site.ts (placeholders until launch).
+// Contacts — single source of truth is site.ts (factos verificados no perfil
+// oficial remax.pt). Email, WhatsApp e horário: por confirmar com a agência —
+// ausentes de propósito para o assistente nunca citar dados inventados.
 export const contacts = {
   phone: site.phone,
   phoneHref: site.phoneHref,
-  email: site.email,
-  emailHref: `mailto:${site.email}`,
-  whatsappHref: site.whatsappHref,
   address: site.address.join(', '),
-  hours: `${site.hours[0]}, ${site.hours[1]}`,
   city: site.city,
   mapsHref:
     'https://www.google.com/maps/search/?api=1&query=' +

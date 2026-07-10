@@ -5,11 +5,12 @@ import Button from '../components/Button.astro';
 import Icon from '../components/Icon.astro';
 import { site } from '../data/site';
 
+// Email e horário: por confirmar com a agência — deliberadamente ausentes
+// (o formulário desta página é o canal escrito; nunca publicar dados fictícios).
 const details = [
   { icon: 'pin', label: 'Morada', lines: site.address },
   { icon: 'phone', label: 'Telefone', lines: [site.phone], href: site.phoneHref },
-  { icon: 'mail', label: 'Email', lines: [site.email], href: `mailto:${site.email}` },
-  { icon: 'clock', label: 'Horário', lines: site.hours },
+  { icon: 'shield-check', label: 'Licença', lines: [`${site.ami} · ${site.legalName}`] },
 ];
 const assuntos = ['Comprar um imóvel', 'Vender / avaliação', 'Estudo de mercado', 'Agendar uma visita', 'Outro assunto'];
 ---
@@ -41,16 +42,8 @@ const assuntos = ['Comprar um imóvel', 'Vender / avaliação', 'Estudo de merca
             </li>
           ))}
         </ul>
-        <div class="contacto__social">
-          <span class="cdetail__label">Seguir</span>
-          <div class="contacto__social-row">
-            {site.social.map((s) => (
-              <a href={s.href} aria-label={s.label} class="contacto__social-link" rel="noopener" target="_blank">
-                <Icon name={s.icon} size={18} stroke={1.6} />
-              </a>
-            ))}
-          </div>
-        </div>
+        {/* Bloco «Seguir» removido 2026-07-10: os links sociais eram '#'
+            (placeholders). Repor quando existirem perfis reais. */}
       </aside>
 
       <form class="cform" data-contact novalidate aria-label="Formulário de contacto">
@@ -120,13 +113,6 @@ const assuntos = ['Comprar um imóvel', 'Vender / avaliação', 'Estudo de merca
   a.cdetail__val { transition: color var(--t-fast); }
   a.cdetail__val:hover { color: var(--gold-deep); }
 
-  .contacto__social { margin-top: 34px; padding-top: 30px; border-top: 1px solid var(--ink-10); }
-  .contacto__social-row { display: flex; gap: 12px; }
-  .contacto__social-link {
-    width: 42px; height: 42px; display: grid; place-items: center; border-radius: 50%; color: var(--navy);
-    border: 1px solid var(--ink-20); transition: background var(--t-fast), color var(--t-fast), border-color var(--t-fast);
-  }
-  .contacto__social-link:hover { background: var(--gold); color: var(--navy-ink); border-color: var(--gold); }
 
   /* Form (mirrors ValuationForm styling) */
   .cform {

@@ -43,8 +43,10 @@ export const acoes = [
   { text: 'Apoio na decoração / home staging', confirmar: false },
   { text: 'Foto-reportagem e vídeo profissionais, incluindo visita virtual', confirmar: false },
   {
-    text: 'Inserção do imóvel no site da RE/MAX — o portal imobiliário com mais audiência em Portugal — e em plataformas internacionais que reforçam a divulgação no estrangeiro',
-    confirmar: true, // "portal com mais audiência" formulation
+    // Superlativo «portal com mais audiência» retirado (2026-07-10) até
+    // confirmação escrita da agência.
+    text: 'Inserção do imóvel no site da RE/MAX e em plataformas internacionais que reforçam a divulgação no estrangeiro',
+    confirmar: false,
   },
   { text: 'Informação a toda a rede RE/MAX e a outras imobiliárias de que o imóvel está para venda', confirmar: false },
   { text: 'Feedback constante sobre o trabalho desenvolvido e os resultados', confirmar: false },
@@ -55,7 +57,8 @@ export const acoes = [
 
 // B2 · Planned marketing strategy (6 items). Flyer volume needs confirmation.
 export const marketing = [
-  { text: '1000 flyers de divulgação por mês', confirmar: true },
+  // Volume «1000/mês» retirado (2026-07-10) até confirmação da agência.
+  { text: 'Flyers de divulgação distribuídos regularmente', confirmar: false },
   { text: 'Montra, cartaz, lona e outdoor de venda', confirmar: false },
   { text: 'Open House para potenciais compradores', confirmar: false },
   { text: 'Open House para mediadores', confirmar: false },
@@ -82,15 +85,20 @@ export const promocao = [
   { label: 'Vendido', confirmar: false },
 ] as const;
 
-// B4 · The power of sharing. ALL numbers need confirmation.
+// B4 · The power of sharing.
+// O número «10.000 consultores» foi retirado do site (2026-07-10): era um
+// valor por confirmar e números não verificados não podem ser publicados.
+// Repor a versão numérica APENAS com confirmação escrita da agência.
 export const forcaPartilha = {
   intro:
     'Um consultor dedicado — e toda a equipa da agência a trabalhar o seu imóvel.',
   pontos: [
-    { text: '10.000 consultores em Portugal na rede RE/MAX', confirmar: true },
+    { text: 'Toda a rede RE/MAX em Portugal com acesso ao seu imóvel', confirmar: false },
     {
-      text: 'A partilha com a rede abrange todo o mercado imobiliário nacional e internacional; outras imobiliárias procuram imóveis na rede RE/MAX — o maior «armazém» de angariações do mercado',
-      confirmar: true,
+      // Superlativo «o maior armazém do mercado» retirado (2026-07-10) até
+      // confirmação escrita da agência.
+      text: 'A partilha com a rede abrange todo o mercado imobiliário nacional e internacional; outras imobiliárias também procuram imóveis na rede RE/MAX',
+      confirmar: false,
     },
   ],
 } as const;
