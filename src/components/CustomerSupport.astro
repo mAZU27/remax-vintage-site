@@ -769,7 +769,7 @@ import Icon from './Icon.astro';
 
       const step = flow ? flows[flow.id].steps[flow.step] : null;
       const ctx = flow
-        ? { inFlow: true, flowId: flow.id, stepKey: step!.key, answeredKeys: Object.keys(flow.answers) }
+        ? { inFlow: true, flowId: flow.id, stepKey: step!.key, answeredKeys: Object.keys(flow.answers), stepChips: step!.chips?.[lang] }
         : { inFlow: false };
       const c = classifyMessage(msg, ctx);
 
