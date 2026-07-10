@@ -90,7 +90,8 @@ export const careersWhyJoin = {
   ] as CardItem[],
   // Career progression path (illustrative stages, not a contractual promise).
   path: ['Consultor', 'Consultor Sénior', 'Gestor de Equipa', 'Diretor de Sucesso'],
-  cta: { label: 'Ver oportunidades', href: `#${anchors.roles}` },
+  // Roles section is not rendered (placeholders removed) → CTA goes to the form.
+  cta: { label: 'Enviar candidatura', href: `#${anchors.apply}` },
 };
 
 // ---------- 4. Benefícios ----------
@@ -250,7 +251,7 @@ export const careersTeam = {
   ] as Voice[],
   strip: {
     text: 'O próximo testemunho de sucesso pode ser o seu.',
-    cta: { label: 'Ver oportunidades', href: `#${anchors.roles}` },
+    cta: { label: 'Enviar candidatura', href: `#${anchors.apply}` },
   },
 };
 
