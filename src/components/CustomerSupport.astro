@@ -245,8 +245,9 @@ import Icon from './Icon.astro';
 </style>
 
 <script>
-  import { getReply, getWelcome, flows, composeLead, validateAnswer, buildLeadPayload, type BotReply, type Chip, type FlowId } from '../data/supportResponses';
-  import { quickStart, contacts } from '../data/supportKnowledge';
+  import { getReply, getWelcome, flows, buildLeadPayload, navChips, humanChips, stepKind, type BotReply, type Chip, type FlowId, type Lang } from '../data/supportResponses';
+  import { classifyMessage, extractSlots, slotsToAnswers, stepExpectation, detectLang, isFrustrated, type Slots } from '../data/supportRouter';
+  import { contacts } from '../data/supportKnowledge';
 
   const root = document.querySelector<HTMLElement>('[data-cs]');
   if (!root) {
@@ -261,10 +262,29 @@ import Icon from './Icon.astro';
     const thread = root.querySelector<HTMLElement>('[data-cs-thread]');
     const form = root.querySelector<HTMLFormElement>('[data-cs-form]');
     const field = root.querySelector<HTMLInputElement>('[data-cs-text]');
+    const sendBtn = root.querySelector<HTMLButtonElement>('.cs__send');
+    // Lock the composer while a lead is being delivered so the user can't type
+    // or cancel mid-send (which would race the pending state / abort a request
+    // the server may already have processed).
+    const setComposerEnabled = (on: boolean) => {
+      if (field) field.disabled = !on;
+      if (sendBtn) sendBtn.disabled = !on;
+    };
 
+    type Flow = { id: FlowId; step: number; answers: Record<string, string> };
     let started = false;
-    let flow: { id: FlowId; step: number; answers: Record<string, string> } | null = null;
+    let flow: Flow | null = null; // active lead-capture flow
+    let suspended: Flow | null = null; // flow paused by an interruption
+    let resumeOffered = false; // don't nag about resuming
     let chain: Promise<void> = Promise.resolve();
+    // Concurrency: every user input bumps `turn`; queued/in-flight bot output
+    // from an older turn is invalidated so a stale reply never lands after a
+    // newer message. The newest user message always wins.
+    let turn = 0;
+    // Language the assistant replies in — sticky, updated when a message is
+    // confidently detected as PT or EN (the newest signal wins).
+    let lang: Lang = 'pt';
+    const t = (pt: string, en: string) => (lang === 'en' ? en : pt);
 
     /* ---------- panel open/close ---------- */
     const open = () => {
@@ -330,7 +350,8 @@ import Icon from './Icon.astro';
 
       const chips: Chip[] = [...(reply.chips ?? [])];
       const stepChips = (reply.stepChips ?? []).map((label) => ({ label, answer: true } as Chip & { answer: boolean }));
-      const all = [...stepChips, ...chips] as (Chip & { answer?: boolean })[];
+      // At most 4 quick options (free text is always available via the input).
+      const all = [...stepChips, ...chips].slice(0, 4) as (Chip & { answer?: boolean })[];
       if (all.length) {
         const row = document.createElement('div');
         row.className = 'cs__chips';
@@ -347,6 +368,7 @@ import Icon from './Icon.astro';
             if (c.flow) b.dataset.flow = c.flow;
             if (c.send) b.dataset.send = c.send;
             if (c.consent) b.dataset.consent = c.consent;
+            if (c.action) b.dataset.action = c.action;
             row.appendChild(b);
           }
         }
@@ -355,183 +377,449 @@ import Icon from './Icon.astro';
       scrollDown();
     }
 
-    // Queue a bot message behind a short typing indicator (sequential).
+    // Queue a bot message behind a short typing indicator (sequential). Tagged
+    // with the turn it was enqueued in: if a newer user message arrives first,
+    // the message is dropped instead of rendering out of order.
     function botSay(reply: BotReply & { stepChips?: string[] }) {
+      const myTurn = turn;
       chain = chain.then(
         () =>
           new Promise<void>((resolve) => {
-            if (!thread) return resolve();
+            if (!thread || myTurn !== turn) return resolve(); // stale → skip
             const typing = document.createElement('div');
             typing.className = 'cs__msg cs__msg--bot cs__typing';
             typing.innerHTML = '<span></span><span></span><span></span>';
             thread.appendChild(typing);
             scrollDown();
-            window.setTimeout(() => { typing.remove(); renderBot(reply); resolve(); }, 440);
+            window.setTimeout(() => {
+              typing.remove();
+              if (myTurn === turn) renderBot(reply); // re-check at render time
+              resolve();
+            }, 440);
           }),
       );
     }
 
-    /* ---------- conversation logic ---------- */
-    function greet() {
-      botSay({ ...getWelcome(), chips: quickStart.map((q) => ({ label: q.label, flow: q.flow as FlowId | undefined, send: q.send })) });
+    /* ---------- shared helpers (bilingual) ---------- */
+    function objectiveLabel(id: FlowId): string {
+      const m: Record<FlowId, [string, string]> = {
+        comprar: ['a procura de imóvel', 'your property search'],
+        vender: ['a venda', 'the sale'],
+        alugar: ['o arrendamento', 'the rental'],
+        avaliacao: ['o pedido de avaliação', 'your valuation request'],
+        visita: ['a marcação da visita', 'the viewing'],
+        carreira: ['a candidatura', 'your application'],
+      };
+      return t(m[id][0], m[id][1]);
+    }
+    function objectiveShort(id: FlowId): string {
+      const m: Record<FlowId, [string, string]> = {
+        comprar: ['Comprar', 'Buy'],
+        vender: ['Vender', 'Sell'],
+        alugar: ['Arrendar', 'Rent'],
+        avaliacao: ['Avaliação', 'Valuation'],
+        visita: ['Visita', 'Viewing'],
+        carreira: ['Candidatura', 'Application'],
+      };
+      return t(m[id][0], m[id][1]);
     }
 
-    function startFlow(id: FlowId) {
+    // Trim a knowledge reply to a short chat answer: keep the opening prose,
+    // drop bullet/emoji list lines, cap at ~45 words on a sentence boundary.
+    function concise(text: string): string {
+      const firstBlock = text.split('\n\n')[0];
+      const prose = firstBlock
+        .split('\n')
+        .filter((l) => !/^\s*[•\-📞📍📝⏰💬📧🏆]/.test(l))
+        .join(' ')
+        .replace(/\s+/g, ' ')
+        .trim();
+      const base = (prose || firstBlock.replace(/\s+/g, ' ').trim()).replace(/:\s*$/, '.');
+      const words = base.split(' ');
+      if (words.length <= 45) return base;
+      let out = words.slice(0, 45).join(' ');
+      const cut = Math.max(out.lastIndexOf('. '), out.lastIndexOf('! '), out.lastIndexOf('? '));
+      out = cut > 24 ? out.slice(0, cut + 1) : out.replace(/[,;:]?\s*\S*$/, '') + '…';
+      return out;
+    }
+
+    function replyConcise(userText: string): BotReply {
+      const r = getReply(userText, lang);
+      return { text: concise(r.text), chips: r.chips, cta: r.cta };
+    }
+
+    function deliverConcise(reply: BotReply) {
+      botSay({ text: concise(reply.text), chips: reply.chips, cta: reply.cta });
+      if (reply.flow) startFlow(reply.flow, {});
+    }
+
+    /* ---------- flow lifecycle ---------- */
+    function greet() {
+      botSay({ ...getWelcome(lang), chips: navChips(lang) });
+    }
+
+    function startFlow(id: FlowId, prefill: Slots) {
       flow = { id, step: 0, answers: {} };
-      botSay({ text: flows[id].intro });
-      askStep();
+      suspended = null;
+      resumeOffered = false;
+      Object.assign(flow.answers, slotsToAnswers(id, prefill)); // skip what we know
+      botSay({ text: flows[id].intro[lang] });
+      advanceOrAsk();
+    }
+
+    // The zone the user has already given (to personalize later questions).
+    function zoneAnswered(): string | null {
+      if (!flow) return null;
+      for (const step of flows[flow.id].steps) {
+        if (stepExpectation(step.key) === 'zone' && flow.answers[step.key]) return flow.answers[step.key];
+      }
+      return null;
     }
 
     function askStep() {
       if (!flow) return;
       const step = flows[flow.id].steps[flow.step];
-      botSay({ text: step.question, stepChips: step.chips });
+      let q = step.question[lang];
+      // Personalize with what we already know: reference the given zone once,
+      // on the typology step (reads naturally: "…em Foz?" / "…in Foz?").
+      const zone = zoneAnswered();
+      if (zone && stepExpectation(step.key) === 'typology') q = q.replace(/\?\s*$/, t(` em ${zone}?`, ` in ${zone}?`));
+      botSay({ text: q, stepChips: step.chips?.[lang] });
     }
 
-    // Pending lead awaiting an explicit consent tap before it is delivered.
-    // submissionId is minted once here and reused across retries so the
-    // server's Idempotency-Key dedupes a resent lead.
-    let pending: { flowId: FlowId; answers: Record<string, string>; summary: string; closing: string; submissionId: string } | null = null;
-    let sending = false;
-
-    function answerStep(value: string) {
+    // Ask the next unanswered step, skipping any pre-filled ones; when every
+    // step is answered, move to the consent gate.
+    function advanceOrAsk() {
       if (!flow) return;
       const f = flows[flow.id];
-      const step = f.steps[flow.step];
-      const v = value.trim();
-
-      // Intelligence: validate the answer for this step. A question or garbage
-      // typed at the name/contact step is NOT stored — we answer (if it was a
-      // question) and re-ask, so a lead never gets a bogus name/contact.
-      const check = validateAnswer(step.key, v);
-      if (!check.ok) {
-        if (check.answerQuestion) {
-          const r = getReply(v);
-          // Answer WITHOUT starting a nested flow (drop reply.flow).
-          botSay({ text: r.text, chips: r.chips, cta: r.cta });
-        }
-        botSay({ text: check.hint ?? step.question, stepChips: step.chips });
-        return; // stay on the same step
-      }
-
-      flow.answers[step.key] = v;
-      flow.step += 1;
+      while (flow.step < f.steps.length && flow.answers[f.steps[flow.step].key]) flow.step += 1;
       if (flow.step < f.steps.length) { askStep(); return; }
-      // All answers collected — hold the lead and ask for explicit consent
-      // (with a link to /privacidade) before sending any personal data.
-      const lead = composeLead(flow.id, flow.answers);
-      pending = {
-        flowId: flow.id,
-        answers: { ...flow.answers },
-        summary: lead.lines.join('\n'),
-        closing: lead.closing,
-        submissionId: crypto.randomUUID(),
-      };
+      beginConsent();
+    }
+
+    /* ---------- lead delivery (consent + Resend, idempotent) ---------- */
+    let pending: { flowId: FlowId; answers: Record<string, string>; submissionId: string } | null = null;
+    let sending = false;
+    let sendAbort: AbortController | null = null;
+
+    // Only the confirmed, non-personal details (objective · zone · typology…),
+    // shown before asking to send.
+    function confirmedSummary(flowId: FlowId, answers: Record<string, string>): string {
+      const bits: string[] = [objectiveShort(flowId)];
+      for (const step of flows[flowId].steps) {
+        const v = answers[step.key];
+        if (v && stepKind(step.key) === 'free') bits.push(v);
+      }
+      const name = answers['Nome'];
+      return bits.join(' · ') + (name ? ` — ${name}` : '');
+    }
+
+    function beginConsent() {
+      if (!flow) return;
+      pending = { flowId: flow.id, answers: { ...flow.answers }, submissionId: crypto.randomUUID() };
       flow = null;
+      suspended = null;
       askConsent();
     }
 
     function askConsent() {
+      if (!pending) return;
+      const summary = confirmedSummary(pending.flowId, pending.answers);
       botSay({
-        text:
-          'Só falta a sua autorização. Ao enviar, autoriza o contacto da Collection Vintage sobre este pedido e o tratamento dos seus dados, nos termos da Política de Privacidade.',
-        cta: { label: 'Política de Privacidade', href: '/privacidade' },
+        text: t(
+          `Confirmo: ${summary}. Autoriza que envie à equipa? (nos termos da Política de Privacidade)`,
+          `To confirm: ${summary}. May I send this to the team? (per our Privacy Policy)`,
+        ),
+        cta: { label: t('Política de Privacidade', 'Privacy Policy'), href: '/privacidade' },
         chips: [
-          { label: 'Autorizo e enviar', consent: 'send' },
-          { label: 'Cancelar', consent: 'cancel' },
+          { label: t('Autorizar e enviar', 'Authorise and send'), consent: 'send' },
+          { label: t('Cancelar', 'Cancel'), consent: 'cancel' },
         ],
       });
     }
 
-    async function handleConsent(action: string, label: string) {
+    async function handleConsent(action: string) {
       if (action === 'cancel') {
-        userSay(label);
         pending = null;
-        botSay({
-          text: 'Sem problema — não enviámos nada. Se preferir, pode ligar-nos ou usar a página de contacto.',
-          chips: [{ label: 'Ligar', href: contacts.phoneHref }, { label: 'Página de contacto', href: '/contacto' }],
-        });
+        sendAbort?.abort();
+        botSay({ text: t('Sem problema, não enviei nada. Em que mais posso ajudar?', 'No problem, I haven’t sent anything. How else can I help?'), chips: navChips(lang) });
         return;
       }
-      if (action === 'send') userSay(label);
-      await sendLead();
+      await sendLead(); // 'send' or 'retry'
     }
 
-    // Deliver the chat lead through the same server-side endpoint every form
-    // uses. Uses buildLeadPayload (intelligent name/contact mapping) and adds
-    // the stable submission_id for idempotency. The confirmation is shown ONLY
-    // after the server confirms real delivery (delivered:true); on failure the
+    // Success is shown ONLY after the server confirms real delivery
+    // (delivered:true), and only if it is still the newest turn; on failure the
     // pending lead is kept so the user can retry with a single tap.
     async function sendLead() {
       if (!pending || sending) return; // block double-send while in flight
       sending = true;
+      setComposerEnabled(false); // lock the composer for the whole round-trip
+      sendAbort = new AbortController();
       try {
         const payload = buildLeadPayload(pending.flowId, pending.answers);
         const res = await fetch('/api/lead', {
           method: 'POST',
           headers: { 'Content-Type': 'application/json' },
           body: JSON.stringify({ ...payload, submission_id: pending.submissionId }),
+          signal: sendAbort.signal,
         });
         const data = await res.json().catch(() => ({}));
         if (res.ok && data.delivered === true) {
-          const done = pending;
           pending = null;
-          sending = false;
-          botSay({
-            text: done.closing + '\n\n' + done.summary,
-            chips: [{ label: 'Ligar', href: contacts.phoneHref }, { label: 'Página de contacto', href: '/contacto' }],
-          });
+          botSay({ text: t('Enviado. A equipa entra em contacto em breve, normalmente em 24h.', 'Sent. The team will be in touch shortly, usually within 24h.'), chips: humanChips(lang) });
           return;
         }
         throw new Error('not delivered');
-      } catch {
-        sending = false;
+      } catch (e) {
+        if ((e as { name?: string })?.name === 'AbortError') return; // superseded
         botSay({
-          text: 'Não consegui enviar o seu pedido agora. Pode tentar novamente ou contactar-nos diretamente.',
-          chips: [
-            { label: 'Tentar novamente', consent: 'retry' },
-            { label: 'Ligar', href: contacts.phoneHref },
-          ],
+          text: t('Não consegui enviar agora. Pode tentar novamente ou contactar-nos diretamente.', 'I couldn’t send it just now. You can try again or contact us directly.'),
+          chips: [{ label: t('Tentar novamente', 'Try again'), consent: 'retry' }, { label: t('Ligar', 'Call'), href: contacts.phoneHref }],
         });
+      } finally {
+        sending = false;
+        setComposerEnabled(true);
       }
     }
 
-    function deliver(reply: BotReply) {
-      botSay(reply);
-      if (reply.flow) startFlow(reply.flow);
+    /* ---------- interruption / resume ---------- */
+    function offerResume() {
+      if (!suspended || resumeOffered) return; // ask once, never nag
+      resumeOffered = true;
+      botSay({
+        text: t(`Quer retomar ${objectiveLabel(suspended.id)}?`, `Would you like to resume ${objectiveLabel(suspended.id)}?`),
+        chips: [{ label: t('Retomar', 'Resume'), action: 'resume' }, { label: t('Não, obrigado', 'No, thanks'), action: 'dismiss' }],
+      });
     }
 
-    function handleUser(text: string) {
-      const t = text.trim();
-      if (!t) return;
-      userSay(t);
+    function resumeFlow() {
+      if (!suspended) return;
+      flow = suspended;
+      suspended = null;
+      resumeOffered = false;
+      botSay({ text: t('Com certeza, retomamos.', 'Of course, let’s resume.') });
+      askStep();
+    }
+
+    /* ---------- decision handlers (one per classification) ---------- */
+    function doAnswer(text: string) {
+      if (!flow) return;
+      const step = flows[flow.id].steps[flow.step];
+      const exp = stepExpectation(step.key);
+      const slots = extractSlots(text);
+      const raw = text.trim();
+      // Keep the user's own words when they give a range or alternatives
+      // ("T3 ou T4", "500-800 mil"); otherwise store the tidy extracted value.
+      const multi = /\b(ou|or|entre|between)\b|,|\/|\d\s*[–—-]\s*\d/i.test(raw);
+      let value = raw;
+      if (!multi) {
+        if (exp === 'zone' && slots.zone) value = slots.zone;
+        else if (exp === 'typology' && slots.typology) value = slots.typology;
+        else if (exp === 'budget' && slots.budget) value = slots.budget;
+      }
+      flow.answers[step.key] = value;
+      flow.step += 1;
+      advanceOrAsk();
+    }
+
+    function doNav(command: 'cancel' | 'restart' | 'back' | 'human') {
+      if (command === 'cancel') {
+        flow = null; suspended = null; pending = null; sendAbort?.abort();
+        botSay({ text: t('Sem problema, cancelei. Em que mais posso ajudar?', 'No problem, cancelled. How else can I help?'), chips: navChips(lang) });
+        return;
+      }
+      if (command === 'restart') {
+        flow = null; suspended = null; pending = null; resumeOffered = false;
+        botSay({ text: t('Vamos recomeçar. Comprar, vender, arrendar ou avaliar um imóvel?', 'Let’s start over. Buying, selling, renting or valuing a property?'), chips: navChips(lang) });
+        return;
+      }
+      if (command === 'back') {
+        if (flow && flow.step > 0) { flow.step -= 1; askStep(); return; }
+        if (flow) { botSay({ text: t('Estamos na primeira pergunta.', 'We’re on the first question.') }); askStep(); return; }
+        if (suspended) { resumeFlow(); return; }
+        botSay({ text: t('Não há nada em curso para retomar. Em que posso ajudar?', 'There’s nothing in progress to resume. How can I help?'), chips: navChips(lang) });
+        return;
+      }
+      // human hand-off — suspend the flow so it can still be resumed.
+      if (flow) { suspended = flow; flow = null; }
+      botSay({ text: t('Com certeza. Fale diretamente com a nossa equipa:', 'Of course. Speak directly with our team:'), chips: humanChips(lang) });
+      offerResume();
+    }
+
+    function doDecline() {
+      if (flow) { suspended = flow; flow = null; }
+      const chips: Chip[] = [...humanChips(lang)];
+      if (suspended) chips.push({ label: t('Continuar', 'Continue'), action: 'resume' });
+      chips.push({ label: t('Cancelar', 'Cancel'), action: 'cancel' });
+      botSay({ text: t('Sem problema, não é obrigatório. Prefere falar diretamente com a equipa?', 'No problem, it’s not required. Would you rather speak with the team directly?'), chips });
+    }
+
+    function doClarify() {
+      if (flow) {
+        const step = flows[flow.id].steps[flow.step];
+        botSay({ text: t('Peço desculpa. ', 'Apologies. ') + step.question[lang], stepChips: step.chips?.[lang] });
+        return;
+      }
+      botSay({ text: t('Desculpe — pode reformular? Ajudo com compra, venda, arrendamento ou avaliação.', 'Sorry — could you rephrase? I can help with buying, selling, renting or valuation.'), chips: navChips(lang) });
+    }
+
+    function doSwitch(objective: FlowId, slots: Slots) {
+      // Carry over compatible details (zone / typology / budget) so the user
+      // doesn't repeat them after changing objective.
+      const carried: Slots = { zone: slots.zone, typology: slots.typology, budget: slots.budget };
+      if (flow) {
+        for (const step of flows[flow.id].steps) {
+          const v = flow.answers[step.key];
+          if (!v) continue;
+          const exp = stepExpectation(step.key);
+          if (exp === 'zone' && !carried.zone) carried.zone = v;
+          if (exp === 'typology' && !carried.typology) carried.typology = v;
+          if (exp === 'budget' && !carried.budget) carried.budget = v;
+        }
+      }
+      flow = null; suspended = null;
+      startFlow(objective, carried);
+    }
+
+    function doCorrection(slots: Slots) {
+      if (!flow) { doQuestion('', slots); return; }
+      const applied: string[] = [];
+      for (const step of flows[flow.id].steps) {
+        const exp = stepExpectation(step.key);
+        if (exp === 'zone' && slots.zone) { flow.answers[step.key] = slots.zone; applied.push(slots.zone); }
+        if (exp === 'typology' && slots.typology) { flow.answers[step.key] = slots.typology; applied.push(slots.typology); }
+        if (exp === 'budget' && slots.budget) { flow.answers[step.key] = slots.budget; applied.push(slots.budget); }
+      }
+      botSay({ text: applied.length ? t(`Corrigido: ${applied.join(', ')}.`, `Updated: ${applied.join(', ')}.`) : t('Anotado.', 'Noted.') });
+      advanceOrAsk();
+    }
+
+    function doQuestion(text: string, slots: Slots) {
+      if (flow) {
+        // Interruption: suspend the flow silently, answer first, then offer to
+        // resume — never auto-advance to the next question.
+        if (!suspended) suspended = flow;
+        flow = null;
+        if (text) botSay(replyConcise(text));
+        offerResume();
+        return;
+      }
+      if (slots.objective) { startFlow(slots.objective, slots); return; }
+      deliverConcise(getReply(text, lang));
+    }
+
+    function doAmbiguous() {
+      if (flow) {
+        const step = flows[flow.id].steps[flow.step];
+        botSay({ text: t('Desculpe, não percebi bem. ', 'Sorry, I didn’t quite get that. ') + step.question[lang], stepChips: step.chips?.[lang] });
+        return;
+      }
+      botSay({
+        text: t('Posso passá-lo à equipa, ou diga-me se procura comprar, vender ou arrendar.', 'I can put you through to the team, or tell me if you’re looking to buy, sell or rent.'),
+        chips: [...navChips(lang).slice(0, 2), ...humanChips(lang)],
+      });
+    }
+
+    function onAction(action: string) {
+      if (action === 'resume') { resumeFlow(); return; }
+      if (action === 'dismiss') {
+        suspended = null; resumeOffered = false;
+        botSay({ text: t('Combinado. Em que mais posso ajudar?', 'Sure. How else can I help?'), chips: navChips(lang) });
+        return;
+      }
+      if (action === 'cancel') { doNav('cancel'); return; }
+      if (action === 'restart') { doNav('restart'); return; }
+      if (action === 'human') { doNav('human'); return; }
+    }
+
+    // A lead is awaiting consent and the user typed instead of tapping: honour
+    // cancel / human, answer a question, but never lose the pending lead.
+    function handleConsentInterruption(text: string) {
+      const c = classifyMessage(text, { inFlow: false });
+      if (c.kind === 'nav' && c.command === 'cancel') {
+        pending = null; sendAbort?.abort();
+        botSay({ text: t('Sem problema, não enviei nada. Em que mais posso ajudar?', 'No problem, I haven’t sent anything. How else can I help?'), chips: navChips(lang) });
+        return;
+      }
+      if (c.kind === 'nav' && c.command === 'human') {
+        botSay({
+          text: t('Com certeza — fale já com a equipa, ou confirme o envio do seu pedido:', 'Of course — speak with the team now, or confirm sending your request:'),
+          chips: [...humanChips(lang), { label: t('Autorizar e enviar', 'Authorise and send'), consent: 'send' }, { label: t('Cancelar', 'Cancel'), consent: 'cancel' }],
+        });
+        return;
+      }
+      // Answer the question but WITHOUT its chips — while a lead awaits consent
+      // the only actionable chips must be the consent ones (re-rendered below).
+      if (c.kind === 'question') botSay({ text: replyConcise(text).text });
+      askConsent(); // re-present the gate so the pending lead survives
+    }
+
+    /* ---------- the router: re-classify EVERY message ---------- */
+    function route(text: string) {
+      const msg = text.trim();
+      if (!msg) return;
+      turn += 1; // newest input wins; invalidates queued/in-flight bot output
+      const detected = detectLang(msg); // adapt to the visitor's language (sticky)
+      if (detected) lang = detected;
+      userSay(msg);
       clearChips();
-      // A lead is waiting for an explicit consent tap — don't lose it if the
-      // user types instead of tapping; re-present the consent gate.
-      if (pending) { askConsent(); return; }
-      if (flow) { answerStep(t); return; }
-      deliver(getReply(t));
+
+      if (pending) { handleConsentInterruption(msg); return; }
+
+      const step = flow ? flows[flow.id].steps[flow.step] : null;
+      const ctx = flow
+        ? { inFlow: true, flowId: flow.id, stepKey: step!.key, answeredKeys: Object.keys(flow.answers) }
+        : { inFlow: false };
+      const c = classifyMessage(msg, ctx);
+
+      // Frustrated visitor: acknowledge once and redirect — but not when the
+      // message already routes to an empathetic handler (problem / human),
+      // which would apologise a second time ("não se justificar em excesso").
+      const empathetic =
+        (c.kind === 'nav' && c.command === 'human') ||
+        (c.kind === 'question' && (c.intent === 'problema' || c.intent === 'humano'));
+      if (isFrustrated(msg) && !empathetic) {
+        botSay({ text: t('Lamento — vou ajudá-lo já.', 'Sorry about that — let me help right away.') });
+      }
+
+      switch (c.kind) {
+        case 'nav': doNav(c.command); return;
+        case 'decline': doDecline(); return;
+        case 'clarify': doClarify(); return;
+        case 'switch': doSwitch(c.objective, c.slots); return;
+        case 'correction': doCorrection(c.slots); return;
+        case 'answer': doAnswer(msg); return;
+        case 'question': doQuestion(msg, c.slots); return;
+        case 'ambiguous': doAmbiguous(); return;
+      }
     }
 
     /* ---------- input + chip events ---------- */
     form?.addEventListener('submit', (e) => {
       e.preventDefault();
-      if (!field) return;
+      if (!field || sending) return; // ignore input while a lead is being sent
       const v = field.value;
       field.value = '';
-      handleUser(v);
+      route(v);
     });
 
     thread?.addEventListener('click', (e) => {
       const target = e.target as HTMLElement;
       const btn = target.closest('button.cs__chip') as HTMLButtonElement | null;
-      if (!btn) return;
+      if (!btn || sending) return; // ignore taps while a lead is being sent
       const label = btn.textContent ?? '';
       clearChips();
-      if (btn.dataset.answer) { userSay(label); answerStep(label); return; }
-      if (btn.dataset.flow) { userSay(label); startFlow(btn.dataset.flow as FlowId); return; }
-      if (btn.dataset.send) { userSay(label); deliver(getReply(btn.dataset.send)); return; }
-      if (btn.dataset.consent) { handleConsent(btn.dataset.consent, label); return; }
+      // Every chip tap is a user turn — bump `turn` so older bot output drops.
+      if (btn.dataset.action) { turn += 1; onAction(btn.dataset.action); return; }
+      if (btn.dataset.consent) { turn += 1; userSay(label); handleConsent(btn.dataset.consent); return; }
+      // While a lead awaits consent, a stray flow/answer/send chip must not
+      // start a new flow off the still-live `pending` — route it through the
+      // consent interruption instead (mirrors the typed-message guard).
+      if (pending) { turn += 1; userSay(label); handleConsentInterruption(label); return; }
+      if (btn.dataset.answer) { turn += 1; userSay(label); doAnswer(label); return; }
+      if (btn.dataset.flow) { turn += 1; userSay(label); startFlow(btn.dataset.flow as FlowId, {}); return; }
+      if (btn.dataset.send) { turn += 1; userSay(label); deliverConcise(getReply(btn.dataset.send, lang)); return; }
     });
   }
 </script>
