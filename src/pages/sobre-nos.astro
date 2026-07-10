@@ -91,6 +91,7 @@ const aboutTestimonials = testimonials.slice(0, 3);
       <p class="ab-phil__quote" data-reveal>
         <span class="ab-phil__mark" aria-hidden="true"><Icon name="quote" size={34} stroke={1.3} /></span>
         Um imóvel distinto não deve entrar no mercado como <em class="em-gold serif-it">mais um anúncio</em>.
+        <span class="ab-phil__mark ab-phil__mark--close" aria-hidden="true"><Icon name="quote" size={34} stroke={1.3} /></span>
       </p>
       <div class="ab-phil__cols">
         <p class="ab-phil__col" data-reveal style="--reveal-delay:120ms">
@@ -281,6 +282,14 @@ const aboutTestimonials = testimonials.slice(0, 3);
   /* S3 — Filosofia */
   .ab-phil { text-align: center; }
   .ab-phil__mark { display: block; color: var(--gold-light); margin: 0 auto 18px; opacity: 0.8; }
+  /* Closing marks — bottom-right, mirroring the top-left opening pair.
+     The span is a full-width block with the glyph on its left edge, so a
+     180° rotation lands it on the right edge, upside down — exactly the
+     closing-quote position. */
+  .ab-phil__mark--close {
+    margin: 18px auto 0;
+    transform: rotate(180deg);
+  }
   .ab-phil__quote {
     font-family: var(--font-serif); font-weight: 500; font-size: clamp(28px, 4.2vw, 54px);
     line-height: 1.12; letter-spacing: -0.02em; color: var(--cream); max-width: 20ch; margin: 0 auto;
