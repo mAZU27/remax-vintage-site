@@ -14,8 +14,11 @@ import { EXTERNAL_LISTINGS_URL } from '../lib/site.config';
   <div class="hm__media" aria-hidden="true">
     <div class="hm__bg" data-hm-parallax>
       <picture>
+        {/* Exact complement of the mobile breakpoint — plain (min-width: 561px)
+            would leave fractional-zoom viewports in (560,561) matching neither
+            side and double-download the hero. */}
         <source
-          media="(min-width: 561px)"
+          media="not all and (max-width: 560px)"
           srcset="/media/hero-collection-768.jpg 768w, /media/hero-collection-1280.jpg 1280w, /media/hero-collection-1672.jpg 1672w"
           sizes="100vw"
         />
@@ -81,7 +84,7 @@ import { EXTERNAL_LISTINGS_URL } from '../lib/site.config';
           <Icon name="crown" size={19} stroke={1.3} />
           <span class="hm__benefit-title">Serviço bespoke</span>
         </span>
-        <p>Um serviço tão exclusivo quanto os imóveis.</p>
+        <p>Um serviço tão exclusivo como os imóveis.</p>
       </li>
     </ul>
 
@@ -135,7 +138,7 @@ import { EXTERNAL_LISTINGS_URL } from '../lib/site.config';
       position: absolute; inset: 0;
       background:
         linear-gradient(180deg, rgba(6, 12, 22, 0.78) 0%, rgba(6, 12, 22, 0.28) 20%, rgba(6, 12, 22, 0) 34%),
-        linear-gradient(115deg, rgba(6, 12, 22, 0.88) 0%, rgba(6, 12, 22, 0.55) 36%, rgba(6, 12, 22, 0.14) 64%, rgba(6, 12, 22, 0) 80%),
+        linear-gradient(115deg, rgba(6, 12, 22, 0.9) 0%, rgba(6, 12, 22, 0.62) 40%, rgba(6, 12, 22, 0.3) 66%, rgba(6, 12, 22, 0.1) 82%, rgba(6, 12, 22, 0) 92%),
         linear-gradient(to top, rgba(7, 13, 24, 0.94) 0%, rgba(7, 13, 24, 0.58) 24%, rgba(7, 13, 24, 0) 52%);
     }
     .hm__grain {
@@ -160,12 +163,16 @@ import { EXTERNAL_LISTINGS_URL } from '../lib/site.config';
     .hm__rule--bottom { width: 58px; margin-top: 26px; animation: hmRuleX 1000ms var(--t-ease-emph) 900ms both; }
 
     .hm__title {
+      /* flex column: block siblings would COLLAPSE the negative margins below
+         and inflate the leading from 1.07 to ~1.17. */
+      display: flex; flex-direction: column; align-items: flex-start;
       margin: 20px 0 0; font-family: var(--font-serif); font-weight: 500;
       font-size: clamp(41px, 12vw, 54px); line-height: 1.07; letter-spacing: -0.02em;
-      text-shadow: 0 2px 30px rgba(0, 0, 0, 0.55);
+      text-shadow: 0 2px 22px rgba(0, 0, 0, 0.5);
     }
-    /* Masked line reveal — the padding/margin pair keeps «ç» descenders unclipped. */
-    .hm__line { display: block; overflow: hidden; padding-block: 0.1em; margin-block: -0.1em; }
+    /* Masked line reveal — the padding/margin pairs keep «ç» descenders and
+       the text-shadow bleed unclipped by the overflow mask. */
+    .hm__line { display: block; overflow: hidden; padding: 0.12em 0.45em; margin: -0.12em -0.45em; }
     .hm__line-in { display: block; transform: translateY(118%); animation: hmLineUp 950ms cubic-bezier(0.22, 1, 0.32, 1) both; }
     .hm__line:nth-child(1) .hm__line-in { animation-delay: 400ms; }
     .hm__line:nth-child(2) .hm__line-in { animation-delay: 520ms; }
@@ -192,38 +199,53 @@ import { EXTERNAL_LISTINGS_URL } from '../lib/site.config';
       font-size: 13px; font-weight: 500; letter-spacing: 0.22em; text-transform: uppercase;
       box-shadow: 0 20px 44px -20px rgba(0, 0, 0, 0.7), inset 0 1px 0 rgba(255, 255, 255, 0.12);
       transition: transform var(--t-fast), border-color var(--t-fast);
-      animation:
-        hmFadeUp 900ms var(--t-ease-emph) 1120ms both,
-        hmGlow 4200ms ease-in-out 2800ms infinite;
+      animation: hmFadeUp 900ms var(--t-ease-emph) 1120ms both;
     }
     .hm__cta:active { transform: scale(0.975); }
+    /* Breathing gold glow on a pseudo-element's OPACITY (compositor-only) —
+       animating box-shadow itself would repaint every frame, forever. */
+    .hm__cta::before {
+      content: ""; position: absolute; inset: 0; border-radius: inherit; pointer-events: none;
+      box-shadow: 0 0 30px -6px rgba(212, 187, 133, 0.4);
+      opacity: 0;
+      animation: hmGlow 4200ms ease-in-out 2800ms infinite;
+    }
     .hm__cta-arrow {
       flex-shrink: 0; width: 44px; height: 44px; border-radius: 50%; display: grid; place-items: center;
       border: 1px solid rgba(212, 187, 133, 0.65); background: rgba(212, 187, 133, 0.1);
       transition: transform var(--t-med), background var(--t-med);
     }
     .hm__cta:active .hm__cta-arrow { transform: translateX(3px); background: rgba(212, 187, 133, 0.2); }
-    /* One elegant sheen sweep once the button has settled. */
+    /* One elegant sheen sweep once the button has settled (transform-only). */
     .hm__cta::after {
       content: ""; position: absolute; top: 0; left: -130%; width: 55%; height: 100%;
       background: linear-gradient(100deg, transparent, rgba(255, 255, 255, 0.22), transparent);
       transform: skewX(-18deg); pointer-events: none;
       animation: hmSheen 1400ms ease 2300ms both;
     }
+    /* The global :focus-visible ring squares the radius and drowns in the
+       glow — give the new controls an explicit gold outline instead. */
+    .hm__cta:focus-visible, .hm__spot:focus-visible {
+      outline: 2px solid var(--gold-light); outline-offset: 3px;
+      box-shadow: none; border-radius: 999px;
+    }
+    .hm__spot:focus-visible { border-radius: 22px; }
 
     .hm__spacer { flex: 1 1 auto; min-height: clamp(56px, 14svh, 190px); }
 
     /* ---------- Benefit cards — one glass plate, three columns ---------- */
+    /* No backdrop-filter here nor on .hm__spot: they sit on the darkest scrim
+       band, so a higher-alpha navy reads the same and halves the per-frame
+       glass budget on low-end phones (nav + CTA keep the real blur). */
     .hm__benefits {
       list-style: none; margin: 0; padding: 16px 2px; width: 100%;
       display: grid; grid-template-columns: repeat(3, 1fr);
       border-radius: 20px; border: 1px solid rgba(176, 198, 230, 0.16);
-      background: linear-gradient(180deg, rgba(14, 29, 50, 0.6), rgba(8, 17, 31, 0.72));
-      -webkit-backdrop-filter: blur(16px) saturate(140%); backdrop-filter: blur(16px) saturate(140%);
+      background: linear-gradient(180deg, rgba(14, 29, 50, 0.82), rgba(8, 17, 31, 0.88));
       box-shadow: 0 24px 55px -28px rgba(0, 0, 0, 0.75), inset 0 1px 0 rgba(255, 255, 255, 0.1);
     }
     .hm__benefit {
-      padding: 2px 12px; display: flex; flex-direction: column; gap: 8px;
+      padding: 2px 12px; min-width: 0; display: flex; flex-direction: column; gap: 8px;
       animation: hmFadeUp 850ms var(--t-ease-emph) both;
     }
     .hm__benefit:nth-child(1) { animation-delay: 1300ms; }
@@ -236,6 +258,12 @@ import { EXTERNAL_LISTINGS_URL } from '../lib/site.config';
       font-weight: 500; line-height: 1.35;
     }
     .hm__benefit p { margin: 0; font-size: 11.5px; line-height: 1.5; color: var(--white-70); }
+    /* Very narrow phones — tighten the three columns so «Discrição» never overflows. */
+    @media (max-width: 374px) {
+      .hm__benefit { padding: 2px 9px; }
+      .hm__benefit-title { font-size: 9.5px; letter-spacing: 0.1em; }
+      .hm__benefit p { font-size: 11px; }
+    }
 
     /* ---------- Destaque microcard ---------- */
     .hm__spot {
@@ -243,8 +271,7 @@ import { EXTERNAL_LISTINGS_URL } from '../lib/site.config';
       display: flex; align-items: center; gap: 13px;
       padding: 11px 13px 11px 11px;
       border-radius: 22px; border: 1px solid rgba(176, 198, 230, 0.16);
-      background: linear-gradient(180deg, rgba(14, 29, 50, 0.64), rgba(8, 17, 31, 0.76));
-      -webkit-backdrop-filter: blur(16px) saturate(140%); backdrop-filter: blur(16px) saturate(140%);
+      background: linear-gradient(180deg, rgba(14, 29, 50, 0.84), rgba(8, 17, 31, 0.9));
       box-shadow: 0 24px 55px -28px rgba(0, 0, 0, 0.75), inset 0 1px 0 rgba(255, 255, 255, 0.1);
       text-decoration: none; color: var(--cream);
       transition: transform var(--t-fast);
@@ -296,16 +323,21 @@ import { EXTERNAL_LISTINGS_URL } from '../lib/site.config';
     to { transform: scale(1); }
   }
   @keyframes hmGlow {
-    0%, 100% { box-shadow: 0 20px 44px -20px rgba(0, 0, 0, 0.7), inset 0 1px 0 rgba(255, 255, 255, 0.12), 0 0 0 0 rgba(212, 187, 133, 0); }
-    50% { box-shadow: 0 20px 44px -20px rgba(0, 0, 0, 0.7), inset 0 1px 0 rgba(255, 255, 255, 0.12), 0 0 30px -6px rgba(212, 187, 133, 0.4); }
+    0%, 100% { opacity: 0; }
+    50% { opacity: 1; }
   }
   @keyframes hmSheen {
-    from { left: -130%; }
-    to { left: 160%; }
+    from { transform: skewX(-18deg) translateX(0); }
+    to { transform: skewX(-18deg) translateX(530%); }
   }
 
   @media (prefers-reduced-motion: reduce) {
-    .hm__cta { animation: none; }
+    /* The global reduce rule zeroes durations but NOT delays — with fill
+       "both" the staggered elements would still pop in one by one over ~1.7s.
+       Every base rule below renders fully visible, so none is safe. */
+    .hm__cta, .hm__cta::before, .hm__eyebrow, .hm__rule--top, .hm__rule--bottom,
+    .hm__lede, .hm__benefit, .hm__spot, .hm__img,
+    .nav .nav__inner { animation: none; }
     .hm__cta::after { display: none; }
     .hm__line-in { transform: none; animation: none; }
   }

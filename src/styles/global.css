@@ -73,6 +73,10 @@ html {
   scroll-behavior: smooth;
   -webkit-font-smoothing: antialiased;
   scroll-padding-top: calc(var(--nav-h) + 12px);
+  /* iOS Safari ignores overflow-x:hidden on <body> alone and still lets the
+     page pan sideways past any overflowing pixel (empty band on the right).
+     clip kills the pan without creating a scroll container. */
+  overflow-x: clip;
 }
 body {
   font-family: var(--font-sans);
@@ -143,6 +147,13 @@ em.em-gold, .em-gold { font-family: var(--font-serif); font-style: italic; color
   padding: 17px 32px; font-family: var(--font-sans); font-size: 14px; font-weight: 500;
   letter-spacing: 0.1em; text-transform: uppercase; text-decoration: none;
   border-radius: 2px; transition: background var(--t-med), color var(--t-med), transform var(--t-med), box-shadow var(--t-med); cursor: pointer; white-space: nowrap;
+  max-width: 100%;
+}
+/* Long CTA labels («Agendar uma conversa sem compromisso») exceed a phone's
+   width when nowrap — the overflow inflated body scrollWidth and let iOS pan
+   into an empty band on the right. Let them wrap on small screens. */
+@media (max-width: 560px) {
+  .btn { white-space: normal; text-align: center; }
 }
 .btn .arrow { transition: transform var(--t-med); }
 .btn:hover .arrow { transform: translateX(4px); }

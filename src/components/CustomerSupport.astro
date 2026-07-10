@@ -235,8 +235,10 @@ import Icon from './Icon.astro';
   .cs__foot :global(.icon) { color: var(--gold); }
 
   /* ---------- Mobile (not fullscreen-aggressive) ---------- */
+  /* Owner call: the launcher lives in the BOTTOM-RIGHT corner on phones
+     (the valuation pill owns bottom-left; centred it collided with both). */
   @media (max-width: 480px) {
-    .cs { left: 50%; right: auto; bottom: 16px; transform: translateX(-50%); gap: 12px; align-items: center; }
+    .cs { right: 12px; left: auto; bottom: 14px; gap: 12px; align-items: flex-end; }
     .cs__panel { width: calc(100vw - 24px); height: min(74svh, 600px); }
     .cs__fab { position: relative; width: 54px; height: 54px; }
   }

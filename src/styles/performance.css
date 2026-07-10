@@ -15,14 +15,11 @@ img {
   aspect-ratio: auto;
 }
 
-/* Enable GPU acceleration for smooth animations */
-[data-reveal],
-.pin,
-.bcard,
-.chip,
-.ts__track {
-  will-change: transform, opacity;
-}
+/* NOTE: no blanket will-change here. Promoting every [data-reveal]/.bcard/.pin
+   to its own permanent compositor layer exhausted iOS Safari's tile memory —
+   whole sections scrolled in as blank navy voids on iPhone. Transitions
+   composite fine on their own; reserve will-change for actively-animating
+   elements only. */
 
 /* Reduce repaints on hover */
 button,

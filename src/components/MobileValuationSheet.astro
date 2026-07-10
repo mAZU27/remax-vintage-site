@@ -44,11 +44,13 @@ import Icon from './Icon.astro';
   @media (max-width: 560px) {
     .vsheet {
       position: fixed; left: 12px; right: 12px;
-      /* Sits above the support fab (centred, bottom:16, 54px tall) and
-         BELOW the ValueSimulator overlay (z 1500) so the modal covers it. */
-      bottom: 92px; z-index: 1400;
+      /* Sits above the support fab position (centred, bottom:16, 54px tall) and
+         BELOW the nav/drawer (z 1000) and the ValueSimulator overlay (z 1500),
+         so the open menu and the modal always paint over it. */
+      bottom: 92px; z-index: 900;
       display: flex; flex-direction: column;
       padding: 14px 18px 14px;
+      max-height: calc(100svh - 110px); overflow-y: auto;
       border-radius: 24px; border: 1px solid rgba(176, 198, 230, 0.24);
       background: linear-gradient(180deg, rgba(16, 36, 61, 0.92), rgba(10, 23, 41, 0.94));
       -webkit-backdrop-filter: blur(22px) saturate(150%); backdrop-filter: blur(22px) saturate(150%);
@@ -69,8 +71,8 @@ import Icon from './Icon.astro';
       background: rgba(244, 237, 222, 0.28); margin-bottom: 10px;
     }
     .vsheet__close {
-      position: absolute; top: 12px; right: 12px;
-      width: 30px; height: 30px; border-radius: 50%;
+      position: absolute; top: 10px; right: 10px;
+      width: 36px; height: 36px; border-radius: 50%;
       display: grid; place-items: center; color: var(--white-70);
       background: rgba(255, 255, 255, 0.07); border: 1px solid rgba(176, 198, 230, 0.18);
       transition: background var(--t-fast), color var(--t-fast);
@@ -103,10 +105,13 @@ import Icon from './Icon.astro';
     .vsheet__cta:active .arrow { transform: translateX(3px); }
 
     .vsheet__alt {
-      margin-top: 12px; align-self: center;
+      margin-top: 4px; align-self: center;
       font-size: 12px; letter-spacing: 0.12em; text-transform: uppercase;
       color: var(--white-70); text-decoration: none;
-      padding-bottom: 2px; border-bottom: 1px solid rgba(244, 237, 222, 0.25);
+      /* generous padding = real tap target; the hairline sits on a child-less
+         inline so only the text is underlined */
+      padding: 10px 10px 8px;
+      border-bottom: 1px solid rgba(244, 237, 222, 0.25);
     }
     .vsheet__alt:active { color: var(--gold-light); border-color: var(--gold-light); }
 
@@ -115,12 +120,12 @@ import Icon from './Icon.astro';
       border-top: 1px solid rgba(244, 237, 222, 0.14);
       display: flex; justify-content: center; gap: 20px;
     }
-    .vsheet__meta li { display: inline-flex; align-items: center; gap: 7px; font-size: 11px; color: var(--white-50); letter-spacing: 0.03em; }
+    .vsheet__meta li { display: inline-flex; align-items: center; gap: 7px; font-size: 11px; color: var(--white-70); letter-spacing: 0.03em; }
     .vsheet__meta .icon { color: var(--gold-light); }
 
     /* ---------- Collapsed re-open pill ---------- */
     .vsheet-pill {
-      position: fixed; left: 14px; bottom: 18px; z-index: 1400;
+      position: fixed; left: 14px; bottom: 18px; z-index: 900;
       display: inline-flex; align-items: center; gap: 8px;
       padding: 11px 16px; border-radius: 999px;
       background: linear-gradient(180deg, rgba(16, 36, 61, 0.9), rgba(10, 23, 41, 0.92));
@@ -134,6 +139,18 @@ import Icon from './Icon.astro';
     .vsheet-pill[hidden] { display: none; }
     .vsheet-pill.is-in { transform: translateY(0); opacity: 1; }
     .vsheet-pill:active { transform: scale(0.96); }
+    /* Very narrow phones — icon-only so it never reaches the centred support fab. */
+    @media (max-width: 359px) {
+      .vsheet-pill { padding: 12px; }
+      .vsheet-pill span { display: none; }
+    }
+
+    /* The global :focus-visible ring squares the radius — explicit gold outline. */
+    .vsheet__cta:focus-visible, .vsheet__close:focus-visible,
+    .vsheet__alt:focus-visible, .vsheet-pill:focus-visible {
+      outline: 2px solid var(--gold-light); outline-offset: 3px;
+      box-shadow: none; border-radius: 999px;
+    }
   }
 </style>
 
@@ -162,6 +179,11 @@ import Icon from './Icon.astro';
       }
     };
 
+    const nav = document.querySelector<HTMLElement>('[data-nav]');
+    const simulator = document.querySelector<HTMLElement>('[data-vsim]');
+    const navIsOpen = () => nav?.hasAttribute('data-open') ?? false;
+    const simulatorIsOpen = () => (simulator ? !simulator.hidden : false);
+
     const showPill = () => {
       pill.hidden = false;
       requestAnimationFrame(() => requestAnimationFrame(() => pill.classList.add('is-in')));
@@ -180,52 +202,100 @@ import Icon from './Icon.astro';
       if (remember) rememberDismissed();
       sheet.classList.remove('is-in');
       hideTimer = window.setTimeout(() => {
+        // Hand keyboard/AT focus to the pill instead of dropping it on <body>.
+        const hadFocus = sheet.contains(document.activeElement);
         sheet.hidden = true;
         showPill();
+        if (hadFocus) pill.focus();
       }, 550);
     };
 
     // Auto-reveal once per session, after the hero choreography settles.
+    // While the nav drawer is open the reveal re-arms instead of firing under it.
+    const armAutoShow = (delay: number) => {
+      window.setTimeout(() => {
+        if (!mqMobile.matches || !sheet.hidden || !pill.hidden) return;
+        if (wasDismissed()) return;
+        if (navIsOpen()) {
+          armAutoShow(3000);
+          return;
+        }
+        showSheet();
+      }, delay);
+    };
     if (wasDismissed()) {
       if (mqMobile.matches) showPill();
     } else {
-      window.setTimeout(() => {
-        if (mqMobile.matches && sheet.hidden) showSheet();
-      }, 3800);
+      armAutoShow(3800);
     }
+    // Loading in landscape/desktop width and rotating into ≤560px later.
+    mqMobile.addEventListener('change', (e) => {
+      if (!e.matches || !sheet.hidden || !pill.hidden) return;
+      if (wasDismissed()) showPill();
+      else armAutoShow(600);
+    });
 
     sheet.querySelector('[data-vsheet-close]')?.addEventListener('click', () => hideSheet(true));
     pill.addEventListener('click', () => {
       hidePill();
       showSheet();
-    });
-    // Opening the simulator supersedes the sheet — collapse it underneath.
-    sheet.querySelector('[data-open-simulator]')?.addEventListener('click', () => hideSheet(true));
-    document.addEventListener('keydown', (e) => {
-      if (e.key === 'Escape' && !sheet.hidden && sheet.classList.contains('is-in')) hideSheet(true);
+      sheet.querySelector<HTMLButtonElement>('[data-vsheet-close]')?.focus();
     });
 
-    // Swipe-down to dismiss.
+    // «Pedir avaliação» opens the ValueSimulator (z 1500) OVER the sheet; the
+    // sheet stays put underneath so the modal's focus-restore lands on a
+    // visible trigger, and only collapses once the modal closes.
+    let collapseAfterSimulator = false;
+    sheet.querySelector('[data-open-simulator]')?.addEventListener('click', () => {
+      rememberDismissed();
+      collapseAfterSimulator = true;
+    });
+    if (simulator) {
+      new MutationObserver(() => {
+        if (simulator.hidden && collapseAfterSimulator) {
+          collapseAfterSimulator = false;
+          if (!sheet.hidden) hideSheet(false);
+        }
+      }).observe(simulator, { attributes: true, attributeFilter: ['hidden'] });
+    }
+
+    document.addEventListener('keydown', (e) => {
+      if (e.key !== 'Escape') return;
+      // The simulator (or the open menu) owns Escape while it is up.
+      if (simulatorIsOpen() || navIsOpen()) return;
+      if (!sheet.hidden && sheet.classList.contains('is-in')) hideSheet(true);
+    });
+
+    // Swipe-down to dismiss — engages only after clear downward intent, so a
+    // tap never snaps the entrance/exit transition.
     let startY = 0;
     let delta = 0;
+    let dragging = false;
     sheet.addEventListener(
       'touchstart',
       (e) => {
         startY = e.touches[0].clientY;
         delta = 0;
-        sheet.classList.add('is-drag');
+        dragging = false;
       },
       { passive: true }
     );
     sheet.addEventListener(
       'touchmove',
       (e) => {
+        if (!sheet.classList.contains('is-in')) return;
         delta = Math.max(0, e.touches[0].clientY - startY);
-        sheet.style.transform = `translateY(${delta}px)`;
+        if (!dragging && delta > 6) {
+          dragging = true;
+          sheet.classList.add('is-drag');
+        }
+        if (dragging) sheet.style.transform = `translateY(${delta}px)`;
       },
       { passive: true }
     );
     sheet.addEventListener('touchend', () => {
+      if (!dragging) return;
+      dragging = false;
       sheet.classList.remove('is-drag');
       sheet.style.transform = '';
       if (delta > 70) hideSheet(true);

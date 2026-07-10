@@ -81,7 +81,10 @@ const articleSchema = [
 </Base>
 
 <style>
-  .art { padding: calc(var(--nav-h) + 40px) 0 clamp(70px, 9vw, 130px); }
+  /* Horizontal gutter is essential: .container has no side padding of its
+     own, so without it the article text/images touch the viewport edges on
+     any screen narrower than the column. */
+  .art { padding: calc(var(--nav-h) + 40px) var(--gutter) clamp(70px, 9vw, 130px); }
   .art__back {
     display: inline-flex; align-items: center; gap: 9px; text-decoration: none; color: var(--ink-60);
     font-size: 13px; letter-spacing: 0.06em; text-transform: uppercase; transition: color var(--t-fast);

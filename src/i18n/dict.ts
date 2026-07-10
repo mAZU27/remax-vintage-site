@@ -1427,4 +1427,31 @@ export const en: Record<string, string> = {
   'Objetivo: Pedido de avaliação': 'Goal: Valuation request',
   'Objetivo: Marcar visita': 'Goal: Book a viewing',
   'Objetivo: Carreira / candidatura': 'Goal: Career / application',
+
+  // ---------- Hero mobile (≤560px) + valuation sheet ----------
+  // The headline renders as three masked lines → three separate text nodes.
+  'A coleção': 'The collection',
+  'mais exclusiva': 'at its most exclusive',
+  'do': 'in',
+  'Porto.': 'Porto.',
+  'Imóveis extraordinários para quem valoriza o que é verdadeiramente raro.':
+    'Extraordinary properties for those who value the truly rare.',
+  'Seleção curada': 'Curated selection',
+  'Imóveis únicos. Padrão incomparável.': 'Unique properties. An unmatched standard.',
+  'Discrição absoluta': 'Absolute discretion',
+  'Privacidade total em cada negociação.': 'Total privacy in every negotiation.',
+  'Serviço bespoke': 'Bespoke service',
+  'Um serviço tão exclusivo como os imóveis.': 'A service as exclusive as the properties.',
+  'Destaque': 'Featured',
+  'Imóveis de exceção no Porto': 'Exceptional properties in Porto',
+  'RE/MAX Collection Vintage — a coleção mais exclusiva do Porto':
+    'RE/MAX Collection Vintage — the most exclusive collection in Porto',
+  // Sheet title renders as «Faça a sua » + <em>avaliação</em> + «.»
+  'Faça a sua': 'Request your',
+  'avaliação': 'valuation',
+  'O valor real do seu imóvel no mercado do Porto — confidencial e sem compromisso.':
+    'The real value of your property in the Porto market — confidential and with no obligation.',
+  '100% confidencial': '100% confidential',
+  'Faça a sua avaliação': 'Request your valuation',
+  'Abrir avaliação de imóvel': 'Open property valuation',
 };

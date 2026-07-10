@@ -72,10 +72,15 @@ const homeFaqs: Faq[] = [
       href: '/media/hero-collection-1280.jpg',
       srcset: '/media/hero-collection-768.jpg 768w, /media/hero-collection-1280.jpg 1280w, /media/hero-collection-1672.jpg 1672w',
       sizes: '100vw',
-      media: '(min-width: 561px)',
+      // Exact complement of the mobile preload — plain (min-width: 561px)
+      // leaves fractional-zoom viewports in (560,561) with no preload at all.
+      media: 'not all and (max-width: 560px)',
     },
     {
-      href: '/media/hero-mobile-douro-720.webp',
+      // href = the 941w candidate: browsers without imagesrcset support
+      // (old Safari) preload exactly what the <picture> will pick on 3x phones;
+      // modern browsers ignore href when imagesrcset is present.
+      href: '/media/hero-mobile-douro-941.webp',
       srcset: '/media/hero-mobile-douro-480.webp 480w, /media/hero-mobile-douro-720.webp 720w, /media/hero-mobile-douro-941.webp 941w',
       sizes: '100vw',
       media: '(max-width: 560px)',

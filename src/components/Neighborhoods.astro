@@ -377,6 +377,27 @@ const faixa = zonas.slice(4);
     .zonas__mapwrap { max-width: 620px; margin-inline: auto; }
   }
   @media (max-width: 560px) {
+    /* GPU relief on phones: the two 540–620px blur(90px) glows and per-card
+       backdrop blurs overwhelmed iOS Safari's compositor (sections scrolled
+       in as blank navy). Flat, slightly stronger card fills read the same
+       over the plain navy section. */
+    .zonas__glow { display: none; }
+    .bcard {
+      -webkit-backdrop-filter: none; backdrop-filter: none;
+      background: rgba(16, 39, 66, 0.66);
+    }
+
+    /* The tooltip anchors to the pin's x% inline style — right-side pins
+       pushed it past the viewport and it rendered cut off. Centre it over
+       the map on phones (vertical anchor keeps following the pin). */
+    .zonas__tip {
+      left: 50% !important;
+      max-width: min(300px, calc(100vw - 56px));
+      min-width: 0;
+      width: max-content;
+    }
+    .zonas__tip::after { display: none; }
+
     /* Mobile: mapa no topo, depois 4 cards horizontais */
     .zonas__stage {
       grid-template-columns: 1fr;
