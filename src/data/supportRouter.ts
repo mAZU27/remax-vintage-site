@@ -204,6 +204,8 @@ export interface ClassifyCtx {
   stepKey?: string;
   /** Keys already collected in the current flow (for correction detection). */
   answeredKeys?: string[];
+  /** Quick-reply options offered for the current step (in the active language). */
+  stepChips?: string[];
 }
 
 export type Classification =
@@ -285,11 +287,15 @@ export function classifyMessage(text: string, ctx: ClassifyCtx): Classification 
     // 6. Answer: fits the current step and is not a stand-alone question.
     //    At a FREE step (fitsStep is always true), a recognised intent that
     //    does NOT describe a property (e.g. "quem são vocês", "contactos") is
-    //    still an interruption, never stored as the answer.
+    //    still an interruption — UNLESS the text matches one of the step's own
+    //    quick-reply options (e.g. "Imediato" at the Prazo step, which also
+    //    matches the 'urgente' intent), which is always a valid answer.
+    const matchesChip = (ctx.stepChips ?? []).some((c) => normalize(c) === normalize(raw));
     const clearlyQuestion =
-      hasQuestion ||
-      (!!intent && !isSlotIntent(intent, expected) && !fitsStep(expected, raw, slots)) ||
-      (expected === 'free' && !!intent && !PROPERTY_INTENTS.has(intent));
+      !matchesChip &&
+      (hasQuestion ||
+        (!!intent && !isSlotIntent(intent, expected) && !fitsStep(expected, raw, slots)) ||
+        (expected === 'free' && !!intent && !PROPERTY_INTENTS.has(intent)));
     if (!clearlyQuestion && fitsStep(expected, raw, slots)) {
       return { kind: 'answer' };
     }

@@ -156,6 +156,14 @@ test('a property description at a FREE step is a valid answer', () => {
   assert.equal(classifyMessage('CV-1042', visiting('Imóvel de interesse')).kind, 'answer');
 });
 
+test('a typed value matching a step chip is an answer, even if it matches an intent', () => {
+  // "Imediato" is a Prazo option AND matches the 'urgente' intent — the chip
+  // match must win so a typed answer is not treated as an urgency question.
+  const prazo: ClassifyCtx = { inFlow: true, flowId: 'alugar', stepKey: 'Prazo', stepChips: ['Imediato', '1–3 meses', '3–6 meses', 'Flexível'] };
+  assert.equal(classifyMessage('Imediato', prazo).kind, 'answer');
+  assert.equal(classifyMessage('Flexível', prazo).kind, 'answer');
+});
+
 test('budget with a k suffix is recognised', () => {
   assert.ok(extractSlots('around 800k').budget);
   assert.ok(extractSlots('até 500 k').budget);
