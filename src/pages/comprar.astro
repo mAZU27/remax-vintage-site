@@ -5,6 +5,7 @@
 // invented claims. Items flagged `confirmar: true` in the data render
 // normally but carry an adjacent CONFIRMAR COM AGÊNCIA comment.
 import Base from '../layouts/Base.astro';
+import { EXTERNAL_LISTINGS_URL } from '../lib/site.config';
 import PageHero from '../components/PageHero.astro';
 import SectionEyebrow from '../components/SectionEyebrow.astro';
 import StructureDiagram from '../components/StructureDiagram.astro';
@@ -35,13 +36,28 @@ const notaIcons = ['document', 'bank', 'scale'];
   title="O método de compra"
   description="Mandato de Comprador e Contrato Exclusivo de Comprador: como procuramos casa por si, as garantias, as doze etapas do processo e os documentos para simulação de financiamento."
 >
-  <!-- 1 · Hero editorial — sem CTAs -->
+  <!-- 1 · Hero with CTAs -->
   <PageHero
     eyebrow="O método · Comprar"
     title='Porquê procurar a sua casa <em class="em-gold serif-it">connosco</em>.'
     subtitle={heroSubtitle}
     image="/images/porto/porto-douro-retrato.webp"
     imagePosition="center 58%"
+    ctas={[
+      {
+        label: 'Explorar Propriedades',
+        href: EXTERNAL_LISTINGS_URL,
+        external: true,
+        variant: 'gold',
+        arrow: true,
+      },
+      {
+        label: 'Falar com Consultor',
+        href: '/contacto',
+        variant: 'ghost',
+        arrow: true,
+      },
+    ]}
   />
 
   <!-- 2 · A estrutura à volta do cliente -->
@@ -299,7 +315,8 @@ const notaIcons = ['document', 'bank', 'scale'];
         Uma conversa clara, confidencial e sem compromisso.
       </p>
       <div class="fecho__cta" data-reveal style="--reveal-delay:240ms">
-        <Button href="/contacto" variant="gold" arrow>Falar com um consultor</Button>
+        <Button href={EXTERNAL_LISTINGS_URL} external variant="gold" arrow>Ver imóveis à venda</Button>
+        <Button href="/contacto" variant="ghost-dark" arrow>Falar com um consultor</Button>
       </div>
     </div>
   </section>
@@ -545,5 +562,5 @@ const notaIcons = ['document', 'bank', 'scale'];
   /* ---------- 12 · Fecho ---------- */
   .fecho__title { margin-top: 16px; }
   .fecho__lede { margin: 20px auto 0; }
-  .fecho__cta { margin-top: 32px; }
+  .fecho__cta { margin-top: 32px; display: flex; flex-wrap: wrap; gap: 14px; justify-content: center; }
 </style>

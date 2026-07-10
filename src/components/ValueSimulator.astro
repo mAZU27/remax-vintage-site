@@ -579,8 +579,7 @@ const TOTAL = 6;
         extras: getExtras(),
       };
       const r = estimateRange(input);
-      countUp(lowEl, r.low);
-      countUp(highEl, r.high);
+      // Value sent via email — do not display in the modal
       summaryEl.textContent = [
         typeLabels[input.type],
         zoneLabels[input.zone],

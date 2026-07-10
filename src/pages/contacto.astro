@@ -10,6 +10,7 @@ import { site } from '../data/site';
 const details = [
   { icon: 'pin', label: 'Morada', lines: site.address },
   { icon: 'phone', label: 'Telefone', lines: [site.phone], href: site.phoneHref },
+  { icon: 'clock', label: 'Horário', lines: site.hours.map((h) => `${h.day}: ${h.time}`) },
   { icon: 'shield-check', label: 'Licença', lines: [`${site.ami} · ${site.legalName}`] },
 ];
 const assuntos = ['Comprar um imóvel', 'Vender / avaliação', 'Estudo de mercado', 'Agendar uma visita', 'Outro assunto'];

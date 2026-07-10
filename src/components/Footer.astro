@@ -6,97 +6,252 @@ import FinalBrand from './FinalBrand.astro';
 
 const year = new Date().getFullYear();
 ---
+
 <FinalBrand />
 
 <footer class="foot" id="footer">
-  <div class="container foot__grid">
-    <!-- Sobre -->
-    <section class="foot__section">
-      <a class="foot__section-brand" href="/" aria-label={`${site.name} — início`}>
-        <img class="foot__section-logo" src={site.logo} alt={site.name} width="643" height="96" />
-      </a>
-      <p class="foot__section-text">
-        A seleção mais exclusiva de imóveis no Porto. Especialistas em propriedades com carácter, história e potencial.
-      </p>
-      <span class="foot__place">
-        <Icon name="pin" size={14} stroke={1.6} />
-        {site.city}
-      </span>
-    </section>
-
-    <!-- Navegação -->
-    <section class="foot__section">
-      <h3 class="foot__section-title">Explorar</h3>
-      <nav class="foot__section-nav" aria-label="Navegação principal">
-        {nav.map((item) => (
-          <a
-            href={item.href}
-            class="foot__section-link"
-            {...item.external ? { target: '_blank', rel: 'noopener noreferrer' } : {}}
-          >
-            {item.label}
-          </a>
-        ))}
-      </nav>
-    </section>
-
-    <!-- Contactos -->
-    <section class="foot__section">
-      <h3 class="foot__section-title">Contactos</h3>
-      <div class="foot__section-contact">
-        <a href={site.phoneHref} class="foot__section-link">
-          <Icon name="phone" size={14} stroke={1.6} />
-          {site.phone}
+  <!-- DESKTOP LAYOUT (≥768px) -->
+  <div class="foot__desktop">
+    <div class="container foot__grid">
+      <!-- Sobre -->
+      <section class="foot__section">
+        <a class="foot__section-brand" href="/" aria-label={`${site.name} — início`}>
+          <img class="foot__section-logo" src={site.logo} alt={site.name} width="643" height="96" />
         </a>
-        <a href="/contacto" class="foot__section-link">
-          <Icon name="mail" size={14} stroke={1.6} />
-          Formulário de contacto
-        </a>
-        <div class="foot__section-address">
+        <p class="foot__section-text">
+          A seleção mais exclusiva de imóveis no Porto. Especialistas em propriedades com carácter, história e potencial.
+        </p>
+        <span class="foot__place">
           <Icon name="pin" size={14} stroke={1.6} />
-          <span>
-            {site.address[0]}<br />{site.address[1]}
-          </span>
-        </div>
-      </div>
-    </section>
+          {site.city}
+        </span>
+      </section>
 
-    <!-- Serviços -->
-    <section class="foot__section">
-      <h3 class="foot__section-title">Serviços</h3>
-      {/* Carreiras saiu desta coluna: foi promovida ao menu principal
-          (owner ask 2026-07-10) e a coluna «Explorar» já a mostra via nav. */}
-      <nav class="foot__section-nav" aria-label="Serviços">
-        <a href="/comprar" class="foot__section-link">Comprar imóvel</a>
-        <a href="/vender" class="foot__section-link">Vender imóvel</a>
-        <a href="/alugar" class="foot__section-link">Arrendar</a>
-        <a href="/apoio" class="foot__section-link">Apoio ao cliente</a>
+      <!-- Navegação -->
+      <section class="foot__section">
+        <h3 class="foot__section-title">Explorar</h3>
+        <nav class="foot__section-nav" aria-label="Navegação principal">
+          {nav.map((item) => (
+            <a
+              href={item.href}
+              class="foot__section-link"
+              {...item.external ? { target: '_blank', rel: 'noopener noreferrer' } : {}}
+            >
+              {item.label}
+            </a>
+          ))}
+        </nav>
+      </section>
+
+      <!-- Contactos -->
+      <section class="foot__section">
+        <h3 class="foot__section-title">Contactos</h3>
+        <div class="foot__section-contact">
+          <a href={site.phoneHref} class="foot__section-link">
+            <Icon name="phone" size={14} stroke={1.6} />
+            {site.phone}
+          </a>
+          <a href="/contacto" class="foot__section-link">
+            <Icon name="mail" size={14} stroke={1.6} />
+            Formulário de contacto
+          </a>
+          <div class="foot__section-address">
+            <Icon name="pin" size={14} stroke={1.6} />
+            <span>
+              {site.address[0]}<br />{site.address[1]}
+            </span>
+          </div>
+        </div>
+      </section>
+
+      <!-- Serviços -->
+      <section class="foot__section">
+        <h3 class="foot__section-title">Serviços</h3>
+        <nav class="foot__section-nav" aria-label="Serviços">
+          <a href="/comprar" class="foot__section-link">Comprar imóvel</a>
+          <a href="/vender" class="foot__section-link">Vender imóvel</a>
+          <a href="/alugar" class="foot__section-link">Arrendar</a>
+          <a href="/apoio" class="foot__section-link">Apoio ao cliente</a>
+        </nav>
+      </section>
+    </div>
+
+    <!-- Social + Legal bar -->
+    <div class="foot__divider"></div>
+
+    <div class="container foot__footer-bar">
+      <p class="foot__copy">
+        © {year} {site.brandLine} · {site.legalName} · Licença {site.ami} · Cada agência é juridicamente independente.
+      </p>
+
+      <nav class="foot__legal-links" aria-label="Legal">
+        <a href="/privacidade">Política de Privacidade</a>
       </nav>
-    </section>
+    </div>
   </div>
 
-  <!-- Social + Legal bar -->
-  <div class="foot__divider"></div>
+  <!-- MOBILE LAYOUT (≤767px) -->
+  <div class="foot__mobile">
+    <div class="foot__mobile-container">
+      <!-- 1. Main block: Logo + Title + CTA -->
+      <section class="foot__mobile-main" data-reveal>
+        <div class="foot__mobile-logo">
+          <img src={site.logo} alt={site.name} width="643" height="96" />
+        </div>
 
-  <div class="container foot__footer-bar">
-    <p class="foot__copy">
-      © {year} {site.brandLine} · {site.legalName} · Licença {site.ami} · Cada agência é juridicamente independente.
-    </p>
+        <div class="foot__mobile-divider-small"></div>
 
-    <nav class="foot__legal-links" aria-label="Legal">
-      <a href="/privacidade">Política de Privacidade</a>
-    </nav>
+        <div class="foot__mobile-hero">
+          <h2 class="foot__mobile-title">
+            Propriedades exclusivas.<br />Histórias que ficam.
+          </h2>
+          <p class="foot__mobile-subtitle">
+            A seleção mais exclusiva de imóveis no Porto. Especialistas em propriedades com carácter, história e potencial.
+          </p>
+        </div>
+
+        <a href="/#vender" class="foot__mobile-cta">
+          <Icon name="bookmark" size={16} stroke={1.6} />
+          Pedir avaliação
+        </a>
+
+        <div class="foot__mobile-divider-small"></div>
+      </section>
+
+      <!-- 2. Explorar -->
+      <section class="foot__mobile-section" data-reveal>
+        <h3 class="foot__mobile-section-title">
+          <Icon name="pin" size={18} stroke={1.4} />
+          Explorar
+        </h3>
+        <nav class="foot__mobile-section-nav">
+          {nav.map((item) => (
+            <a
+              href={item.href}
+              class="foot__mobile-section-link"
+              {...item.external ? { target: '_blank', rel: 'noopener noreferrer' } : {}}
+            >
+              {item.label}
+              <Icon name="arrow" size={14} stroke={1.8} />
+            </a>
+          ))}
+        </nav>
+      </section>
+
+      <!-- 3. Contactos -->
+      <section class="foot__mobile-section" data-reveal>
+        <h3 class="foot__mobile-section-title">
+          <Icon name="phone" size={18} stroke={1.4} />
+          Contactos
+        </h3>
+        <div class="foot__mobile-contact">
+          <a href={site.phoneHref} class="foot__mobile-contact-card">
+            <Icon name="phone" size={16} stroke={1.6} />
+            <span>{site.phone}</span>
+          </a>
+          <a href="/contacto" class="foot__mobile-contact-card">
+            <Icon name="mail" size={16} stroke={1.6} />
+            <span>Formulário de contacto</span>
+          </a>
+          <div class="foot__mobile-contact-card">
+            <Icon name="pin" size={16} stroke={1.6} />
+            <span>{site.address[0]}<br />{site.address[1]}</span>
+          </div>
+        </div>
+      </section>
+
+      <!-- 4. Serviços -->
+      <section class="foot__mobile-section" data-reveal>
+        <h3 class="foot__mobile-section-title">
+          <Icon name="diamond" size={18} stroke={1.4} />
+          Serviços
+        </h3>
+        <nav class="foot__mobile-section-nav">
+          <a href="/comprar" class="foot__mobile-section-link">
+            Comprar imóvel
+            <Icon name="arrow" size={14} stroke={1.8} />
+          </a>
+          <a href="/vender" class="foot__mobile-section-link">
+            Vender imóvel
+            <Icon name="arrow" size={14} stroke={1.8} />
+          </a>
+          <a href="/alugar" class="foot__mobile-section-link">
+            Arrendar
+            <Icon name="arrow" size={14} stroke={1.8} />
+          </a>
+          <a href="/apoio" class="foot__mobile-section-link">
+            Apoio ao cliente
+            <Icon name="arrow" size={14} stroke={1.8} />
+          </a>
+        </nav>
+      </section>
+
+      <!-- 5. Porto Card -->
+      <section class="foot__mobile-porto" data-reveal>
+        <div class="foot__mobile-porto-illustration">
+          <svg viewBox="0 0 200 220" xmlns="http://www.w3.org/2000/svg" class="foot__porto-building">
+            <text x="100" y="110" text-anchor="middle" font-size="48" fill="currentColor">🏛️</text>
+          </svg>
+        </div>
+        <div class="foot__mobile-porto-text">
+          <h3 class="foot__mobile-porto-title">Porto, Portugal</h3>
+          <div class="foot__mobile-porto-divider"></div>
+          <p class="foot__mobile-porto-copy">Conectamos pessoas a propriedades únicas e a oportunidades raras.</p>
+        </div>
+      </section>
+
+      <!-- 6. Social + Legal -->
+      <div class="foot__mobile-divider"></div>
+
+      <div class="foot__mobile-social-bar">
+        <nav class="foot__mobile-social" aria-label="Redes sociais">
+          <a href="#" class="foot__mobile-social-link" aria-label="Instagram">
+            <Icon name="instagram" size={20} stroke={1.4} />
+          </a>
+          <a href="#" class="foot__mobile-social-link" aria-label="LinkedIn">
+            <Icon name="linkedin" size={20} stroke={1.4} />
+          </a>
+          <a href="#" class="foot__mobile-social-link" aria-label="Facebook">
+            <Icon name="facebook" size={20} stroke={1.4} />
+          </a>
+          <a href="#" class="foot__mobile-social-link" aria-label="YouTube">
+            <Icon name="youtube" size={20} stroke={1.4} />
+          </a>
+        </nav>
+      </div>
+
+      <div class="foot__mobile-legal">
+        <p class="foot__mobile-copy">
+          © {year} RE/MAX Collection Vintage. Todos os direitos reservados.
+        </p>
+        <nav class="foot__mobile-legal-links" aria-label="Legal">
+          <a href="/privacidade">Política de Privacidade</a>
+          <a href="#">Termos e Condições</a>
+          <a href="#">Livro de Reclamações</a>
+        </nav>
+      </div>
+    </div>
   </div>
 </footer>
 
 <style>
   .foot {
-    position: relative; background: var(--navy-ink); color: var(--cream);
+    position: relative;
+    background: linear-gradient(180deg, var(--navy-ink) 0%, rgba(11, 26, 46, 0.98) 100%);
+    color: var(--cream);
     border-top: 1px solid var(--hairline-gold);
+  }
+
+  /* ============ DESKTOP LAYOUT (≥768px) ============ */
+  .foot__desktop {
+    display: block;
     padding: clamp(40px, 5vw, 60px) 0 clamp(32px, 4vw, 48px);
   }
 
-  /* ---- 4-column grid section ---- */
+  .foot__mobile {
+    display: none;
+  }
+
   .foot__grid {
     display: grid;
     grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
@@ -185,8 +340,7 @@ const year = new Date().getFullYear();
     gap: 14px;
   }
 
-  .foot__section-address,
-  .foot__section-hours {
+  .foot__section-address {
     display: inline-flex;
     align-items: flex-start;
     gap: 8px;
@@ -194,33 +348,24 @@ const year = new Date().getFullYear();
     color: var(--white-70);
   }
 
-  .foot__section-address :global(.icon),
-  .foot__section-hours :global(.icon) {
+  .foot__section-address :global(.icon) {
     flex-shrink: 0;
     margin-top: 2px;
     color: var(--gold);
   }
 
-  /* ---- Divider ---- */
   .foot__divider {
     height: 1px;
     background: var(--hairline-light);
-    margin-bottom: clamp(28px, 3vw, 40px);
-    margin-top: clamp(28px, 3vw, 40px);
+    margin: clamp(28px, 3vw, 40px) 0;
   }
 
-  /* ---- Footer bar: social, copy, legal ---- */
   .foot__footer-bar {
     display: flex;
     align-items: center;
     justify-content: space-between;
     gap: clamp(16px, 2vw, 32px);
     flex-wrap: wrap;
-  }
-
-  .foot__social {
-    display: flex;
-    gap: 12px;
   }
 
   .foot__copy {
@@ -250,91 +395,365 @@ const year = new Date().getFullYear();
     color: var(--gold-light);
   }
 
-  /* ---- Tablet (1024px) ---- */
-  @media (max-width: 1024px) {
-    .foot__grid {
-      grid-template-columns: repeat(2, 1fr);
-    }
-  }
-
-  /* ---- Mobile (640px) ---- */
-  @media (max-width: 640px) {
+  /* ============ MOBILE LAYOUT (≤767px) ============ */
+  @media (max-width: 767px) {
     .foot {
-      padding-top: clamp(56px, 8vw, 72px);
-      padding-bottom: max(clamp(64px, 10vw, 96px), 120px);
+      padding: 0;
     }
 
-    .foot__grid {
-      grid-template-columns: 1fr;
-      gap: clamp(32px, 6vw, 48px);
+    .foot__desktop {
+      display: none;
     }
 
-    .foot__section {
-      align-items: center;
+    .foot__mobile {
+      display: block;
+      padding: clamp(40px, 6vw, 56px) clamp(20px, 4vw, 24px);
+      padding-bottom: max(clamp(80px, 10vw, 120px), calc(80px + env(safe-area-inset-bottom)));
+    }
+
+    .foot__mobile-container {
+      width: 100%;
+      max-width: 100%;
+    }
+
+    /* 1. Main block */
+    .foot__mobile-main {
       text-align: center;
+      margin-bottom: clamp(40px, 6vw, 56px);
     }
 
-    .foot__section:first-child {
-      align-items: flex-start;
+    .foot__mobile-logo {
+      margin-bottom: 24px;
+    }
+
+    .foot__mobile-logo img {
+      height: 40px;
+      width: auto;
+      display: inline-block;
+    }
+
+    .foot__mobile-divider-small {
+      width: 120px;
+      height: 1px;
+      background: var(--hairline-gold);
+      margin: 24px auto;
+      position: relative;
+    }
+
+    .foot__mobile-divider-small::after {
+      content: '◆';
+      position: absolute;
+      left: 50%;
+      top: 50%;
+      transform: translate(-50%, -50%);
+      color: var(--gold);
+      font-size: 8px;
+      background: var(--navy-ink);
+      padding: 0 6px;
+    }
+
+    .foot__mobile-hero {
+      margin-bottom: 32px;
+    }
+
+    .foot__mobile-title {
+      font-family: var(--font-serif);
+      font-weight: 500;
+      font-size: clamp(24px, 5vw, 32px);
+      line-height: 1.25;
+      letter-spacing: -0.01em;
+      color: var(--cream);
+      margin: 0 0 16px;
+    }
+
+    .foot__mobile-subtitle {
+      font-size: 14px;
+      line-height: 1.6;
+      color: var(--white-70);
+      margin: 0;
+      max-width: 100%;
+    }
+
+    .foot__mobile-cta {
+      display: inline-flex;
+      align-items: center;
+      gap: 12px;
+      padding: 16px 28px;
+      border: 1px solid var(--hairline-gold-strong);
+      border-radius: var(--radius);
+      font-size: 14px;
+      font-weight: 500;
+      letter-spacing: 0.1em;
+      text-transform: uppercase;
+      color: var(--gold-light);
+      background: transparent;
+      text-decoration: none;
+      cursor: pointer;
+      transition: border-color var(--t-fast), color var(--t-fast);
+      min-height: 44px;
+    }
+
+    .foot__mobile-cta:hover {
+      border-color: var(--gold);
+      color: var(--gold);
+    }
+
+    /* 2-4. Sections */
+    .foot__mobile-section {
+      margin-bottom: clamp(32px, 5vw, 48px);
       text-align: left;
     }
 
-    .foot__section-brand {
-      margin-bottom: 8px;
-    }
-
-    .foot__section-logo {
-      height: 28px;
-    }
-
-    .foot__section-text {
-      max-width: 320px;
-    }
-
-    .foot__section-nav {
+    .foot__mobile-section-title {
+      font-family: var(--font-serif);
+      font-weight: 500;
+      font-size: clamp(18px, 4vw, 20px);
+      line-height: 1.2;
+      letter-spacing: -0.01em;
+      color: var(--cream);
+      margin: 0 0 20px;
+      display: flex;
       align-items: center;
+      gap: 12px;
     }
 
-    .foot__section-link {
-      justify-content: center;
+    .foot__mobile-section-title :global(.icon) {
+      color: var(--gold);
+      flex-shrink: 0;
+    }
+
+    .foot__mobile-section-nav {
+      display: flex;
+      flex-direction: column;
+      gap: 14px;
+    }
+
+    .foot__mobile-section-link {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 12px 0;
+      min-height: 44px;
+      font-size: 14px;
+      color: var(--white-70);
+      text-decoration: none;
+      transition: color var(--t-fast);
+      border-bottom: 1px solid var(--hairline-light);
+    }
+
+    .foot__mobile-section-link:last-child {
+      border-bottom: none;
+    }
+
+    .foot__mobile-section-link:hover,
+    .foot__mobile-section-link:active {
+      color: var(--gold-light);
+    }
+
+    .foot__mobile-section-link :global(.icon) {
+      color: var(--gold-light);
+      flex-shrink: 0;
+    }
+
+    /* Contact cards */
+    .foot__mobile-contact {
+      display: flex;
+      flex-direction: column;
+      gap: 12px;
+    }
+
+    .foot__mobile-contact-card {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      padding: 14px 16px;
+      border: 1px solid var(--hairline-light);
+      border-radius: var(--radius);
+      background: rgba(244, 237, 222, 0.03);
       font-size: 13px;
+      color: var(--white-70);
+      text-decoration: none;
+      transition: border-color var(--t-fast), background var(--t-fast);
+      min-height: 44px;
     }
 
-    .foot__section-contact {
+    .foot__mobile-contact-card:hover {
+      border-color: var(--hairline-gold-strong);
+      background: rgba(184, 153, 104, 0.08);
+    }
+
+    .foot__mobile-contact-card :global(.icon) {
+      color: var(--gold);
+      flex-shrink: 0;
+    }
+
+    /* 5. Porto card -->
+    .foot__mobile-porto {
+      border: 1px solid var(--hairline-gold);
+      border-radius: clamp(16px, 4vw, 24px);
+      background: rgba(20, 47, 79, 0.5);
+      padding: clamp(24px, 5vw, 32px);
+      margin-bottom: clamp(32px, 5vw, 48px);
+      display: flex;
       align-items: center;
+      gap: clamp(20px, 4vw, 28px);
     }
 
-    .foot__section-address,
-    .foot__section-hours {
-      justify-content: center;
-      flex-direction: column;
-      align-items: center;
-      text-align: center;
-      line-height: 1.6;
+    .foot__mobile-porto-illustration {
+      flex-shrink: 0;
+      width: clamp(80px, 20vw, 100px);
+      height: clamp(80px, 20vw, 100px);
     }
 
-    .foot__divider {
-      margin-bottom: clamp(32px, 5vw, 44px);
-    }
-
-    .foot__footer-bar {
-      flex-direction: column;
-      align-items: center;
-      gap: clamp(20px, 4vw, 32px);
-    }
-    .foot__copy {
-      order: 2;
-      min-width: auto;
-      text-align: center;
-      max-width: 320px;
-    }
-
-    .foot__legal-links {
-      order: 3;
+    .foot__porto-building {
       width: 100%;
+      height: 100%;
+      color: var(--gold);
+    }
+
+    .foot__mobile-porto-text {
+      flex: 1;
+      text-align: left;
+    }
+
+    .foot__mobile-porto-title {
+      font-family: var(--font-serif);
+      font-weight: 500;
+      font-size: clamp(18px, 4vw, 20px);
+      line-height: 1.2;
+      letter-spacing: -0.01em;
+      color: var(--gold-light);
+      margin: 0 0 12px;
+    }
+
+    .foot__mobile-porto-divider {
+      width: 28px;
+      height: 1px;
+      background: var(--gold);
+      margin-bottom: 12px;
+    }
+
+    .foot__mobile-porto-copy {
+      font-size: 13px;
+      line-height: 1.6;
+      color: var(--white-70);
+      margin: 0;
+    }
+
+    /* 6. Social + Legal -->
+    .foot__mobile-divider {
+      width: 100%;
+      height: 1px;
+      background: var(--hairline-light);
+      margin: clamp(32px, 5vw, 48px) 0;
+      position: relative;
+    }
+
+    .foot__mobile-divider::after {
+      content: '◆';
+      position: absolute;
+      left: 50%;
+      top: 50%;
+      transform: translate(-50%, -50%);
+      color: var(--gold);
+      font-size: 8px;
+      background: var(--navy-ink);
+      padding: 0 6px;
+    }
+
+    .foot__mobile-social-bar {
+      text-align: center;
+      margin-bottom: clamp(32px, 5vw, 48px);
+    }
+
+    .foot__mobile-social {
+      display: flex;
       justify-content: center;
-      gap: clamp(12px, 2vw, 16px);
-      flex-wrap: wrap;
+      gap: clamp(32px, 8vw, 48px);
+    }
+
+    .foot__mobile-social-link {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      width: 44px;
+      height: 44px;
+      color: var(--gold);
+      text-decoration: none;
+      transition: color var(--t-fast), transform var(--t-fast);
+    }
+
+    .foot__mobile-social-link:hover {
+      color: var(--gold-light);
+      transform: scale(1.1);
+    }
+
+    /* Legal -->
+    .foot__mobile-legal {
+      text-align: center;
+    }
+
+    .foot__mobile-copy {
+      font-size: 12px;
+      line-height: 1.6;
+      color: var(--white-50);
+      margin: 0 0 16px;
+    }
+
+    .foot__mobile-legal-links {
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
+      align-items: center;
+    }
+
+    .foot__mobile-legal-links a {
+      font-size: 12px;
+      color: var(--gold-light);
+      text-decoration: none;
+      transition: color var(--t-fast);
+    }
+
+    .foot__mobile-legal-links a:hover {
+      color: var(--gold);
+    }
+  }
+
+  /* Reveal animation for mobile */
+  @media (max-width: 767px) {
+    [data-reveal] {
+      animation: footerReveal 600ms var(--t-ease-emph) both;
+    }
+
+    .foot__mobile-section:nth-child(2) { animation-delay: 100ms; }
+    .foot__mobile-section:nth-child(3) { animation-delay: 200ms; }
+    .foot__mobile-section:nth-child(4) { animation-delay: 300ms; }
+    .foot__mobile-section:nth-child(5) { animation-delay: 400ms; }
+
+    @keyframes footerReveal {
+      from {
+        opacity: 0;
+        transform: translateY(16px);
+      }
+      to {
+        opacity: 1;
+        transform: translateY(0);
+      }
+    }
+
+    @media (prefers-reduced-motion: reduce) {
+      [data-reveal] {
+        animation: none;
+        opacity: 1;
+        transform: none;
+      }
+    }
+  }
+
+  /* Tablet (768px-1023px) */
+  @media (min-width: 768px) and (max-width: 1023px) {
+    .foot__grid {
+      grid-template-columns: repeat(2, 1fr);
     }
   }
 </style>

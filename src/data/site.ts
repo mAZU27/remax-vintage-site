@@ -20,15 +20,24 @@ export const site = {
     'Imóveis vintage e premium no Porto — oito zonas de eleição, da Foz do Douro à Baixa. Avaliação confidencial e uma apresentação à altura de cada imóvel distinto.',
   // Contactos VERIFICADOS no perfil oficial da agência em remax.pt
   // (remax.pt/pt/agencia/remax-collection-vintage/12382, consultado 2026-07-10).
-  // Email, horário, redes sociais e WhatsApp: por confirmar com a agência —
+  // Email, redes sociais e WhatsApp: por confirmar com a agência —
   // deliberadamente ausentes até haver dados reais (nunca inventar).
-  phone: '+351 226 181 031',
+  phone: '+351 22 618 1031',
   phoneHref: 'tel:+351226181031',
   city: 'Porto, Portugal',
   address: ['Avenida da Boavista, 3191/3195', '4100-137 Porto, Portugal'],
   legalName: 'Vintage Patamar - Mediação Imobiliária, Lda',
   ami: 'AMI 10092',
   established: 2014,
+  hours: [
+    { day: 'segunda-feira', time: '09:30–19:00' },
+    { day: 'terça-feira', time: '09:30–19:00' },
+    { day: 'quarta-feira', time: '09:30–19:00' },
+    { day: 'quinta-feira', time: '09:30–19:00' },
+    { day: 'sexta-feira', time: '09:30–19:00' },
+    { day: 'sábado', time: '10:00–18:00' },
+    { day: 'domingo', time: 'Encerrado' },
+  ],
 } as const;
 
 export interface NavItem {
