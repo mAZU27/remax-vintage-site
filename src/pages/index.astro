@@ -1,6 +1,8 @@
 ---
 import Base from '../layouts/Base.astro';
 import Hero from '../components/Hero.astro';
+import HeroMobile from '../components/HeroMobile.astro';
+import MobileValuationSheet from '../components/MobileValuationSheet.astro';
 import AwardsBelt from '../components/AwardsBelt.astro';
 import SectionEyebrow from '../components/SectionEyebrow.astro';
 import Neighborhoods from '../components/Neighborhoods.astro';
@@ -21,7 +23,11 @@ import type { Faq } from '../data/faqs';
 
 // The homepage carries EXACTLY 10 conversion CTAs (see docs/mission map):
 //  #1 hero card «Avaliar o meu imóvel» → simulator modal   (primary gold)
+//     · ≤560px the hero card gives way to the MobileValuationSheet
+//       («Pedir avaliação» → same simulator; «Falar com um consultor» → /contacto)
 //  #2 hero «Explorar a coleção» → external listings
+//     · ≤560px rendered by HeroMobile («Explorar imóveis» + destaque card,
+//       both → external listings)
 //  #3 método «Conhecer o método de compra» → /comprar
 //  #4 método «Vender com o método» → /vender
 //  #5 estrutura «Falar com um consultor» → /contacto
@@ -61,14 +67,25 @@ const homeFaqs: Faq[] = [
 ---
 <Base
   overHeroNav
-  heroPreload={{
-    href: '/media/hero-collection-1280.jpg',
-    srcset: '/media/hero-collection-768.jpg 768w, /media/hero-collection-1280.jpg 1280w, /media/hero-collection-1672.jpg 1672w',
-    sizes: '100vw',
-  }}
+  heroPreload={[
+    {
+      href: '/media/hero-collection-1280.jpg',
+      srcset: '/media/hero-collection-768.jpg 768w, /media/hero-collection-1280.jpg 1280w, /media/hero-collection-1672.jpg 1672w',
+      sizes: '100vw',
+      media: '(min-width: 561px)',
+    },
+    {
+      href: '/media/hero-mobile-douro-720.webp',
+      srcset: '/media/hero-mobile-douro-480.webp 480w, /media/hero-mobile-douro-720.webp 720w, /media/hero-mobile-douro-941.webp 941w',
+      sizes: '100vw',
+      media: '(max-width: 560px)',
+    },
+  ]}
 >
-  <!-- CTAs #1 + #2 live inside the hero -->
+  <!-- CTAs #1 + #2 live inside the hero (mobile: HeroMobile + valuation sheet) -->
   <Hero />
+  <HeroMobile />
+  <MobileValuationSheet />
 
   <!-- Faixa de trust — prémios RE/MAX Portugal (rede) -->
   <AwardsBelt />

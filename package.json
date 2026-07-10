@@ -9,7 +9,8 @@
     "build": "astro build",
     "preview": "astro preview",
     "check": "astro check",
-    "images": "node scripts/convert-images.mjs"
+    "images": "node scripts/convert-images.mjs",
+    "i18n:check": "esbuild scripts/i18n-coverage.mjs --bundle --platform=node --format=esm --packages=external --log-level=warning --outfile=node_modules/.cache/i18n-coverage.bundle.mjs && node node_modules/.cache/i18n-coverage.bundle.mjs"
   },
   "dependencies": {
     "@astrojs/vercel": "^8.2.11",

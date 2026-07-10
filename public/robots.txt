@@ -1,0 +1,6 @@
+User-agent: *
+Allow: /
+Disallow: /api/
+Disallow: /mobile-preview
+
+Sitemap: https://remaxcollectionvintage.pt/sitemap.xml

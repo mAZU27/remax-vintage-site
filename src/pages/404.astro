@@ -1,0 +1,32 @@
+---
+import Base from '../layouts/Base.astro';
+import Button from '../components/Button.astro';
+---
+<Base title="Página não encontrada" noindex>
+  <section class="nf container">
+    <span class="eyebrow" data-reveal>Erro 404</span>
+    <h1 class="display nf__title" data-reveal style="--reveal-delay:80ms">
+      Esta página não <em class="em-gold serif-it">existe</em>.
+    </h1>
+    <p class="lede nf__lede" data-reveal style="--reveal-delay:140ms">
+      O endereço pode ter mudado ou nunca ter existido. Continue a partir de uma
+      destas páginas.
+    </p>
+    <div class="nf__ctas" data-reveal style="--reveal-delay:200ms">
+      <Button href="/" variant="gold" arrow>Voltar ao início</Button>
+      <Button href="/contacto" variant="ghost-dark">Falar connosco</Button>
+    </div>
+  </section>
+</Base>
+
+<style>
+  .nf {
+    min-height: 60svh;
+    padding: calc(var(--nav-h) + clamp(60px, 8vw, 110px)) var(--gutter) clamp(80px, 10vw, 140px);
+    display: flex; flex-direction: column; align-items: center; justify-content: center;
+    text-align: center;
+  }
+  .nf__title { margin-top: 18px; }
+  .nf__lede { margin-top: 20px; max-width: 46ch; }
+  .nf__ctas { margin-top: 34px; display: flex; gap: 14px; flex-wrap: wrap; justify-content: center; }
+</style>

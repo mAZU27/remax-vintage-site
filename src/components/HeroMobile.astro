@@ -1,0 +1,339 @@
+---
+import Icon from './Icon.astro';
+import { EXTERNAL_LISTINGS_URL } from '../lib/site.config';
+
+// Homepage hero — MOBILE ONLY (≤560px). Dark editorial "Douro ao entardecer"
+// plate with a staged load choreography: nav → eyebrow → masked headline
+// lines → rule → lede → CTA → benefit cards → destaque card.
+// Hero.astro (desktop) hides itself at the same breakpoint. Both <picture>
+// elements carry mirrored sources so, at any viewport, the two heros resolve
+// to the SAME image URL — the hidden one is a cache hit, never a 2nd download.
+// The seller-conversion element lives in MobileValuationSheet.astro.
+---
+<section class="hm" data-hero-mobile aria-label="RE/MAX Collection Vintage — a coleção mais exclusiva do Porto">
+  <div class="hm__media" aria-hidden="true">
+    <div class="hm__bg" data-hm-parallax>
+      <picture>
+        <source
+          media="(min-width: 561px)"
+          srcset="/media/hero-collection-768.jpg 768w, /media/hero-collection-1280.jpg 1280w, /media/hero-collection-1672.jpg 1672w"
+          sizes="100vw"
+        />
+        <source
+          type="image/webp"
+          srcset="/media/hero-mobile-douro-480.webp 480w, /media/hero-mobile-douro-720.webp 720w, /media/hero-mobile-douro-941.webp 941w"
+          sizes="100vw"
+        />
+        <img
+          class="hm__img"
+          src="/media/hero-mobile-douro-720.jpg"
+          alt=""
+          width="941"
+          height="1672"
+          fetchpriority="high"
+          decoding="async"
+        />
+      </picture>
+    </div>
+    <div class="hm__scrim"></div>
+    <div class="hm__grain"></div>
+  </div>
+
+  <div class="hm__inner">
+    <p class="hm__eyebrow">RE/MAX Collection Vintage</p>
+    <span class="hm__rule hm__rule--top"></span>
+
+    <p class="hm__title" role="heading" aria-level="1">
+      <span class="hm__line"><span class="hm__line-in">A coleção</span></span>
+      <span class="hm__line"><span class="hm__line-in">mais exclusiva</span></span>
+      <span class="hm__line"><span class="hm__line-in">do <em class="em-gold serif-it">Porto.</em></span></span>
+    </p>
+
+    <span class="hm__rule hm__rule--bottom"></span>
+    <p class="hm__lede">
+      Imóveis extraordinários para quem valoriza o que é verdadeiramente raro.
+    </p>
+
+    <a class="hm__cta" href={EXTERNAL_LISTINGS_URL} target="_blank" rel="noopener noreferrer">
+      <span>Explorar imóveis</span>
+      <span class="hm__cta-arrow"><Icon name="arrow" size={16} stroke={1.8} /></span>
+    </a>
+
+    <div class="hm__spacer" aria-hidden="true"></div>
+
+    <ul class="hm__benefits">
+      <li class="hm__benefit">
+        <span class="hm__benefit-head">
+          <Icon name="diamond" size={19} stroke={1.3} />
+          <span class="hm__benefit-title">Seleção curada</span>
+        </span>
+        <p>Imóveis únicos. Padrão incomparável.</p>
+      </li>
+      <li class="hm__benefit">
+        <span class="hm__benefit-head">
+          <Icon name="key" size={19} stroke={1.3} />
+          <span class="hm__benefit-title">Discrição absoluta</span>
+        </span>
+        <p>Privacidade total em cada negociação.</p>
+      </li>
+      <li class="hm__benefit">
+        <span class="hm__benefit-head">
+          <Icon name="crown" size={19} stroke={1.3} />
+          <span class="hm__benefit-title">Serviço bespoke</span>
+        </span>
+        <p>Um serviço tão exclusivo quanto os imóveis.</p>
+      </li>
+    </ul>
+
+    {/* Destaque — points at the official RE/MAX listings page (single source
+        of property truth). No invented property names: copy stays about the
+        collection until the agency confirms a real featured listing. */}
+    <a class="hm__spot" href={EXTERNAL_LISTINGS_URL} target="_blank" rel="noopener noreferrer">
+      <span class="hm__spot-thumb">
+        <picture>
+          <source type="image/webp" srcset="/media/destaque-porto-noite-192.webp" />
+          <img src="/media/destaque-porto-noite-192.jpg" alt="" width="192" height="192" loading="lazy" decoding="async" />
+        </picture>
+      </span>
+      <span class="hm__spot-copy">
+        <span class="hm__spot-label">Destaque</span>
+        <span class="hm__spot-title">Imóveis de exceção no Porto</span>
+        <span class="hm__spot-meta">Sob consulta</span>
+      </span>
+      <span class="hm__spot-arrow"><Icon name="arrow" size={15} stroke={1.7} /></span>
+    </a>
+  </div>
+</section>
+
+<style is:global>
+  /* Mobile-only hero — global styles (namespaced `hm`) so the load-choreography
+     keyframes keep plain names and the homepage-only nav entrance can reach
+     the shared .nav without :global/keyframe scoping mismatches. */
+  .hm { display: none; }
+
+  @media (max-width: 560px) {
+    .hm {
+      position: relative; isolation: isolate;
+      display: flex; flex-direction: column;
+      min-height: 100svh;
+      padding: clamp(126px, 33vw, 152px) clamp(20px, 5.5vw, 28px) 16px;
+      color: var(--cream);
+      background: var(--navy-ink);
+      overflow: hidden;
+    }
+
+    /* ---------- Media plate ---------- */
+    .hm__media { position: absolute; inset: 0; z-index: -1; overflow: hidden; }
+    /* Vertical bleed gives the scroll parallax headroom without exposing edges. */
+    .hm__bg { position: absolute; inset: -6% 0; will-change: transform; }
+    .hm__bg picture, .hm__img { width: 100%; height: 100%; }
+    .hm__img { object-fit: cover; object-position: 62% center; }
+    @media (prefers-reduced-motion: no-preference) {
+      .hm__img { animation: hmZoomSettle 2600ms var(--t-ease-emph) both; }
+    }
+    .hm__scrim {
+      position: absolute; inset: 0;
+      background:
+        linear-gradient(180deg, rgba(6, 12, 22, 0.78) 0%, rgba(6, 12, 22, 0.28) 20%, rgba(6, 12, 22, 0) 34%),
+        linear-gradient(115deg, rgba(6, 12, 22, 0.88) 0%, rgba(6, 12, 22, 0.55) 36%, rgba(6, 12, 22, 0.14) 64%, rgba(6, 12, 22, 0) 80%),
+        linear-gradient(to top, rgba(7, 13, 24, 0.94) 0%, rgba(7, 13, 24, 0.58) 24%, rgba(7, 13, 24, 0) 52%);
+    }
+    .hm__grain {
+      position: absolute; inset: 0; opacity: 0.4; mix-blend-mode: overlay; pointer-events: none;
+      background-image: radial-gradient(circle at 1px 1px, rgba(255, 255, 255, 0.12) 1px, transparent 0);
+      background-size: 3px 3px;
+    }
+
+    .hm__inner { position: relative; display: flex; flex-direction: column; align-items: flex-start; flex: 1; width: 100%; }
+
+    /* ---------- Copy ---------- */
+    .hm__eyebrow {
+      margin: 0; font-size: 11px; letter-spacing: 0.3em; text-transform: uppercase;
+      font-weight: 500; color: var(--gold-light);
+      animation: hmFadeUp 900ms var(--t-ease-emph) 260ms both;
+    }
+    .hm__rule {
+      display: block; height: 1px; transform-origin: left;
+      background: linear-gradient(90deg, var(--gold), rgba(212, 187, 133, 0.1));
+    }
+    .hm__rule--top { width: 44px; margin-top: 16px; animation: hmRuleX 1000ms var(--t-ease-emph) 430ms both; }
+    .hm__rule--bottom { width: 58px; margin-top: 26px; animation: hmRuleX 1000ms var(--t-ease-emph) 900ms both; }
+
+    .hm__title {
+      margin: 20px 0 0; font-family: var(--font-serif); font-weight: 500;
+      font-size: clamp(41px, 12vw, 54px); line-height: 1.07; letter-spacing: -0.02em;
+      text-shadow: 0 2px 30px rgba(0, 0, 0, 0.55);
+    }
+    /* Masked line reveal — the padding/margin pair keeps «ç» descenders unclipped. */
+    .hm__line { display: block; overflow: hidden; padding-block: 0.1em; margin-block: -0.1em; }
+    .hm__line-in { display: block; transform: translateY(118%); animation: hmLineUp 950ms cubic-bezier(0.22, 1, 0.32, 1) both; }
+    .hm__line:nth-child(1) .hm__line-in { animation-delay: 400ms; }
+    .hm__line:nth-child(2) .hm__line-in { animation-delay: 520ms; }
+    .hm__line:nth-child(3) .hm__line-in { animation-delay: 640ms; }
+    .hm__title .em-gold { color: var(--gold-light); }
+
+    .hm__lede {
+      margin: 20px 0 0; max-width: 30ch;
+      font-size: 15.5px; line-height: 1.65; letter-spacing: 0.01em;
+      color: rgba(244, 237, 222, 0.85); text-wrap: pretty;
+      animation: hmFadeUp 900ms var(--t-ease-emph) 980ms both;
+    }
+
+    /* ---------- Primary CTA — glass capsule, gold ring, breathing glow ---------- */
+    .hm__cta {
+      position: relative; overflow: hidden;
+      margin-top: 30px; width: min(100%, 360px); min-height: 58px;
+      display: flex; align-items: center; justify-content: space-between; gap: 14px;
+      padding: 7px 7px 7px 26px;
+      border-radius: 999px; border: 1px solid rgba(212, 187, 133, 0.6);
+      background: linear-gradient(180deg, rgba(20, 38, 63, 0.62), rgba(9, 19, 34, 0.78));
+      -webkit-backdrop-filter: blur(14px) saturate(140%); backdrop-filter: blur(14px) saturate(140%);
+      color: var(--gold-light); text-decoration: none;
+      font-size: 13px; font-weight: 500; letter-spacing: 0.22em; text-transform: uppercase;
+      box-shadow: 0 20px 44px -20px rgba(0, 0, 0, 0.7), inset 0 1px 0 rgba(255, 255, 255, 0.12);
+      transition: transform var(--t-fast), border-color var(--t-fast);
+      animation:
+        hmFadeUp 900ms var(--t-ease-emph) 1120ms both,
+        hmGlow 4200ms ease-in-out 2800ms infinite;
+    }
+    .hm__cta:active { transform: scale(0.975); }
+    .hm__cta-arrow {
+      flex-shrink: 0; width: 44px; height: 44px; border-radius: 50%; display: grid; place-items: center;
+      border: 1px solid rgba(212, 187, 133, 0.65); background: rgba(212, 187, 133, 0.1);
+      transition: transform var(--t-med), background var(--t-med);
+    }
+    .hm__cta:active .hm__cta-arrow { transform: translateX(3px); background: rgba(212, 187, 133, 0.2); }
+    /* One elegant sheen sweep once the button has settled. */
+    .hm__cta::after {
+      content: ""; position: absolute; top: 0; left: -130%; width: 55%; height: 100%;
+      background: linear-gradient(100deg, transparent, rgba(255, 255, 255, 0.22), transparent);
+      transform: skewX(-18deg); pointer-events: none;
+      animation: hmSheen 1400ms ease 2300ms both;
+    }
+
+    .hm__spacer { flex: 1 1 auto; min-height: clamp(56px, 14svh, 190px); }
+
+    /* ---------- Benefit cards — one glass plate, three columns ---------- */
+    .hm__benefits {
+      list-style: none; margin: 0; padding: 16px 2px; width: 100%;
+      display: grid; grid-template-columns: repeat(3, 1fr);
+      border-radius: 20px; border: 1px solid rgba(176, 198, 230, 0.16);
+      background: linear-gradient(180deg, rgba(14, 29, 50, 0.6), rgba(8, 17, 31, 0.72));
+      -webkit-backdrop-filter: blur(16px) saturate(140%); backdrop-filter: blur(16px) saturate(140%);
+      box-shadow: 0 24px 55px -28px rgba(0, 0, 0, 0.75), inset 0 1px 0 rgba(255, 255, 255, 0.1);
+    }
+    .hm__benefit {
+      padding: 2px 12px; display: flex; flex-direction: column; gap: 8px;
+      animation: hmFadeUp 850ms var(--t-ease-emph) both;
+    }
+    .hm__benefit:nth-child(1) { animation-delay: 1300ms; }
+    .hm__benefit:nth-child(2) { animation-delay: 1420ms; border-left: 1px solid rgba(176, 198, 230, 0.14); }
+    .hm__benefit:nth-child(3) { animation-delay: 1540ms; border-left: 1px solid rgba(176, 198, 230, 0.14); }
+    .hm__benefit-head { display: flex; align-items: center; gap: 7px; color: var(--gold-light); }
+    .hm__benefit-head .icon { flex-shrink: 0; }
+    .hm__benefit-title {
+      font-size: 10px; letter-spacing: 0.13em; text-transform: uppercase;
+      font-weight: 500; line-height: 1.35;
+    }
+    .hm__benefit p { margin: 0; font-size: 11.5px; line-height: 1.5; color: var(--white-70); }
+
+    /* ---------- Destaque microcard ---------- */
+    .hm__spot {
+      margin-top: 14px; width: 100%;
+      display: flex; align-items: center; gap: 13px;
+      padding: 11px 13px 11px 11px;
+      border-radius: 22px; border: 1px solid rgba(176, 198, 230, 0.16);
+      background: linear-gradient(180deg, rgba(14, 29, 50, 0.64), rgba(8, 17, 31, 0.76));
+      -webkit-backdrop-filter: blur(16px) saturate(140%); backdrop-filter: blur(16px) saturate(140%);
+      box-shadow: 0 24px 55px -28px rgba(0, 0, 0, 0.75), inset 0 1px 0 rgba(255, 255, 255, 0.1);
+      text-decoration: none; color: var(--cream);
+      transition: transform var(--t-fast);
+      animation: hmFadeUp 850ms var(--t-ease-emph) 1680ms both;
+    }
+    .hm__spot:active { transform: scale(0.985); }
+    .hm__spot-thumb {
+      flex-shrink: 0; width: 56px; height: 56px; border-radius: 50%; overflow: hidden;
+      box-shadow: 0 0 0 1px rgba(212, 187, 133, 0.55), 0 8px 20px -10px rgba(0, 0, 0, 0.8);
+    }
+    .hm__spot-thumb img { width: 100%; height: 100%; object-fit: cover; }
+    .hm__spot-copy { display: flex; flex-direction: column; gap: 3px; min-width: 0; }
+    .hm__spot-label { font-size: 9.5px; letter-spacing: 0.24em; text-transform: uppercase; font-weight: 500; color: var(--gold-light); }
+    .hm__spot-title { font-size: 14.5px; font-weight: 500; letter-spacing: 0.01em; }
+    .hm__spot-meta { font-size: 12px; color: var(--white-50); letter-spacing: 0.02em; }
+    .hm__spot-arrow {
+      margin-left: auto; flex-shrink: 0; width: 40px; height: 40px; border-radius: 50%;
+      display: grid; place-items: center; color: var(--gold-light);
+      border: 1px solid rgba(212, 187, 133, 0.5);
+      transition: transform var(--t-med);
+    }
+    .hm__spot:active .hm__spot-arrow { transform: translateX(3px); }
+
+    /* Homepage-only nav entrance (this component renders on the homepage only). */
+    .nav .nav__inner { animation: hmNavIn 1000ms var(--t-ease-emph) 100ms both; }
+
+    /* The desktop hero hides at this width — its data-reveal children never
+       intersect, so no observer work is wasted on them. */
+  }
+
+  /* ---------- Load choreography ---------- */
+  @keyframes hmFadeUp {
+    from { opacity: 0; transform: translateY(22px); }
+    to { opacity: 1; transform: translateY(0); }
+  }
+  @keyframes hmLineUp {
+    to { transform: translateY(0); }
+  }
+  @keyframes hmRuleX {
+    from { transform: scaleX(0); }
+    to { transform: scaleX(1); }
+  }
+  @keyframes hmNavIn {
+    from { opacity: 0; transform: translateY(-16px); }
+    to { opacity: 1; transform: translateY(0); }
+  }
+  @keyframes hmZoomSettle {
+    from { transform: scale(1.1); }
+    to { transform: scale(1); }
+  }
+  @keyframes hmGlow {
+    0%, 100% { box-shadow: 0 20px 44px -20px rgba(0, 0, 0, 0.7), inset 0 1px 0 rgba(255, 255, 255, 0.12), 0 0 0 0 rgba(212, 187, 133, 0); }
+    50% { box-shadow: 0 20px 44px -20px rgba(0, 0, 0, 0.7), inset 0 1px 0 rgba(255, 255, 255, 0.12), 0 0 30px -6px rgba(212, 187, 133, 0.4); }
+  }
+  @keyframes hmSheen {
+    from { left: -130%; }
+    to { left: 160%; }
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    .hm__cta { animation: none; }
+    .hm__cta::after { display: none; }
+    .hm__line-in { transform: none; animation: none; }
+  }
+</style>
+
+<script>
+  // Subtle depth parallax on the hero plate — mobile only, transform-only
+  // (compositor), rAF-throttled, and off under prefers-reduced-motion.
+  const hero = document.querySelector<HTMLElement>('[data-hero-mobile]');
+  const bg = hero?.querySelector<HTMLElement>('[data-hm-parallax]');
+  if (hero && bg) {
+    const mqMobile = window.matchMedia('(max-width: 560px)');
+    const reduce = window.matchMedia('(prefers-reduced-motion: reduce)');
+    let raf = 0;
+    const update = () => {
+      raf = 0;
+      const y = window.scrollY;
+      const h = hero.offsetHeight;
+      if (y > h) return; // hero off-screen — nothing to move
+      // Cap the shift inside the 6% vertical bleed so no edge is ever exposed.
+      bg.style.transform = `translate3d(0, ${Math.min(y * 0.12, h * 0.05)}px, 0)`;
+    };
+    window.addEventListener(
+      'scroll',
+      () => {
+        if (!raf && mqMobile.matches && !reduce.matches) raf = requestAnimationFrame(update);
+      },
+      { passive: true }
+    );
+  }
+</script>

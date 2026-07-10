@@ -13,7 +13,7 @@ const year = new Date().getFullYear();
     <!-- Sobre -->
     <section class="foot__section">
       <a class="foot__section-brand" href="/" aria-label={`${site.name} — início`}>
-        <img class="foot__section-logo" src={site.logo} alt={site.name} width="2587" height="386" />
+        <img class="foot__section-logo" src={site.logo} alt={site.name} width="643" height="96" />
       </a>
       <p class="foot__section-text">
         A seleção mais exclusiva de imóveis no Porto. Especialistas em propriedades com carácter, história e potencial.
@@ -98,7 +98,8 @@ const year = new Date().getFullYear();
 
     <nav class="foot__legal-links" aria-label="Legal">
       <a href="/privacidade">Política de Privacidade</a>
-      <a href="/termos">Termos e Condições</a>
+      <!-- TODO(legal): repor o link "Termos e Condições" quando a página /termos
+           existir com texto legal real — apontava para um 404. -->
     </nav>
   </div>
 </footer>

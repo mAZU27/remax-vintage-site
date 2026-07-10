@@ -58,9 +58,11 @@ The whole site is in **European Portuguese**.
 src/pages/       index (homepage) · comprar · vender · alugar · sobre-nos ·
                  contacto · apoio · carreiras · insights/ · privacidade ·
                  mobile-preview · api/lead.ts
-src/components/  Nav, Footer, Hero, PageHero, Button, Icon, SectionEyebrow,
-                 StructureDiagram, FaqAccordion, ValuationForm, ValueSimulator,
-                 Neighborhoods, Testimonials, AwardsBelt/Grid, Careers*, …
+src/components/  Nav, Footer, Hero (desktop >560px) + HeroMobile (≤560px) +
+                 MobileValuationSheet (mobile conversion sheet), PageHero,
+                 Button, Icon, SectionEyebrow, StructureDiagram, FaqAccordion,
+                 ValuationForm, ValueSimulator, Neighborhoods, Testimonials,
+                 AwardsBelt/Grid, Careers*, …
 src/content/     metodo-comprar.ts · metodo-vender.ts · rede.ts — method-page
                  content transcribed from the OFFICIAL printed guides (Grupo
                  RE/MAX Dragão); items flagged confirmar:true await agency
@@ -112,7 +114,13 @@ parallax). Keep that bar — don't regress it.
 
 ## 4. Page anatomy (12 sections, top to bottom)
 
-1. Hero — headline "A coleção mais rara do Porto." + search box (Comprar/Arrendar/Vender)
+1. Hero — headline "A coleção mais rara do Porto." + valuation card.
+   ≤560px this is replaced by HeroMobile.astro (dark editorial "Douro ao
+   entardecer" plate, staged load animations, benefit cards, destaque card)
+   plus MobileValuationSheet.astro — a floating «Faça a sua avaliação» sheet
+   (auto-shows once per session, collapses to a re-open pill; «Pedir
+   avaliação» opens the global ValueSimulator). Both heros mirror each
+   other's <picture> sources so only one image downloads per viewport.
 2. Identidade — trust strip
 3. Posicionamento (`#sobre`)
 4. Método (`#metodo`)

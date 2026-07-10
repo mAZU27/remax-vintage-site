@@ -3,14 +3,22 @@ import Button from './Button.astro';
 import { EXTERNAL_LISTINGS_URL } from '../lib/site.config';
 import Icon from './Icon.astro';
 
-// Homepage hero — static "RE/MAX Collection Vintage" plaque interior plate.
-// The image is the LCP: a responsive <img> (cover) preloaded in Base via the
-// `heroPreload` prop. The former hero video now lives on the /sobre-nos hero.
+// Homepage hero — DESKTOP/TABLET (>560px): the "RE/MAX Collection Vintage"
+// plaque interior plate. At ≤560px this section hides and HeroMobile.astro
+// takes over. The ≤560px sources below mirror HeroMobile's exactly, so the
+// hidden <img> resolves to the already-cached mobile file (never a 2nd
+// download). The image is the LCP: preloaded in Base via `heroPreload`.
 ---
 <section class="hero" data-hero>
   <div class="hero__media">
     <picture>
-      <source media="(max-width: 560px)" srcset="/media/hero-interior-porto.jpg" />
+      <source
+        media="(max-width: 560px)"
+        type="image/webp"
+        srcset="/media/hero-mobile-douro-480.webp 480w, /media/hero-mobile-douro-720.webp 720w, /media/hero-mobile-douro-941.webp 941w"
+        sizes="100vw"
+      />
+      <source media="(max-width: 560px)" srcset="/media/hero-mobile-douro-720.jpg" />
       <img
         class="hero__bg"
         src="/media/hero-collection-1280.jpg"
@@ -172,49 +180,9 @@ import Icon from './Icon.astro';
     .hero__cue { display: none; }
     .hero__bg { object-position: 52% center; }
   }
+  /* ≤560px the homepage hero is HeroMobile.astro — this one steps aside. */
   @media (max-width: 560px) {
-    .hero { min-height: 100svh; justify-content: flex-start; align-items: flex-start; padding: calc(var(--nav-h) + 120px) var(--gutter) var(--gutter); flex-direction: column; }
-    .hero__bg { object-position: 70% center; }
-    .hero__copy {
-      display: flex;
-      flex-direction: column;
-      max-width: 100%;
-      z-index: 2;
-    }
-    .hero__eyebrow {
-      font-size: clamp(10px, 1vw, 11px);
-      letter-spacing: 0.1em;
-      color: var(--gold-light);
-      text-transform: uppercase;
-      font-weight: 500;
-    }
-    .hero__title {
-      margin-top: clamp(14px, 2.2vw, 18px);
-      font-size: clamp(42px, 8.2vw, 56px);
-      line-height: 1.15;
-      letter-spacing: -0.015em;
-      max-width: 20ch;
-    }
-    .hero__rule {
-      margin-top: clamp(16px, 2.4vw, 22px);
-      width: clamp(60px, 10vw, 80px);
-    }
-    .hero__lede {
-      margin-top: clamp(18px, 3vw, 24px);
-      font-size: clamp(14px, 1.4vw, 16px);
-      line-height: 1.6;
-      letter-spacing: 0.01em;
-      max-width: 40ch;
-    }
-    .hero__ctas {
-      margin-top: clamp(60px, 10vw, 80px);
-      flex-direction: column;
-      gap: clamp(12px, 2vw, 16px);
-    }
-    .hero__cue { display: none; }
-    .hero__card {
-      display: none;
-    }
+    .hero { display: none; }
   }
   @media (prefers-reduced-motion: reduce) {
     .hero__cue :global(.icon) { animation: none; }

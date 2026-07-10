@@ -11,7 +11,10 @@ export const site = {
   name: 'RE/MAX Collection Vintage',
   shortName: 'Collection Vintage',
   brandLine: 'RE/MAX Collection® Vintage',
-  logo: '/assets/remax-vintage-horizontal.png',
+  // Display logo (nav/footer render at 26–32px → ship the 96px-tall version).
+  logo: '/assets/remax-vintage-horizontal-nav.png',
+  // Full-resolution logo — structured data / social previews only.
+  logoFull: '/assets/remax-vintage-horizontal.png',
   tagline: 'A coleção mais rara do Porto.',
   description:
     'Imóveis vintage e premium no Porto — oito zonas de eleição, da Foz do Douro à Baixa. Avaliação confidencial e uma apresentação à altura de cada imóvel distinto.',

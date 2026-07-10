@@ -26,10 +26,17 @@ const setStored = (lang: Lang) => {
   try { localStorage.setItem(STORAGE_KEY, lang); } catch { /* private mode */ }
 };
 
+// Astro templates wrap long copy across indented lines, so a rendered text
+// node often carries internal newlines. Normalize whitespace on BOTH sides of
+// the lookup or those nodes never match their dictionary entry.
+const collapse = (s: string) => s.replace(/\s+/g, ' ');
+const lookup: Record<string, string> = {};
+for (const [k, v] of Object.entries(en)) lookup[collapse(k.trim())] = v;
+
 const translate = (raw: string): string | null => {
   const trimmed = raw.trim();
   if (!trimmed) return null;
-  const hit = en[trimmed];
+  const hit = lookup[collapse(trimmed)];
   if (hit == null || hit === trimmed) return null;
   // Preserve leading/trailing whitespace so inline markup layout survives.
   const lead = raw.match(/^\s*/)?.[0] ?? '';
@@ -104,6 +111,27 @@ const syncToggleState = (lang: Lang) => {
   });
 };
 
+// The tab title and meta description are not body text nodes — handle them
+// explicitly.
+let ptTitle: string | null = null;
+let ptMetaDesc: string | null = null;
+const applyHead = (lang: Lang) => {
+  if (ptTitle == null) ptTitle = document.title;
+  const meta = document.querySelector<HTMLMetaElement>('meta[name="description"]');
+  if (meta && ptMetaDesc == null) ptMetaDesc = meta.getAttribute('content');
+  if (lang === 'en') {
+    const swappedTitle = translate(ptTitle);
+    if (swappedTitle != null) document.title = swappedTitle;
+    if (meta && ptMetaDesc) {
+      const swappedDesc = translate(ptMetaDesc);
+      if (swappedDesc != null) meta.setAttribute('content', swappedDesc);
+    }
+  } else {
+    document.title = ptTitle;
+    if (meta && ptMetaDesc) meta.setAttribute('content', ptMetaDesc);
+  }
+};
+
 const apply = (lang: Lang) => {
   const html = document.documentElement;
   if (lang === 'en') {
@@ -115,11 +143,17 @@ const apply = (lang: Lang) => {
     restoreAttrs(document.body);
     html.setAttribute('lang', 'pt-PT');
   }
+  applyHead(lang);
   syncToggleState(lang);
 };
 
 // Track the current lang so the MutationObserver knows whether to translate.
 let currentLang: Lang = 'pt';
+
+// For page scripts that COMPOSE strings at runtime (e.g. the simulator summary
+// joining several labels): translate each part before joining, since the
+// composed whole will never match a dictionary entry.
+export const t = (s: string): string => (currentLang === 'en' ? (translate(s) ?? s) : s);
 
 const translateNewNode = (node: Node) => {
   if (currentLang !== 'en') return;
@@ -139,14 +173,40 @@ const translateNewNode = (node: Node) => {
   }
 };
 
+// Page scripts also rewrite attributes at runtime (e.g. the support widget
+// toggling aria-label). Track those so the new value becomes the PT original
+// and, in EN mode, gets swapped immediately.
+const onAttrMutation = (el: HTMLElement, attr: string) => {
+  if (SKIP_TAGS.has(el.tagName) || el.closest('[data-i18n-skip]')) return;
+  const val = el.getAttribute(attr);
+  if (val == null) return;
+  const memoKey = `__i18nPt_${attr}`;
+  const original: string | undefined = (el as any)[memoKey];
+  const ownWrite = original != null && val === (translate(original) ?? original) && val !== original;
+  if (ownWrite) return;
+  if (val !== original) (el as any)[memoKey] = val;
+  if (currentLang === 'en') {
+    const swapped = translate(val);
+    if (swapped != null) el.setAttribute(attr, swapped);
+  }
+};
+
 const observeDom = () => {
   const mo = new MutationObserver((mutations) => {
-    if (currentLang !== 'en') return;
     for (const m of mutations) {
-      m.addedNodes.forEach(translateNewNode);
+      if (m.type === 'attributes' && m.attributeName) {
+        onAttrMutation(m.target as HTMLElement, m.attributeName);
+      } else if (currentLang === 'en') {
+        m.addedNodes.forEach(translateNewNode);
+      }
     }
   });
-  mo.observe(document.body, { childList: true, subtree: true });
+  mo.observe(document.body, {
+    childList: true,
+    subtree: true,
+    attributes: true,
+    attributeFilter: [...ATTRS],
+  });
 };
 
 export const initI18n = () => {

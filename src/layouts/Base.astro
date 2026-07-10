@@ -14,8 +14,22 @@ interface Props {
   /** Homepage sits over a dark video hero → nav starts transparent. */
   overHeroNav?: boolean;
   noindex?: boolean;
-  /** Preload an above-the-fold hero image (LCP). Emits <link rel=preload as=image>. */
-  heroPreload?: { href: string; srcset?: string; sizes?: string };
+  /** og:type — 'article' for blog posts, default 'website'. */
+  ogType?: string;
+  /** schema.org type of this page's WebPage node (e.g. 'ContactPage', 'AboutPage'). */
+  pageType?: string;
+  /** Page-specific JSON-LD (object or array) rendered alongside the global graph. */
+  schema?: Record<string, unknown> | Record<string, unknown>[];
+  /** Preload above-the-fold hero image(s) (LCP). Emits <link rel=preload as=image>.
+   *  Accepts one entry or a list; `media` gates a preload to a viewport range
+   *  (e.g. separate mobile/desktop hero files). */
+  heroPreload?: HeroPreload | HeroPreload[];
+}
+interface HeroPreload {
+  href: string;
+  srcset?: string;
+  sizes?: string;
+  media?: string;
 }
 const {
   title,
@@ -23,28 +37,57 @@ const {
   image = '/media/hero-poster.jpg',
   overHeroNav = false,
   noindex = false,
+  ogType = 'website',
+  pageType = 'WebPage',
+  schema,
   heroPreload,
 } = Astro.props;
 
 const pageTitle = title ? `${title} · ${site.shortName}` : `${site.name} — ${site.tagline}`;
 const canonical = Astro.site ? new URL(Astro.url.pathname, Astro.site).href : Astro.url.pathname;
 const ogImage = Astro.site ? new URL(image, Astro.site).href : image;
+const origin = Astro.site ? Astro.site.href : '/';
 
+// Global entity graph — agency + website. Contact details (phone/email) are
+// deliberately NOT emitted while site.ts still carries launch placeholders;
+// only verified facts go into structured data.
+const sameAs = site.social.map((s) => s.href).filter((h) => h && h !== '#');
 const jsonLd = {
   '@context': 'https://schema.org',
-  '@type': 'RealEstateAgent',
-  name: site.name,
-  description: site.description,
-  image: Astro.site ? new URL(site.logo, Astro.site).href : site.logo,
-  url: Astro.site ? Astro.site.href : undefined,
-  telephone: site.phone,
-  email: site.email,
-  areaServed: 'Porto, Portugal',
-  address: { '@type': 'PostalAddress', addressLocality: 'Porto', addressCountry: 'PT' },
-  priceRange: '€€€€',
-  foundingDate: String(site.established),
-  sameAs: site.social.map((s) => s.href).filter((h) => h && h !== '#'),
+  '@graph': [
+    {
+      '@type': 'RealEstateAgent',
+      '@id': `${origin}#agency`,
+      name: site.name,
+      description: site.description,
+      logo: new URL(site.logoFull, origin).href,
+      image: new URL(site.logoFull, origin).href,
+      url: origin,
+      areaServed: 'Porto, Portugal',
+      address: { '@type': 'PostalAddress', addressLocality: 'Porto', addressCountry: 'PT' },
+      priceRange: '€€€€',
+      foundingDate: String(site.established),
+      ...(sameAs.length ? { sameAs } : {}),
+    },
+    {
+      '@type': 'WebSite',
+      '@id': `${origin}#website`,
+      name: site.name,
+      url: origin,
+      inLanguage: 'pt-PT',
+      publisher: { '@id': `${origin}#agency` },
+    },
+    {
+      '@type': pageType,
+      url: canonical,
+      name: pageTitle,
+      description,
+      inLanguage: 'pt-PT',
+      isPartOf: { '@id': `${origin}#website` },
+    },
+  ],
 };
+const pageSchemas = schema ? (Array.isArray(schema) ? schema : [schema]) : [];
 ---
 <!doctype html>
 <html lang="pt-PT">
@@ -58,23 +101,24 @@ const jsonLd = {
     <meta name="theme-color" content="#0B1A2E" />
     <meta name="color-scheme" content="light" />
 
-    {heroPreload && (
+    {(heroPreload ? (Array.isArray(heroPreload) ? heroPreload : [heroPreload]) : []).map((p) => (
       <link
         rel="preload"
         as="image"
-        href={heroPreload.href}
-        imagesrcset={heroPreload.srcset}
-        imagesizes={heroPreload.sizes}
+        href={p.href}
+        imagesrcset={p.srcset}
+        imagesizes={p.sizes}
+        media={p.media}
         fetchpriority="high"
       />
-    )}
+    ))}
 
     <!-- Icons -->
     <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
     <link rel="apple-touch-icon" href="/favicon.svg" />
 
     <!-- Open Graph -->
-    <meta property="og:type" content="website" />
+    <meta property="og:type" content={ogType} />
     <meta property="og:site_name" content={site.name} />
     <meta property="og:title" content={pageTitle} />
     <meta property="og:description" content={description} />
@@ -97,6 +141,9 @@ const jsonLd = {
     />
 
     <script type="application/ld+json" set:html={JSON.stringify(jsonLd)} />
+    {pageSchemas.map((s) => (
+      <script type="application/ld+json" set:html={JSON.stringify({ '@context': 'https://schema.org', ...s })} />
+    ))}
   </head>
   <body>
     <a href="#main" class="skip-link">Saltar para o conteúdo</a>
@@ -129,11 +176,6 @@ const jsonLd = {
         );
         items.forEach((el) => io.observe(el));
       }
-    </script>
-
-    <script>
-      import { initI18n } from '../i18n/apply';
-      initI18n();
     </script>
   </body>
 </html>

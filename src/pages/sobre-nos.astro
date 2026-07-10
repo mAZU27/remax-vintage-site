@@ -34,6 +34,7 @@ const aboutTestimonials = testimonials.slice(0, 3);
   description="A RE/MAX Collection Vintage — desde 2014 a apresentar o Porto ao mundo. Especialistas em imóveis premium e vintage em oito zonas de eleição, da Foz do Douro à Baixa."
   image="/images/porto/editorial-entrada.webp"
   overHeroNav
+  pageType="AboutPage"
 >
   <!-- S1 — Hero (background video moved here from the homepage hero) -->
   <PageHero
@@ -189,7 +190,7 @@ const aboutTestimonials = testimonials.slice(0, 3);
           ];
           return (
             <div class="ab-gal__item" data-reveal style={`--reveal-delay:${100 + i * 50}ms`}>
-              <img src={`/images/equipa-gallery/equipa-${i + 1}.png`} alt="Equipa Collection Vintage" loading="lazy" decoding="async" />
+              <img src={`/images/equipa-gallery/equipa-${i + 1}.webp`} alt="" loading="lazy" decoding="async" />
               <span class="ab-gal__cap">{captions[i]}</span>
             </div>
           );
@@ -376,7 +377,7 @@ const aboutTestimonials = testimonials.slice(0, 3);
     display: flex; align-items: flex-start; justify-content: space-between; gap: clamp(32px, 5vw, 64px);
     margin-bottom: clamp(48px, 6vw, 80px); flex-wrap: wrap;
   }
-  .ab-about__header > div { flex: 1; min-width: 300px; }
+  .ab-about__header > div { flex: 1; min-width: min(300px, 100%); }
   .ab-about__title { margin-top: 16px; font-size: clamp(42px, 5vw, 68px); }
   .ab-about__desc { max-width: 52ch; margin-top: 18px; }
   .ab-about__cta { align-self: flex-end; }

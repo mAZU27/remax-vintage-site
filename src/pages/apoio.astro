@@ -20,12 +20,23 @@ import {
 
 // Concierge aside reuses the two "talk now" channels (WhatsApp + Telefone).
 const conciergeChannels = [contactChannels[0], contactChannels[1]];
+
+// FAQPage structured data mirrors the accordion rendered below (same source).
+const faqSchema = {
+  '@type': 'FAQPage',
+  mainEntity: faqs.map((f) => ({
+    '@type': 'Question',
+    name: f.q,
+    acceptedAnswer: { '@type': 'Answer', text: f.a },
+  })),
+};
 ---
 <Base
   title="Apoio ao cliente"
   description="Centro de apoio da RE/MAX Collection Vintage — perguntas frequentes, contacto rápido e guias úteis para comprar, vender e avaliar imóveis no Porto."
   image="/images/porto/porto-douro-arrabida.webp"
   overHeroNav
+  schema={faqSchema}
 >
   <!-- S1 — Hero + pesquisa (visual) -->
   <PageHero

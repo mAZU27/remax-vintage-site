@@ -150,7 +150,8 @@ function list(items: string[]): string {
 }
 
 // ---------- Intent → reply ----------
-function replyFor(intent: IntentId): BotReply {
+// Exported so tooling (scripts/i18n-coverage) can enumerate every reply.
+export function replyFor(intent: IntentId): BotReply {
   switch (intent) {
     case 'saudacao':
       return {
