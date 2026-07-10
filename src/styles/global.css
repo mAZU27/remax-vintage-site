@@ -31,6 +31,8 @@
   --hairline-light: rgba(244, 237, 222, 0.18);
   /* Functional signal for form validation (kept muted to suit the palette) */
   --error: #A23A2E;
+  /* Legible error tone for use on the dark navy surfaces (forms on --navy) */
+  --error-light: #E8A99E;
 
   /* Type */
   --font-serif: "Cormorant Garamond", "EB Garamond", Georgia, serif;

@@ -561,7 +561,7 @@ const carouselData = Array.from({ length: LOOP_COPIES }, (_, copy) =>
     const match = transform.match(/matrix3d?\((.+)\)/);
     if (!match) return 0;
     const values = match[1].split(', ');
-    return parseInt(values[values.length === 16 ? 12 : 4] || 0);
+    return parseInt(values[values.length === 16 ? 12 : 4] || '0', 10);
   }
 
   function setTranslate(x: number) {

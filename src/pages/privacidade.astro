@@ -1,10 +1,12 @@
 ---
 // Privacy-policy page — interim FACTUAL version (2026-07-10).
 // Every statement below reflects what the code actually does (formulários →
-// /api/lead → sistema de gestão de leads; alojamento Vercel; sem cookies nem
-// analytics). NÃO afirma conformidade RGPD nem revisão jurídica.
+// /api/lead → entrega por email transacional via Resend; alojamento Vercel; sem
+// cookies nem analytics; sem tracking de aberturas/cliques). NÃO afirma
+// conformidade RGPD nem revisão jurídica.
 // PENDENTE (não inventar): email de contacto para direitos RGPD, prazos de
-// retenção concretos, e REVISÃO POR ADVOGADO antes do lançamento comercial —
+// retenção concretos, e REVISÃO POR ADVOGADO antes do lançamento comercial
+// (incl. validar o texto sobre a Resend, DPA e transferências para os EUA) —
 // ver relatório da Fase 2A e a lista de factos a confirmar por G.
 import Base from '../layouts/Base.astro';
 import SectionEyebrow from '../components/SectionEyebrow.astro';
@@ -49,10 +51,19 @@ const updated = '10 de julho de 2026';
 
         <h2 class="priv__h">Quem trata os dados</h2>
         <p>
-          Os formulários são entregues através do nosso próprio servidor ao sistema de
-          gestão de contactos da equipa {site.shortName}. O site está alojado na Vercel,
-          cuja infraestrutura pode processar registos técnicos (por exemplo, endereço IP)
-          para operação e segurança do serviço.
+          Quando envia um formulário, os seus dados são processados no nosso próprio
+          servidor e entregues à equipa {site.shortName} por email transacional, através
+          do fornecedor Resend (Resend, Inc.), que utilizamos exclusivamente para fazer
+          chegar a sua mensagem à agência. Para esse efeito, o conteúdo do formulário é
+          processado pela Resend; os metadados técnicos do envio (registos do serviço)
+          podem ser armazenados em infraestrutura nos Estados Unidos da América. O
+          fornecedor disponibiliza um Acordo de Tratamento de Dados (DPA) e cláusulas
+          contratuais-tipo para as transferências internacionais. Não ativámos o
+          seguimento de aberturas nem de cliques nas mensagens.
+        </p>
+        <p>
+          O site está alojado na Vercel, cuja infraestrutura pode processar registos
+          técnicos (por exemplo, endereço IP) para operação e segurança do serviço.
         </p>
 
         <h2 class="priv__h">Cookies e armazenamento local</h2>

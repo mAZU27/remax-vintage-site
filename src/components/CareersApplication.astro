@@ -69,6 +69,7 @@ import { careersApplication as a, anchors } from '../data/carreiras';
             <span class="cupload__text" data-cv-text>Carregar ficheiro <em>(PDF ou Word)</em></span>
             <input id="ap-cv" name="cv" type="file" accept=".pdf,.doc,.docx" />
           </label>
+          <p class="cupload__note">O ficheiro não é enviado nesta fase. A nossa equipa solicitará o CV durante o contacto.</p>
         </div>
 
         <label class="cconsent">
@@ -79,6 +80,9 @@ import { careersApplication as a, anchors } from '../data/carreiras';
         <button type="submit" class="btn btn--gold capply__submit">
           <span>Enviar candidatura</span><Icon name="arrow" size={14} stroke={1.8} />
         </button>
+        <p class="capply__error" data-apply-error hidden role="alert">
+          Não foi possível enviar a candidatura. Verifique a ligação e tente novamente — os seus dados foram mantidos.
+        </p>
         <p class="capply__micro"><Icon name="lock" size={13} stroke={1.6} /> Confidencial · Resposta em breve</p>
       </form>
 
@@ -137,6 +141,7 @@ import { careersApplication as a, anchors } from '../data/carreiras';
   .cupload :global(.icon) { color: var(--gold-light); flex-shrink: 0; }
   .cupload__text { font-size: 14px; letter-spacing: 0; text-transform: none; color: inherit; }
   .cupload__text em { color: var(--white-50); font-style: normal; }
+  .cupload__note { margin: 8px 0 0; font-size: 12px; line-height: 1.5; letter-spacing: 0; text-transform: none; color: var(--white-50); }
   .cupload input[type="file"] { position: absolute; width: 1px; height: 1px; opacity: 0; pointer-events: none; }
 
   .cconsent { display: flex; gap: 12px; align-items: flex-start; }
@@ -146,6 +151,8 @@ import { careersApplication as a, anchors } from '../data/carreiras';
   :global(.capply__submit) { width: 100%; margin-top: 4px; }
   .capply__micro { display: flex; align-items: center; justify-content: center; gap: 8px; margin: 4px 0 0; font-size: 12.5px; color: var(--white-70); }
   .capply__micro :global(.icon) { color: var(--gold-light); }
+  .capply__error { margin: 4px 0 0; font-size: 13px; line-height: 1.5; color: var(--error-light); text-align: center; }
+  .capply__submit[disabled] { opacity: 0.6; cursor: progress; }
 
   .capply__done { text-align: center; padding: clamp(30px, 4vw, 56px) 10px; }
   .capply__done-ic { width: 56px; height: 56px; margin: 0 auto; border-radius: 50%; display: grid; place-items: center; background: rgba(184,153,104,0.16); color: var(--gold-light); }
@@ -168,45 +175,74 @@ import { careersApplication as a, anchors } from '../data/carreiras';
       }
     });
 
-    form.addEventListener('submit', (e) => {
+    const submitBtn = form.querySelector<HTMLButtonElement>('button[type="submit"]');
+    const submitLabel = submitBtn?.querySelector('span');
+    const errorBox = form.querySelector<HTMLElement>('[data-apply-error]');
+    let submitting = false;
+    // One id per fill — stable across retries so the server's Idempotency-Key
+    // dedupes a resent lead; rotated only after a confirmed success.
+    let submissionId = crypto.randomUUID();
+
+    form.addEventListener('submit', async (e) => {
       e.preventDefault();
+      if (submitting) return; // block double-submit while in flight
       if (!form.checkValidity()) {
         form.reportValidity();
         return;
       }
 
-      // Recruitment lead → same-origin /api/lead proxy → Novus ingest (token
-      // stays server-side; ingest is fail-soft so the lead is never lost).
-      // The CV binary is NOT uploaded (the ingest is JSON) — the filename
-      // travels as context and the team requests the document on follow-up.
+      // Recruitment lead → same-origin /api/lead endpoint. The CV binary is NOT
+      // uploaded (the ingest is JSON) — only the filename travels as context and
+      // the team requests the document on follow-up (disclosed by the field
+      // note). "Candidatura recebida" is shown ONLY after the server confirms
+      // delivery (delivered:true); on failure the filled data is kept for retry.
       const fd = new FormData(form);
       const val = (n: string) => String(fd.get(n) ?? '').trim();
       const utm: Record<string, string> = {};
       new URLSearchParams(location.search).forEach((v, k) => {
         if (k.startsWith('utm_')) utm[k] = v;
       });
-      fetch('/api/lead', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({
-          full_name: val('nome'),
-          email: val('email'),
-          phone: val('telefone'),
-          location: val('localidade'),
-          interest_area: val('area'),
-          message: val('mensagem'),
-          cv_filename: cvInput?.files?.[0]?.name ?? '',
-          form: 'careers-application',
-          utm,
-          consent: { type: 'recrutamento', text_version: 'v1' },
-        }),
-        keepalive: true,
-      }).catch((err) => console.error('[lead]', err));
 
-      if (done) {
-        form.hidden = true;
-        done.hidden = false;
-        done.scrollIntoView({ behavior: 'smooth', block: 'center' });
+      const prevLabel = submitLabel?.textContent ?? 'Enviar candidatura';
+      submitting = true;
+      if (submitBtn) submitBtn.disabled = true;
+      if (submitLabel) submitLabel.textContent = 'A enviar…';
+      if (errorBox) errorBox.hidden = true;
+
+      try {
+        const res = await fetch('/api/lead', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({
+            full_name: val('nome'),
+            email: val('email'),
+            phone: val('telefone'),
+            location: val('localidade'),
+            interest_area: val('area'),
+            message: val('mensagem'),
+            cv_filename: cvInput?.files?.[0]?.name ?? '',
+            form: 'careers-application',
+            submission_id: submissionId,
+            utm,
+            consent: { type: 'recrutamento', text_version: 'v1' },
+          }),
+        });
+        const data = await res.json().catch(() => ({}));
+        if (res.ok && data.delivered === true) {
+          submissionId = crypto.randomUUID(); // fresh id for any subsequent lead
+          if (done) {
+            form.hidden = true;
+            done.hidden = false;
+            done.scrollIntoView({ behavior: 'smooth', block: 'center' });
+          }
+          return;
+        }
+        throw new Error('not delivered');
+      } catch {
+        if (errorBox) errorBox.hidden = false;
+        if (submitBtn) submitBtn.disabled = false;
+        if (submitLabel) submitLabel.textContent = prevLabel;
+        submitting = false;
       }
     });
   }

@@ -1455,4 +1455,15 @@ export const en: Record<string, string> = {
   'Faça a sua avaliação': 'Request your valuation',
   'Abrir avaliação de imóvel': 'Open property valuation',
   'Venha trabalhar connosco': 'Come work with us',
+  // Lead delivery — field notes, error states and chat consent
+  'O ficheiro não é enviado nesta fase. A nossa equipa solicitará o CV durante o contacto.':
+    'The file is not uploaded at this stage. Our team will request your CV during contact.',
+  'Não foi possível enviar o pedido. Verifique a ligação e tente novamente — os seus dados foram mantidos.':
+    "We couldn't send your request. Check your connection and try again — your details have been kept.",
+  'Não foi possível enviar a mensagem. Verifique a ligação e tente novamente — os seus dados foram mantidos.':
+    "We couldn't send your message. Check your connection and try again — your details have been kept.",
+  'Não foi possível enviar a candidatura. Verifique a ligação e tente novamente — os seus dados foram mantidos.':
+    "We couldn't send your application. Check your connection and try again — your details have been kept.",
+  'Autorizo e enviar': 'I consent and send',
+  'Tentar novamente': 'Try again',
 };

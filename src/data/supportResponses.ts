@@ -32,6 +32,8 @@ export interface Chip {
   /** Navigate to a URL. */
   href?: string;
   external?: boolean;
+  /** Consent-gate action before a chat lead is delivered. */
+  consent?: 'send' | 'cancel' | 'retry';
 }
 
 export interface BotReply {
