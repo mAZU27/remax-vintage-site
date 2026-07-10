@@ -6,6 +6,7 @@
 // Items flagged `confirmar: true` in the data render normally and carry an
 // adjacent <!-- CONFIRMAR COM AGÊNCIA --> comment for the launch review.
 import Base from '../layouts/Base.astro';
+import { EXTERNAL_LISTINGS_URL } from '../lib/site.config';
 import PageHero from '../components/PageHero.astro';
 import SectionEyebrow from '../components/SectionEyebrow.astro';
 import Button from '../components/Button.astro';
@@ -318,6 +319,7 @@ const lastPromocao = promocao.length - 1;
         <Button href="/contacto?assunto=estudo-mercado" variant="gold" arrow>
           Pedir estudo de mercado gratuito
         </Button>
+        <Button href={EXTERNAL_LISTINGS_URL} external variant="ghost-dark" arrow>Ver imóveis à venda</Button>
       </div>
     </div>
   </section>
@@ -576,7 +578,7 @@ const lastPromocao = promocao.length - 1;
   .fcta__inner { text-align: center; }
   .fcta__title { margin-top: 16px; }
   .fcta__lede { margin: 20px auto 0; }
-  .fcta__cta { margin-top: 32px; }
+  .fcta__cta { margin-top: 32px; display: flex; flex-wrap: wrap; gap: 14px; justify-content: center; }
 
   /* ---------- Reduced motion — no transform state changes ---------- */
   @media (prefers-reduced-motion: reduce) {
