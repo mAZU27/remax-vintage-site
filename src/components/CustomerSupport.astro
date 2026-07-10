@@ -245,7 +245,7 @@ import Icon from './Icon.astro';
 </style>
 
 <script>
-  import { getReply, getWelcome, flows, composeLead, type BotReply, type Chip, type FlowId } from '../data/supportResponses';
+  import { getReply, getWelcome, flows, composeLead, validateAnswer, buildLeadPayload, type BotReply, type Chip, type FlowId } from '../data/supportResponses';
   import { quickStart } from '../data/supportKnowledge';
 
   const root = document.querySelector<HTMLElement>('[data-cs]');
@@ -390,16 +390,48 @@ import Icon from './Icon.astro';
     function answerStep(value: string) {
       if (!flow) return;
       const f = flows[flow.id];
-      flow.answers[f.steps[flow.step].key] = value;
+      const step = f.steps[flow.step];
+      const v = value.trim();
+
+      // Intelligence: validate the answer for this step. A question or garbage
+      // typed at the name/contact step is NOT stored — we answer (if it was a
+      // question) and re-ask, so a lead never gets a bogus name/contact.
+      const check = validateAnswer(step.key, v);
+      if (!check.ok) {
+        if (check.answerQuestion) {
+          const r = getReply(v);
+          // Answer WITHOUT starting a nested flow (drop reply.flow).
+          botSay({ text: r.text, chips: r.chips, cta: r.cta });
+        }
+        botSay({ text: check.hint ?? step.question, stepChips: step.chips });
+        return; // stay on the same step
+      }
+
+      flow.answers[step.key] = v;
       flow.step += 1;
       if (flow.step < f.steps.length) { askStep(); return; }
+      finishFlow();
+    }
+
+    // Flow complete → send the lead to the app (Novus) via the same-origin
+    // /api/lead proxy (token stays server-side; fail-soft so the UX never
+    // breaks), then recap + offer an optional WhatsApp hand-off.
+    function finishFlow() {
+      if (!flow) return;
       const lead = composeLead(flow.id, flow.answers);
+      const payload = buildLeadPayload(flow.id, flow.answers);
+      flow = null;
+      fetch('/api/lead', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(payload),
+        keepalive: true,
+      }).catch((e) => console.error('[support-lead]', e));
       botSay({
         text: lead.closing + '\n\n' + lead.lines.join('\n'),
-        cta: { label: 'Enviar à equipa (WhatsApp)', href: lead.waHref, external: true },
+        cta: { label: 'Enviar também por WhatsApp', href: lead.waHref, external: true },
         chips: [{ label: 'Página de contacto', href: '/contacto' }],
       });
-      flow = null;
     }
 
     function deliver(reply: BotReply) {

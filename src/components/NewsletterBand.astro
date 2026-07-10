@@ -100,7 +100,18 @@ const { class: cls = '' } = Astro.props;
         return;
       }
       field?.classList.remove('is-invalid');
-      // Front-end only for now (no backend wired). Show confirmation.
+      // Send to the app (Novus) via the same-origin /api/lead proxy — token
+      // stays server-side, fail-soft so the confirmation never blocks.
+      fetch('/api/lead', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          email: input.value.trim(),
+          form: 'newsletter',
+          consent: { type: 'newsletter', text_version: 'v1' },
+        }),
+        keepalive: true,
+      }).catch((err) => console.error('[lead]', err));
       if (field) field.style.display = 'none';
       form.querySelector('.news__btn')?.setAttribute('hidden', '');
       if (note) note.hidden = true;
