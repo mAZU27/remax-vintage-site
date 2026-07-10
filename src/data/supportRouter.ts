@@ -13,7 +13,28 @@
 // conversation cases can be unit-tested directly.
 // ============================================================
 import { detectIntent, normalize, searchFaq, type IntentId } from './supportIntents';
-import { flows, validateAnswer, type FlowId } from './supportResponses';
+import { flows, validateAnswer, type FlowId, type Lang } from './supportResponses';
+
+// ---------- Language detection (respond in the visitor's language) ----------
+// Distinctive PT / EN tokens (accent-free, matched against normalize()d text).
+const EN_HINTS =
+  /\b(the|you|your|what|where|when|who|how|why|want|need|looking|buy|buying|sell|selling|rent|renting|house|home|apartment|flat|property|properties|price|contact|team|help|hello|please|thanks|thank|speak|talk|viewing|schedule|available|about|with|are|is|do|does|would|could|my|for|and|can)\b/g;
+const PT_HINTS =
+  /\b(que|qual|quais|quero|queria|comprar|vender|arrendar|casa|imovel|imoveis|preco|contacto|equipa|ajuda|falar|procuro|procura|obrigado|obrigada|ola|bom|boa|voces|vcs|gostava|marcar|visita|sim|nao|para|meu|minha|sobre|onde|como|quanto|avaliacao|zona)\b/g;
+
+// Returns the detected language, or null when undecided (keep the current one).
+// Contact tokens (emails / phone numbers) carry no language and never flip it —
+// e.g. a ".com" email must not read as the Portuguese word "com".
+export function detectLang(text: string): Lang | null {
+  const s = text.trim();
+  if (/^\S+@\S+$/.test(s) || /^\+?[\d\s().-]+$/.test(s)) return null;
+  const n = ` ${normalize(text)} `;
+  const en = (n.match(EN_HINTS) ?? []).length;
+  const pt = (n.match(PT_HINTS) ?? []).length;
+  if (en > pt && en >= 1) return 'en';
+  if (pt > en && pt >= 1) return 'pt';
+  return null;
+}
 
 // ---------- Slots the assistant can read out of free text ----------
 export interface Slots {
@@ -98,8 +119,9 @@ export function extractTypology(text: string): string | undefined {
 export function extractBudget(text: string): string | undefined {
   const n = normalize(text);
   const lower = text.toLowerCase();
-  // With an explicit scale/currency marker, any number reads as a budget.
-  if (/\d/.test(text) && /(mil|milhao|milhoes|milhão|milhões|\bk\b|euro|euros|€)/.test(lower)) {
+  // With an explicit scale/currency marker, any number reads as a budget
+  // (incl. a "k" thousands suffix attached to digits, e.g. "800k", "800 k").
+  if (/\d/.test(text) && /(mil|milhao|milhoes|milhão|milhões|\d\s*k\b|euro|euros|€)/.test(lower)) {
     return text.trim();
   }
   if (/\b(flexivel|indiferente|sem limite|nao sei|em aberto)\b/.test(n)) return text.trim();
@@ -152,6 +174,15 @@ export function isDecline(text: string): boolean {
 export function isClarify(text: string): boolean {
   const n = normalize(text);
   return /\b(nao percebi|nao entendi|nao compreendi|isso nao responde|nao e isso|nao respondeu|nao era isso|didnt understand|that doesnt answer|not what i asked)\b/.test(n);
+}
+
+// Signals of a frustrated visitor — acknowledged briefly, then redirected.
+export function isFrustrated(text: string): boolean {
+  const n = normalize(text);
+  return (
+    /\b(nao funciona|nao percebem|nao ajuda|nao ajudam|inutil|pessimo|horrivel|ridiculo|irritante|farto|farta|que treta|nao serve|perda de tempo|useless|terrible|awful|frustrat|annoying|doesnt work|does not work|not working|waste of time)\b/.test(n) ||
+    /!{2,}/.test(text)
+  );
 }
 
 // Correction markers that reframe a previous slot.

@@ -24,7 +24,9 @@ export const assistant = {
 };
 
 export const fallbackMessage =
-  'Não tenho informação suficiente para responder com precisão a isso. Deixe-me encaminhar o seu pedido para a equipa — saberão ajudá-lo melhor.';
+  'Sobre isso não tenho uma confirmação. Prefere que a equipa lhe responda diretamente?';
+export const fallbackMessageEn =
+  'I don’t have a confirmed answer on that. Would you like the team to reply to you directly?';
 
 export const leadClosing =
   'Obrigado. A nossa equipa entrará em contacto consigo para dar seguimento — normalmente em 24h.';
@@ -166,23 +168,28 @@ export const company = {
     'Discretion, selectivity, expertise. Cada cliente é único. Cada imóvel conta uma história. O nosso trabalho é encontrar o encaixe perfeito — com paciência, rigor e sem compromissos.',
   recognition:
     'Fazemos parte da RE/MAX, a marca imobiliária mais premiada de Portugal (12 anos de liderança, Escolha do Consumidor 2026, Prémio Cinco Estrelas 2025 e 2026). A Collection Vintage representa esse padrão no segmento de luxo do Porto.',
+  recognitionEn:
+    'We are part of RE/MAX, Portugal’s most awarded real-estate brand (12 years of leadership, Consumer Choice 2026, Five Star Award 2025 and 2026). Collection Vintage carries that standard into Porto’s luxury segment.',
 };
 
 // Careers.
 export const careers = {
   text: 'Estamos à procura de consultores que entendam o segmento premium. Vaga atual: Consultor Imobiliário (Porto, full-time). Aceitamos também candidaturas espontâneas — talentos excepcionais são sempre bem-vindos.',
+  textEn: 'We look for consultants who understand the premium segment. Current opening: Real Estate Consultant (Porto, full-time). We also welcome speculative applications — exceptional talent is always welcome.',
   href: '/carreiras',
 };
 
 // Team.
 export const team = {
   text: 'Uma equipa de consultores especializados no segmento premium do Porto, com acompanhamento próximo, discreto e muito pessoal em cada etapa.',
+  textEn: 'A team of consultants specialising in Porto’s premium segment, with close, discreet and very personal support at every step.',
   href: '/sobre-nos',
 };
 
 // Blog.
 export const blog = {
   text: 'Análises de mercado, guias profundos de zona e perspetivas sobre o segmento de luxo no Porto — escrito por quem vive o mercado.',
+  textEn: 'Market analysis, in-depth area guides and perspectives on Porto’s luxury segment — written by people who live the market.',
   href: '/insights',
 };
 

@@ -143,3 +143,9 @@ test('idle question maps to a flow objective for prefill', () => {
   assert.equal(c.kind, 'question');
   if (c.kind === 'question') assert.equal(c.slots.objective, 'comprar');
 });
+
+test('budget with a k suffix is recognised', () => {
+  assert.ok(extractSlots('around 800k').budget);
+  assert.ok(extractSlots('até 500 k').budget);
+  assert.equal(classifyMessage('around 800k', buying('Orçamento')).kind, 'answer');
+});

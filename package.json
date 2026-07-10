@@ -9,7 +9,7 @@
     "build": "astro build",
     "preview": "astro preview",
     "check": "astro check",
-    "test": "esbuild tests/leads.test.ts tests/support-router.test.ts --bundle --platform=node --format=esm --packages=external --log-level=warning --outdir=.cache/tests && node --test .cache/tests/leads.test.js .cache/tests/support-router.test.js",
+    "test": "esbuild tests/leads.test.ts tests/support-router.test.ts tests/support-quality.test.ts --bundle --platform=node --format=esm --packages=external --log-level=warning --outdir=.cache/tests && node --test .cache/tests/leads.test.js .cache/tests/support-router.test.js .cache/tests/support-quality.test.js",
     "images": "node scripts/convert-images.mjs",
     "i18n:check": "esbuild scripts/i18n-coverage.mjs --bundle --platform=node --format=esm --packages=external --log-level=warning --outfile=node_modules/.cache/i18n-coverage.bundle.mjs && node node_modules/.cache/i18n-coverage.bundle.mjs"
   },

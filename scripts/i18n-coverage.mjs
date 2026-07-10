@@ -144,11 +144,12 @@ record(assistant.name, 'chat:header');
 record(assistant.status, 'chat:header');
 recordLines(assistant.humanNote, 'chat:humanNote');
 for (const [id, flow] of Object.entries(flows)) {
-  recordLines(flow.intro, `chat:flow:${id}`);
+  // Flow intro/question/chips are bilingual { pt, en } — record the PT source.
+  recordLines(flow.intro.pt, `chat:flow:${id}`);
   record(`Objetivo: ${flow.objective}`, `chat:flow:${id}`);
   for (const s of flow.steps) {
-    recordLines(s.question, `chat:flow:${id}`);
-    for (const c of s.chips ?? []) record(c, `chat:flow:${id}`);
+    recordLines(s.question.pt, `chat:flow:${id}`);
+    for (const c of s.chips?.pt ?? []) record(c, `chat:flow:${id}`);
   }
   const lead = composeLead(id, {});
   recordLines(lead.closing, `chat:flow:${id}`);
