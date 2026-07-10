@@ -157,6 +157,16 @@ test('deliverViaResend failure (422) reports not-ok', async () => {
   assert.equal(r.status, 422);
 });
 
+test('deliverViaResend 409 (idempotency replay) is a deduplicated success', async () => {
+  const lead = (normalizeLead(okLead()) as { lead: NormalizedLead }).lead;
+  const email = buildLeadEmail(lead, CTX);
+  const mockFetch = (async () => new Response(JSON.stringify({ name: 'idempotency_conflict' }), { status: 409 })) as unknown as typeof fetch;
+  const r = await deliverViaResend(lead, email, { apiKey: 'rk', from: 'a@b.pt', to: 'c@d.pt' }, mockFetch);
+  assert.equal(r.ok, true);
+  assert.equal(r.deduplicated, true);
+  assert.equal(r.status, 409);
+});
+
 test('deliverViaResend network throw is swallowed to not-ok', async () => {
   const lead = (normalizeLead(okLead()) as { lead: NormalizedLead }).lead;
   const email = buildLeadEmail(lead, CTX);
@@ -279,4 +289,14 @@ test('Resend failure → 502 delivery_failed (no fake success)', async () => {
   const body = await res.json();
   assert.equal(body.delivered, false);
   assert.equal(body.error, 'delivery_failed');
+});
+
+test('Resend 409 replay → 200 delivered:true deduplicated:true (retry after lost response)', async () => {
+  configureResend();
+  globalThis.fetch = (async () => new Response(JSON.stringify({ name: 'idempotency_conflict' }), { status: 409 })) as unknown as typeof fetch;
+  const res = await POST({ request: req(JSON.stringify(okLead())) } as never);
+  assert.equal(res.status, 200);
+  const body = await res.json();
+  assert.equal(body.delivered, true);
+  assert.equal(body.deduplicated, true);
 });

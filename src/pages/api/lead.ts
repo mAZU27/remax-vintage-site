@@ -108,6 +108,7 @@ export const POST: APIRoute = async ({ request }) => {
     });
     if (r.ok) {
       delivered = true;
+      if (r.deduplicated) deduplicated = true;
     } else {
       console.error('[lead] resend delivery failed', {
         form: lead.form,

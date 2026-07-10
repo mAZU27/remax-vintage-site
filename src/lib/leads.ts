@@ -292,6 +292,8 @@ export interface DeliveryResult {
   ok: boolean;
   id?: string;
   status: number;
+  /** True when Resend recognised the Idempotency-Key (409) — already delivered. */
+  deduplicated?: boolean;
 }
 
 // Deliver via the Resend REST API. fetchImpl is injectable for tests. The
@@ -338,5 +340,10 @@ export async function deliverViaResend(
     data && typeof data === 'object' && typeof (data as { id?: unknown }).id === 'string'
       ? (data as { id: string }).id
       : undefined;
-  return { ok: res.ok, id, status: res.status };
+  // 409 means the Idempotency-Key was already used: the email for this
+  // submission was already accepted, so this is a successful (deduplicated)
+  // outcome, NOT a failure. Reporting ok here makes a retried/lost-response
+  // POST show success and guarantees exactly one email per submission_id.
+  const deduplicated = res.status === 409;
+  return { ok: res.ok || deduplicated, id, status: res.status, deduplicated };
 }
