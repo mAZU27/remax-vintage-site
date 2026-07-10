@@ -34,6 +34,8 @@ export interface Chip {
   external?: boolean;
   /** Consent-gate action before a chat lead is delivered. */
   consent?: 'send' | 'cancel' | 'retry';
+  /** Conversational control action (resume/dismiss a suspended flow, etc.). */
+  action?: 'resume' | 'dismiss' | 'human' | 'cancel' | 'restart';
 }
 
 export interface BotReply {
@@ -419,8 +421,8 @@ export function replyFor(intent: IntentId): BotReply {
 
     case 'empresa':
       return {
-        text: company.about + ` Estamos presentes no Porto desde ${company.established}.`,
-        chips: [{ label: 'Sobre nós', href: '/sobre-nos' }, { label: 'Reconhecimento', send: 'premios' }],
+        text: `Somos a RE/MAX Collection Vintage — a linha premium da RE/MAX, especializada em imóveis de prestígio e carácter no Porto desde ${company.established}.`,
+        chips: [{ label: 'Conhecer a equipa', href: '/sobre-nos' }, { label: 'Sobre nós', href: '/sobre-nos' }],
       };
 
     case 'reconhecimento':
