@@ -9,6 +9,7 @@ import { readFileSync, readdirSync, statSync } from 'node:fs';
 import { join, relative } from 'node:path';
 import { parse } from 'parse5';
 import { en } from '../src/i18n/dict.ts';
+import { consultants } from '../src/data/team.ts';
 
 // Run from the project root (the script may execute as an esbuild bundle, so
 // import.meta.url is not a reliable anchor).
@@ -54,6 +55,8 @@ const ALLOW = new Set([
   'Blog & Insights', 'premium', 'T5+', 'T6+', 'Insights · Collection Vintage',
   '📧 Email: collection@vintage.pt', 'Full-time',
 ]);
+// Team member names are proper nouns — never translated (roster is data-driven).
+for (const c of consultants) ALLOW.add(c.name);
 
 const htmlFiles = [];
 const walkDir = (dir) => {
