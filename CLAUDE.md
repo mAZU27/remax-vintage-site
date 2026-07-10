@@ -90,8 +90,9 @@ _archive/        retired property catalog (properties.ts + photos) — the site
 - Method content comes EXCLUSIVELY from the printed guides — never invent
   facts, numbers or services. `[CONFIRMAR]` items stay flagged until the
   agency confirms them in writing.
-- Nav has 7 items (Comprar · Vender · Imóveis↗ · Arrendar · Sobre nós · Blog ·
-  Contacto) + the "Pedir avaliação" button; Carreiras lives in the footer.
+- Nav has 8 items (Comprar · Vender · Imóveis↗ · Arrendar · Sobre nós · Blog ·
+  Carreiras · Contacto) + the "Pedir avaliação" button (Carreiras promoted
+  from the footer 2026-07-10, owner ask).
 - Never repeat the same image across different heros/sections.
 
 ## 3. Design system (defined in src/styles/global.css `:root`)

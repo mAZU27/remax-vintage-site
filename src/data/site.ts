@@ -45,9 +45,10 @@ export interface NavItem {
   external?: boolean;
 }
 
-// 7 items (owner-approved grouping): the two method pages lead; listings are
-// external; Zonas/Método are on-page sections (reachable by scroll) and
-// Carreiras moved to the footer to keep the menu scannable.
+// 8 items (owner-approved grouping): the two method pages lead; listings are
+// external; Zonas/Método are on-page sections (reachable by scroll).
+// Carreiras promoted from the footer into the menu (owner ask 2026-07-10 —
+// recruitment leads flow to the app via the /carreiras application form).
 export const nav: NavItem[] = [
   { label: 'Comprar', href: '/comprar' },
   { label: 'Vender', href: '/vender', highlight: true },
@@ -55,6 +56,7 @@ export const nav: NavItem[] = [
   { label: 'Arrendar', href: '/alugar' },
   { label: 'Sobre nós', href: '/sobre-nos' },
   { label: 'Blog', href: '/insights' },
+  { label: 'Carreiras', href: '/carreiras' },
   { label: 'Contacto', href: '/contacto' },
 ];
 
