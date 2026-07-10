@@ -40,16 +40,18 @@ export interface NavItem {
 }
 
 // 7 items (owner-approved grouping): the two method pages lead; listings are
-// external; Zonas/Método are on-page sections (reachable by scroll) and
-// Carreiras moved to the footer to keep the menu scannable.
-// «Blog» removido temporariamente do menu: os 4 artigos são placeholders
-// declarados (noindex + fora do sitemap) até existir conteúdo editorial real.
+// external; Zonas/Método are on-page sections (reachable by scroll).
+// Carreiras promoted from the footer into the menu (owner ask 2026-07-10 —
+// recruitment leads flow to the app via the /carreiras application form).
+// «Blog» removido temporariamente do menu (fase 2A SEO): os 4 artigos são
+// placeholders declarados (noindex + fora do sitemap) — repor com o blog real.
 export const nav: NavItem[] = [
   { label: 'Comprar', href: '/comprar' },
   { label: 'Vender', href: '/vender', highlight: true },
   { label: 'Imóveis', href: EXTERNAL_LISTINGS_URL, external: true },
   { label: 'Arrendar', href: '/alugar' },
   { label: 'Sobre nós', href: '/sobre-nos' },
+  { label: 'Carreiras', href: '/carreiras' },
   { label: 'Contacto', href: '/contacto' },
 ];
 
