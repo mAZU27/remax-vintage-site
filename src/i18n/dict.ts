@@ -1451,7 +1451,7 @@ export const en: Record<string, string> = {
   'avaliação': 'valuation',
   'O valor real do seu imóvel no mercado do Porto — confidencial e sem compromisso.':
     'The real value of your property in the Porto market — confidential and with no obligation.',
-  '100% confidencial': '100% confidential',
   'Faça a sua avaliação': 'Request your valuation',
   'Abrir avaliação de imóvel': 'Open property valuation',
+  'Venha trabalhar connosco': 'Come work with us',
 };

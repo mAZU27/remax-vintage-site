@@ -81,9 +81,12 @@ _archive/        retired property catalog (properties.ts + photos) — the site
 ```
 
 ### Key rules in force
-- The homepage carries EXACTLY **10 conversion CTAs** (map documented at the
+- The homepage carries EXACTLY **11 conversion CTAs** (map documented at the
   top of `src/pages/index.astro`). Only #1 (hero card → simulator) and #7
-  (estudo de mercado banner) are full gold buttons.
+  (estudo de mercado banner) are full gold buttons. #11 is the quiet hero
+  recruitment link «Venha trabalhar connosco» → /carreiras (owner ask
+  2026-07-10); recruitment leads flow to Novus via CareersApplication →
+  /api/lead (form: 'careers-application').
 - Method content comes EXCLUSIVELY from the printed guides — never invent
   facts, numbers or services. `[CONFIRMAR]` items stay flagged until the
   agency confirms them in writing.

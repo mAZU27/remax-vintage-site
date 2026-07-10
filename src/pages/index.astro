@@ -21,7 +21,7 @@ import { essenciaisVender, miniProcessoVender } from '../content/metodo-vender';
 import { redeNumeros } from '../content/rede';
 import type { Faq } from '../data/faqs';
 
-// The homepage carries EXACTLY 10 conversion CTAs (see docs/mission map):
+// The homepage carries EXACTLY 11 conversion CTAs (see docs/mission map):
 //  #1 hero card «Avaliar o meu imóvel» → simulator modal   (primary gold)
 //     · ≤560px the hero card gives way to the MobileValuationSheet
 //       («Pedir avaliação» → same simulator; «Falar com um consultor» → /contacto)
@@ -36,6 +36,9 @@ import type { Faq } from '../data/faqs';
 //  #8 vender «Simular o valor da minha casa» → simulator modal
 //  #9 coleção «Ver imóveis disponíveis» → external listings
 // #10 fecho «Iniciar conversa» → /contacto
+// #11 hero «Venha trabalhar connosco» → /carreiras (recruitment; owner ask
+//     2026-07-10 — quiet editorial link on both hero variants, leads flow to
+//     the Novus app via CareersApplication → /api/lead)
 
 const sellerPoints = [
   'Avaliação fundamentada no valor real do mercado do Porto.',

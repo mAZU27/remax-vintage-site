@@ -217,9 +217,35 @@ import { site } from '../data/site';
         form.reportValidity();
         return;
       }
-      // TODO(backend): no backend yet. Wire this submit to the recruitment
-      // endpoint (email/CRM/ATS) once the destination is confirmed. UI-only
-      // for now — the CV file is selected but not uploaded anywhere.
+
+      // Recruitment lead → same-origin /api/lead proxy → Novus ingest (token
+      // stays server-side; ingest is fail-soft so the lead is never lost).
+      // The CV binary is NOT uploaded (the ingest is JSON) — the filename
+      // travels as context and the team requests the document on follow-up.
+      const fd = new FormData(form);
+      const val = (n: string) => String(fd.get(n) ?? '').trim();
+      const utm: Record<string, string> = {};
+      new URLSearchParams(location.search).forEach((v, k) => {
+        if (k.startsWith('utm_')) utm[k] = v;
+      });
+      fetch('/api/lead', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          full_name: val('nome'),
+          email: val('email'),
+          phone: val('telefone'),
+          location: val('localidade'),
+          interest_area: val('area'),
+          message: val('mensagem'),
+          cv_filename: cvInput?.files?.[0]?.name ?? '',
+          form: 'careers-application',
+          utm,
+          consent: { type: 'recrutamento', text_version: 'v1' },
+        }),
+        keepalive: true,
+      }).catch((err) => console.error('[lead]', err));
+
       if (done) {
         form.hidden = true;
         done.hidden = false;

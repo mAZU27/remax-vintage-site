@@ -48,6 +48,9 @@ import Icon from './Icon.astro';
       </p>
       <div class="hero__ctas" data-reveal style="--reveal-delay: 340ms">
         <Button href={EXTERNAL_LISTINGS_URL} external variant="ghost" arrow>Explorar a coleção</Button>
+        <a class="hero__work" href="/carreiras">
+          Venha trabalhar connosco <Icon name="arrow" size={13} stroke={1.8} />
+        </a>
       </div>
     </div>
 
@@ -117,7 +120,18 @@ import Icon from './Icon.astro';
   .hero__title { margin-top: 24px; font-size: calc(var(--fs-display) * 0.95); line-height: 1.08; text-shadow: 0 2px 34px rgba(0, 0, 0, 0.5); }
   .hero__rule { margin-top: 28px; width: 72px; }
   .hero__lede { margin-top: 20px; max-width: 46ch; }
-  .hero__ctas { margin-top: 36px; display: flex; flex-wrap: wrap; gap: 16px; }
+  .hero__ctas { margin-top: 36px; display: flex; flex-wrap: wrap; align-items: center; gap: 16px 26px; }
+  /* Recruitment link — quiet, editorial; never competes with the buyer CTA. */
+  .hero__work {
+    display: inline-flex; align-items: center; gap: 9px;
+    font-size: 12px; letter-spacing: 0.16em; text-transform: uppercase; font-weight: 500;
+    color: var(--gold-light); text-decoration: none;
+    padding: 10px 2px; border-bottom: 1px solid var(--hairline-gold);
+    transition: color var(--t-fast), border-color var(--t-fast);
+  }
+  .hero__work:hover { color: var(--cream); border-color: var(--gold-light); }
+  .hero__work :global(.arrow) { transition: transform var(--t-fast); }
+  .hero__work:hover :global(.arrow) { transform: translateX(4px); }
 
   /* Valuation card — near-solid navy, soft luxury shadow.
      Compact so the whole card (incl. button + meta) stays inside the hero
