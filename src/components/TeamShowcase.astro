@@ -1,13 +1,15 @@
 ---
-// "A Nossa Equipa" — premium team showcase.
-// Navy zone: editorial header + an infinite right-moving marquee of portrait
-// cards (overlay caption, linear row, pauses on hover), then a soft
+// "A Nossa Equipa" — premium team carousel.
+// Navy zone: editorial header + an interactive horizontal carousel of portrait
+// cards (draggable, swipeable, keyboard-navigable, infinite loop), then a soft
 // curve into the cream zone with stats + CTA.
 // Each card uses <picture> (webp 400w/600w + jpg fallback). When a portrait is
-// absent or fails to load, a dignified gold-monogram fallback takes over (the
-// small script at the bottom flags it). Reveal + hover are motion-safe.
+// absent or fails to load, a dignified gold-monogram fallback takes over.
+// Clicks open the official RE/MAX team page. Reveal + motion-safety respected.
 import Icon from './Icon.astro';
 import { consultants, teamStats, teamShowcase } from '../data/team';
+
+const REMAX_TEAM_URL = 'https://www.remax.pt/pt/agencia/remax-collection-vintage/12382#:~:text=Equipa';
 
 const initials = (name: string) =>
   name
@@ -18,21 +20,12 @@ const initials = (name: string) =>
     .join('')
     .toUpperCase();
 
-// Infinite right-moving marquee: the consultant set is repeated so the track is
-// perfectly periodic and the loop has no visible seam. Only the first copy is
-// exposed to assistive tech; the rest are decorative duplicates (aria-hidden,
-// links pulled out of the tab order). MARQUEE_COPIES must match the 1/N travel
-// distance in the @keyframes below — keep them in sync (2 copies → -50%).
-const MARQUEE_COPIES = 2;
-const reversedConsultants = [...consultants].reverse();
-const marquee = Array.from({ length: MARQUEE_COPIES }, (_, copy) =>
-  reversedConsultants.map((c) => ({ ...c, clone: copy > 0 }))
+// Infinite carousel: consult list looped for seamless infinite scrolling
+// (visible copy + phantom copy on each end). Drag/swipe/arrow/keyboard controls.
+const LOOP_COPIES = 3;
+const carouselData = Array.from({ length: LOOP_COPIES }, (_, copy) =>
+  consultants.map((c) => ({ ...c, loopCopy: copy }))
 ).flat();
-
-// Keep a constant, premium glide speed regardless of how many consultants there
-// are: ~5s per card. More people → proportionally longer loop, same pace.
-const SECONDS_PER_CARD = 5;
-const marqueeSeconds = Math.max(20, consultants.length * SECONDS_PER_CARD);
 ---
 
 <section class="ts on-navy" aria-labelledby="ts-title">
@@ -53,43 +46,64 @@ const marqueeSeconds = Math.max(20, consultants.length * SECONDS_PER_CARD);
       </div>
     </header>
 
-    <div class="ts__marquee ts__marquee--rtl" style={`--ts-speed:${marqueeSeconds}s`}>
-      <ul class="ts__track" role="list">
-        {marquee.map((c) => (
-          <li class="ts__cell" aria-hidden={c.clone ? 'true' : undefined}>
-            <article class="ts__card">
-              <div class:list={['ts__photo', { 'is-missing': !c.image }]}>
-                {c.image && (
-                  <picture>
-                    {c.hasWebp !== false && (
-                      <source
-                        type="image/webp"
-                        srcset={`${c.image}-400.webp 400w, ${c.image}-600.webp 600w`}
-                        sizes="(max-width: 700px) 240px, 268px"
-                      />
+    <!-- Interactive carousel: drag, swipe, arrow keys, keyboard nav -->
+    <div class="ts__carousel" data-carousel role="region" aria-label="Equipa da Collection Vintage">
+      <div class="ts__marquee">
+        <ul class="ts__track" role="list" data-carousel-track>
+          {carouselData.map((c, idx) => (
+            <li class="ts__cell" data-carousel-item={idx} aria-hidden={c.loopCopy !== 0 ? 'true' : undefined}>
+              <a href={REMAX_TEAM_URL} target="_blank" rel="noopener noreferrer" class="ts__card-link" aria-label={`${c.name}, ${c.role} - Abrir na RE/MAX`}>
+                <article class="ts__card">
+                  <div class:list={['ts__photo', { 'is-missing': !c.image }]}>
+                    {c.image && (
+                      <picture>
+                        {c.hasWebp !== false && (
+                          <source
+                            type="image/webp"
+                            srcset={`${c.image}-400.webp 400w, ${c.image}-600.webp 600w`}
+                            sizes="(max-width: 700px) 240px, 268px"
+                          />
+                        )}
+                        <img
+                          src={`${c.image}.jpg`}
+                          alt={`${c.name}, ${c.role} — RE/MAX Collection Vintage, Porto`}
+                          loading="lazy"
+                          decoding="async"
+                          width="600"
+                          height="800"
+                          draggable={false}
+                        />
+                      </picture>
                     )}
-                    <img
-                      src={`${c.image}.jpg`}
-                      alt={`${c.name}, ${c.role} — RE/MAX Collection Vintage, Porto`}
-                      loading="lazy"
-                      decoding="async"
-                      width="600"
-                      height="800"
-                      draggable={false}
-                    />
-                  </picture>
-                )}
-                <span class="ts__mono" aria-hidden="true">{initials(c.name)}</span>
-                <div class="ts__scrim" aria-hidden="true"></div>
-                <div class="ts__info">
-                  <span class="ts__role">{c.role}</span>
-                  {c.zone && <span class="ts__zone">{c.zone}</span>}
-                </div>
-              </div>
-            </article>
-          </li>
-        ))}
-      </ul>
+                    <span class="ts__mono" aria-hidden="true">{initials(c.name)}</span>
+                    <div class="ts__scrim" aria-hidden="true"></div>
+                    <div class="ts__info">
+                      <span class="ts__role">{c.role}</span>
+                      {c.zone && <span class="ts__zone">{c.zone}</span>}
+                    </div>
+                  </div>
+                </article>
+              </a>
+            </li>
+          ))}
+        </ul>
+      </div>
+
+      <!-- Navigation arrows -->
+      <button class="ts__nav ts__nav--prev" data-carousel-prev aria-label="Card anterior" type="button">
+        <Icon name="chevron-left" size={20} stroke={1.8} />
+      </button>
+      <button class="ts__nav ts__nav--next" data-carousel-next aria-label="Próximo card" type="button">
+        <Icon name="chevron-right" size={20} stroke={1.8} />
+      </button>
+    </div>
+
+    <!-- CTA to full team page -->
+    <div class="ts__cta-group" data-reveal style="--reveal-delay:300ms">
+      <a class="ts__cta-link" href={REMAX_TEAM_URL} target="_blank" rel="noopener noreferrer">
+        <span>{teamShowcase.cta.label}</span>
+        <Icon name="arrow" size={15} stroke={1.8} />
+      </a>
     </div>
   </div>
 
@@ -201,11 +215,15 @@ const marqueeSeconds = Math.max(20, consultants.length * SECONDS_PER_CARD);
     stroke-linejoin: round;
   }
 
-  /* ---------- Team marquee (infinite right-moving carousel) ---------- */
-  .ts__marquee {
+  /* ---------- Interactive carousel ---------- */
+  .ts__carousel {
     --ts-card-w: clamp(232px, 21vw, 268px);
     --ts-gap: clamp(14px, 1.5vw, 22px);
-    --ts-speed: 30s;
+    position: relative;
+    overflow: visible;
+  }
+
+  .ts__marquee {
     position: relative;
     overflow: hidden;
     /* Vertical room so the hover float-shadow is not clipped. */
@@ -222,39 +240,37 @@ const marqueeSeconds = Math.max(20, consultants.length * SECONDS_PER_CARD);
     display: flex;
     width: max-content;
     will-change: transform;
-    animation: ts-marquee var(--ts-speed) linear infinite;
+    transition: transform 0.6s cubic-bezier(0.34, 1.56, 0.64, 1);
+    /* No auto-animation; controlled by JavaScript */
   }
-  /* Pause gently while the visitor is reading a card. */
-  .ts__marquee:hover .ts__track { animation-play-state: paused; }
-
-  @keyframes ts-marquee {
-    /* The track holds 2 identical copies, so one copy is exactly 1/2 of its
-       width. Travelling from -1/2 back to 0 slides the cards to the RIGHT, then
-       loops onto the identical neighbouring copy — no visible seam. Keep the
-       -50% in sync with MARQUEE_COPIES in the frontmatter. */
-    from { transform: translate3d(-50%, 0, 0); }
-    to   { transform: translate3d(0, 0, 0); }
+  .ts__track.is-dragging {
+    transition: none;
   }
 
-  @keyframes ts-marquee-rtl {
-    /* Reverse direction: slides cards to the LEFT. */
-    from { transform: translate3d(0, 0, 0); }
-    to   { transform: translate3d(-50%, 0, 0); }
-  }
-
-  .ts__marquee--rtl .ts__track {
-    animation: ts-marquee-rtl var(--ts-speed) linear infinite;
-  }
-
-  /* Fixed card width + uniform right margin keeps the track perfectly periodic
-     (margin, not flex `gap`, so 1/3 of the track is exactly one copy). */
+  /* Fixed card width + uniform right margin keeps the track perfectly periodic. */
   .ts__cell {
     flex: 0 0 var(--ts-card-w);
     width: var(--ts-card-w);
     min-width: 0;
     margin-right: var(--ts-gap);
+    position: relative;
   }
 
+  .ts__card-link {
+    display: block;
+    text-decoration: none;
+    cursor: grab;
+    position: relative;
+    /* Prevent text selection during drag */
+    user-select: none;
+    -webkit-user-select: none;
+  }
+  .ts__card-link.is-dragging {
+    cursor: grabbing;
+  }
+  .ts__track.is-dragging .ts__card-link {
+    pointer-events: none;
+  }
 
   .ts__card {
     position: relative;
@@ -265,7 +281,7 @@ const marqueeSeconds = Math.max(20, consultants.length * SECONDS_PER_CARD);
     transition: transform var(--t-med) var(--t-ease-emph),
       box-shadow var(--t-med) var(--t-ease-emph), border-color var(--t-med);
   }
-  .ts__card:hover {
+  .ts__card-link:hover .ts__card {
     transform: translateY(-6px);
     border-color: var(--hairline-gold-strong);
     box-shadow: var(--shadow-float);
@@ -343,6 +359,84 @@ const marqueeSeconds = Math.max(20, consultants.length * SECONDS_PER_CARD);
     color: var(--white-70);
   }
 
+  /* ---------- Navigation arrows ---------- */
+  .ts__nav {
+    position: absolute;
+    top: 50%;
+    transform: translateY(-50%);
+    width: 44px;
+    height: 44px;
+    border-radius: 2px;
+    display: grid;
+    place-items: center;
+    background: rgba(184, 153, 104, 0.08);
+    border: 1px solid var(--hairline-gold);
+    color: var(--gold-light);
+    cursor: pointer;
+    z-index: 10;
+    transition: background var(--t-fast), border-color var(--t-fast), color var(--t-fast), transform var(--t-fast);
+    -webkit-appearance: none;
+    appearance: none;
+  }
+  .ts__nav:hover {
+    background: rgba(184, 153, 104, 0.15);
+    border-color: var(--hairline-gold-strong);
+    color: var(--cream);
+    transform: translateY(-50%) scale(1.08);
+  }
+  .ts__nav:active {
+    transform: translateY(-50%) scale(0.96);
+  }
+  .ts__nav:focus-visible {
+    outline: 2px solid var(--gold);
+    outline-offset: 2px;
+  }
+
+  .ts__nav--prev {
+    left: clamp(12px, 1.2vw, 24px);
+  }
+  .ts__nav--next {
+    right: clamp(12px, 1.2vw, 24px);
+  }
+
+  /* CTA to full team page */
+  .ts__cta-group {
+    text-align: center;
+    margin-top: clamp(28px, 3.5vw, 48px);
+  }
+  .ts__cta-link {
+    display: inline-flex;
+    align-items: center;
+    gap: 12px;
+    padding: 16px 30px;
+    border-radius: var(--radius);
+    background: var(--gold);
+    color: var(--navy-ink);
+    font-family: var(--font-sans);
+    font-weight: 600;
+    font-size: 12.5px;
+    letter-spacing: 0.16em;
+    text-transform: uppercase;
+    text-decoration: none;
+    transition: background var(--t-med), box-shadow var(--t-med), transform var(--t-med);
+    cursor: pointer;
+  }
+  .ts__cta-link:hover {
+    background: var(--gold-deep);
+    box-shadow: var(--shadow-float);
+    transform: translateY(-2px);
+  }
+  .ts__cta-link:focus-visible {
+    outline: 2px solid var(--gold-deep);
+    outline-offset: 3px;
+  }
+  .ts__cta-link :global(.icon) {
+    transition: transform var(--t-med);
+  }
+  .ts__cta-link:hover :global(.icon) {
+    transform: translateX(4px);
+  }
+
   /* ---------- Curve divider (navy -> cream) ---------- */
   .ts__divider {
     position: relative;
@@ -404,27 +498,6 @@ const marqueeSeconds = Math.max(20, consultants.length * SECONDS_PER_CARD);
     color: var(--ink-60);
   }
 
-  .ts-stats__cta { text-align: center; margin-top: clamp(38px, 5vw, 62px); }
-  .ts__cta {
-    display: inline-flex;
-    align-items: center;
-    gap: 12px;
-    padding: 16px 30px;
-    border-radius: var(--radius);
-    background: var(--gold);
-    color: var(--navy-ink);
-    font-family: var(--font-sans);
-    font-weight: 600;
-    font-size: 12.5px;
-    letter-spacing: 0.16em;
-    text-transform: uppercase;
-    text-decoration: none;
-    transition: background var(--t-med), box-shadow var(--t-med), transform var(--t-med);
-  }
-  .ts__cta:hover { background: var(--gold-deep); box-shadow: var(--shadow-float); transform: translateY(-2px); }
-  .ts__cta :global(.icon) { transition: transform var(--t-med); }
-  .ts__cta:hover :global(.icon) { transform: translateX(4px); }
-  .ts__cta:focus-visible { outline: 2px solid var(--gold-deep); outline-offset: 3px; }
 
   /* ---------- Responsive ---------- */
   @media (max-width: 760px) {
@@ -435,30 +508,135 @@ const marqueeSeconds = Math.max(20, consultants.length * SECONDS_PER_CARD);
     .ts-stat:nth-child(even)::before { display: block; }
   }
 
-  /* Mobile keeps the same auto marquee; only the CTA goes full-width. */
+  /* Mobile: CTA goes full-width, arrows remain but smaller */
   @media (max-width: 640px) {
-    .ts__cta { width: 100%; justify-content: center; }
+    .ts__cta-link { width: 100%; justify-content: center; }
   }
 
   @media (prefers-reduced-motion: reduce) {
-    /* No auto-scroll: rest on the first copy (the full set of consultants). */
-    .ts__track { animation: none; transform: none; }
+    /* Disable transitions during drag and snap */
+    .ts__track { transition: none !important; }
     .ts__card,
     .ts__mono,
     .ts__photo img,
-    .ts__cta,
-    .ts__cta :global(.icon) { transition: none !important; }
-    .ts__card:hover { transform: none; }
+    .ts__cta-link,
+    .ts__cta-link :global(.icon) { transition: none !important; }
+    .ts__card-link:hover .ts__card { transform: none; }
     .ts__card:hover .ts__photo img { transform: none; }
     .ts__card:hover .ts__mono { transform: none; }
   }
 </style>
 
 <script>
-  // Swap to the gold-monogram fallback when a portrait is missing or fails to load.
-  const photos = document.querySelectorAll<HTMLImageElement>('.ts__photo img');
-  photos.forEach((img) => {
-    const photo = img.closest<HTMLElement>('.ts__photo');
+  // Interactive carousel: drag, swipe, arrows, keyboard
+  const carousel = document.querySelector<HTMLElement>('[data-carousel]');
+  const track = carousel?.querySelector<HTMLElement>('[data-carousel-track]');
+  const prevBtn = carousel?.querySelector<HTMLButtonElement>('[data-carousel-prev]');
+  const nextBtn = carousel?.querySelector<HTMLButtonElement>('[data-carousel-next]');
+
+  if (!carousel || !track) throw new Error('[TeamShowcase] Carousel not found');
+
+  let CARD_WIDTH = 0;
+  let CARDS_PER_LOOP = 59; // Default, updated on resize
+  let currentIndex = CARDS_PER_LOOP;
+  let isDragging = false;
+  let startX = 0;
+  let dragX = 0;
+  let lastX = 0;
+  let lastTime = 0;
+
+  const prefersReducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+
+  function calculateLayout() {
+    const item = track?.children[0] as HTMLElement;
+    if (item) {
+      CARD_WIDTH = item.offsetWidth + 22; // Card width + gap
+    }
+  }
+
+  function getTranslate(): number {
+    const style = window.getComputedStyle(track!);
+    const transform = style.transform;
+    if (transform === 'none') return 0;
+    const match = transform.match(/matrix3d?\((.+)\)/);
+    if (!match) return 0;
+    const values = match[1].split(', ');
+    return parseInt(values[values.length === 16 ? 12 : 4] || 0);
+  }
+
+  function setTranslate(x: number) {
+    track!.style.transform = `translateX(${x}px)`;
+  }
+
+  function snapToCard(index: number) {
+    let nextIndex = index;
+    // Clamp and loop
+    if (nextIndex < CARDS_PER_LOOP) nextIndex += CARDS_PER_LOOP;
+    if (nextIndex >= CARDS_PER_LOOP * 2) nextIndex -= CARDS_PER_LOOP;
+
+    const targetX = -(nextIndex * CARD_WIDTH);
+    track!.classList.remove('is-dragging');
+    track!.style.transition = prefersReducedMotion ? 'none' : '0.6s cubic-bezier(0.34, 1.56, 0.64, 1)';
+    setTranslate(targetX);
+    currentIndex = nextIndex;
+  }
+
+  function handleDragStart(e: MouseEvent | TouchEvent) {
+    if ((e.target as HTMLElement).closest('a')) return;
+    isDragging = true;
+    startX = 'clientX' in e ? e.clientX : e.touches?.[0].clientX || 0;
+    dragX = 0;
+    lastX = startX;
+    lastTime = Date.now();
+    track!.classList.add('is-dragging');
+    track!.style.transition = 'none';
+  }
+
+  function handleDragMove(e: MouseEvent | TouchEvent) {
+    if (!isDragging) return;
+    const currentX = 'clientX' in e ? e.clientX : e.touches?.[0].clientX || 0;
+    dragX = currentX - startX;
+    setTranslate(getTranslate() + (currentX - lastX));
+    lastX = currentX;
+  }
+
+  function handleDragEnd() {
+    if (!isDragging) return;
+    isDragging = false;
+    const threshold = CARD_WIDTH * 0.15;
+    const newIndex = dragX < -threshold ? currentIndex + 1 : dragX > threshold ? currentIndex - 1 : currentIndex;
+    snapToCard(newIndex);
+  }
+
+  function handleArrowClick(dir: number) {
+    snapToCard(currentIndex + dir);
+  }
+
+  function handleKeyDown(e: KeyboardEvent) {
+    if (e.key === 'ArrowLeft') { e.preventDefault(); handleArrowClick(-1); }
+    if (e.key === 'ArrowRight') { e.preventDefault(); handleArrowClick(1); }
+  }
+
+  // Setup
+  calculateLayout();
+  window.addEventListener('resize', calculateLayout);
+  setTranslate(-(currentIndex * CARD_WIDTH));
+
+  // Events
+  track!.addEventListener('mousedown', (e) => handleDragStart(e));
+  track!.addEventListener('touchstart', (e) => handleDragStart(e));
+  document.addEventListener('mousemove', (e) => handleDragMove(e));
+  track!.addEventListener('touchmove', (e) => handleDragMove(e));
+  document.addEventListener('mouseup', handleDragEnd);
+  track!.addEventListener('touchend', handleDragEnd);
+  prevBtn?.addEventListener('click', () => handleArrowClick(-1));
+  nextBtn?.addEventListener('click', () => handleArrowClick(1));
+  document.addEventListener('keydown', handleKeyDown);
+
+  // Image fallback
+  const photos = carousel?.querySelectorAll<HTMLImageElement>('.ts__photo img');
+  photos?.forEach((img) => {
+    const photo = img.closest('.ts__photo') as HTMLElement;
     if (!photo) return;
     const fail = () => photo.classList.add('is-missing');
     img.addEventListener('error', fail);
