@@ -302,7 +302,8 @@ export const careersApplication = {
   },
   formTitle: 'Envie-nos a sua candidatura',
   // Options for the "Área de interesse" select.
-  areas: ['Área Comercial', 'Liderança Comercial', 'Marketing & Comunicação', 'Gestão de Clientes', 'Outra'],
+  // Owner call 2026-07-10: recruitment is for the sales area only.
+  areas: ['Área Comercial'],
 };
 
 // ---------- 10. CTA final ----------
