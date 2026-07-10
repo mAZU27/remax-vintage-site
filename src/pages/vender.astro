@@ -45,12 +45,27 @@ const lastPromocao = promocao.length - 1;
   title="Vender"
   description="O método de venda da RE/MAX Collection Vintage — estudo de mercado gratuito, marketing planeado, partilha com toda a rede e acompanhamento do primeiro contacto à escritura."
 >
-  <!-- S1 · Hero -->
+  <!-- S1 · Hero with CTAs -->
   <PageHero
     eyebrow="O método · Vender"
     title='O método para vender <em class="em-gold serif-it">rápido e pelo melhor valor</em>.'
     subtitle={heroSubtitle}
     image="/images/porto/porto-douro-entardecer.webp"
+    ctas={[
+      {
+        label: 'Pedir Avaliação',
+        href: '/contacto?assunto=estudo-mercado',
+        variant: 'gold',
+        arrow: true,
+      },
+      {
+        label: 'Ver Imóveis à Venda',
+        href: EXTERNAL_LISTINGS_URL,
+        external: true,
+        variant: 'ghost',
+        arrow: true,
+      },
+    ]}
   />
 
   <!-- S2 · O que fazemos para vender o seu imóvel -->

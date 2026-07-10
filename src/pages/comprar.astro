@@ -36,13 +36,28 @@ const notaIcons = ['document', 'bank', 'scale'];
   title="O método de compra"
   description="Mandato de Comprador e Contrato Exclusivo de Comprador: como procuramos casa por si, as garantias, as doze etapas do processo e os documentos para simulação de financiamento."
 >
-  <!-- 1 · Hero editorial — sem CTAs -->
+  <!-- 1 · Hero with CTAs -->
   <PageHero
     eyebrow="O método · Comprar"
     title='Porquê procurar a sua casa <em class="em-gold serif-it">connosco</em>.'
     subtitle={heroSubtitle}
     image="/images/porto/porto-douro-retrato.webp"
     imagePosition="center 58%"
+    ctas={[
+      {
+        label: 'Explorar Propriedades',
+        href: EXTERNAL_LISTINGS_URL,
+        external: true,
+        variant: 'gold',
+        arrow: true,
+      },
+      {
+        label: 'Falar com Consultor',
+        href: '/contacto',
+        variant: 'ghost',
+        arrow: true,
+      },
+    ]}
   />
 
   <!-- 2 · A estrutura à volta do cliente -->
