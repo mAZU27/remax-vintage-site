@@ -36,10 +36,13 @@ const { class: cls = '' } = Astro.props;
       </div>
       <Button type="submit" variant="gold" arrow class="news__btn">Subscrever</Button>
       <p class="news__note" data-news-note>
-        Sem spam. Cancela quando quiser. Ao subscrever aceita a nossa política de privacidade.
+        Sem spam. Cancela quando quiser. Ao subscrever aceita a nossa <a href="/privacidade">política de privacidade</a>.
       </p>
       <p class="news__success" data-news-success hidden>
         <Icon name="shield-check" size={16} stroke={1.7} /> Subscrição confirmada — bem-vindo à coleção.
+      </p>
+      <p class="news__error" data-news-error hidden role="alert">
+        Não foi possível concluir a subscrição. Tente novamente daqui a pouco.
       </p>
     </form>
   </div>
@@ -77,6 +80,11 @@ const { class: cls = '' } = Astro.props;
     grid-column: 1 / -1; margin: 4px 0 0; display: inline-flex; align-items: center; gap: 9px;
     font-size: 14px; color: var(--gold-light); letter-spacing: 0.02em;
   }
+  .news__error {
+    grid-column: 1 / -1; margin: 4px 0 0; font-size: 14px; color: var(--error-light); letter-spacing: 0.02em;
+  }
+  .news__note a { color: var(--gold-light); text-decoration: underline; }
+  :global(.news__btn[disabled]) { opacity: 0.6; cursor: progress; }
   .news__field.is-invalid { border-color: #C98A6A; }
 
   @media (max-width: 860px) {
@@ -92,19 +100,53 @@ const { class: cls = '' } = Astro.props;
     const input = form.querySelector('input[type="email"]') as HTMLInputElement | null;
     const note = form.querySelector('[data-news-note]') as HTMLElement | null;
     const success = form.querySelector('[data-news-success]') as HTMLElement | null;
-    form.addEventListener('submit', (e) => {
+    const errorBox = form.querySelector('[data-news-error]') as HTMLElement | null;
+    const submitBtn = form.querySelector('.news__btn') as HTMLButtonElement | null;
+    let submitting = false;
+    // One id per fill — stable across retries so the server dedupes a resend.
+    let submissionId = crypto.randomUUID();
+
+    form.addEventListener('submit', async (e) => {
       e.preventDefault();
+      if (submitting) return; // block double-submit while in flight
       if (!input || !input.checkValidity()) {
         field?.classList.add('is-invalid');
         input?.focus();
         return;
       }
       field?.classList.remove('is-invalid');
-      // Front-end only for now (no backend wired). Show confirmation.
-      if (field) field.style.display = 'none';
-      form.querySelector('.news__btn')?.setAttribute('hidden', '');
-      if (note) note.hidden = true;
-      if (success) success.hidden = false;
+
+      // Deliver via the same-origin endpoint; confirm success ONLY after the
+      // server reports delivered:true (never a fake confirmation).
+      submitting = true;
+      if (submitBtn) submitBtn.disabled = true;
+      if (errorBox) errorBox.hidden = true;
+      try {
+        const res = await fetch('/api/lead', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({
+            email: input.value.trim(),
+            form: 'newsletter',
+            submission_id: submissionId,
+            consent: { type: 'newsletter', text_version: 'v1' },
+          }),
+        });
+        const data = await res.json().catch(() => ({}));
+        if (res.ok && data.delivered === true) {
+          submissionId = crypto.randomUUID();
+          if (field) field.style.display = 'none';
+          submitBtn?.setAttribute('hidden', '');
+          if (note) note.hidden = true;
+          if (success) success.hidden = false;
+          return;
+        }
+        throw new Error('not delivered');
+      } catch {
+        if (errorBox) errorBox.hidden = false;
+        if (submitBtn) submitBtn.disabled = false;
+        submitting = false;
+      }
     });
     input?.addEventListener('input', () => field?.classList.remove('is-invalid'));
   });

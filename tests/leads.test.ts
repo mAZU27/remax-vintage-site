@@ -32,11 +32,32 @@ function okLead(over: Record<string, unknown> = {}) {
 
 // ---------------- normalizeLead ----------------
 
-test('allow-list has exactly the five legitimate forms', () => {
+test('allow-list has exactly the seven legitimate forms', () => {
   assert.deepEqual(
     [...ALLOWED_FORMS].sort(),
-    ['careers-application', 'chat-assistente', 'contacto', 'valuation-form', 'value-simulator'],
+    ['careers-application', 'chat-assistente', 'contacto', 'newsletter', 'support-chat', 'valuation-form', 'value-simulator'],
   );
+});
+
+test('newsletter requires a valid email', () => {
+  assert.equal(normalizeLead({ form: 'newsletter', consent: true }).ok, false);
+  const r = normalizeLead({ form: 'newsletter', email: 'sub@example.com', consent: { type: 'newsletter', text_version: 'v1' } });
+  assert.equal(r.ok, true);
+});
+
+test('support-chat accepts a null-heavy buildLeadPayload shape (email optional)', () => {
+  const r = normalizeLead({
+    form: 'support-chat',
+    full_name: 'João',
+    email: null,
+    phone: '912345678',
+    objective: 'Vender imóvel',
+    message: 'Objetivo: Vender imóvel\nZona: Foz',
+    consent: { type: 'support_chat', text_version: 'v1' },
+  });
+  assert.equal(r.ok, true);
+  if (!r.ok) return;
+  assert.equal(r.lead.phone, '912345678');
 });
 
 test('unknown form is rejected', () => {

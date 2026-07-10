@@ -491,3 +491,89 @@ export function composeLead(flowId: FlowId, answers: Record<string, string>): {
   }
   return { lines, closing: leadClosing };
 }
+
+// ---------- Answer validation (makes the flow "intelligent") ----------
+// The capture steps used to swallow ANY text into the slot — so a question
+// typed at the "contacto" step became the contact. These guards reject that:
+// the contact must be a real phone/email, the name must look like a name, and
+// a question typed mid-flow is answered instead of being stored.
+export function isEmail(s: string): boolean {
+  return /^[^\s@]+@[^\s@]+\.[^\s@]{2,}$/.test(s.trim());
+}
+export function isPhone(s: string): boolean {
+  const digits = s.replace(/[^\d]/g, '');
+  return digits.length >= 9 && digits.length <= 15;
+}
+export function isValidContact(s: string): boolean {
+  return isEmail(s) || isPhone(s);
+}
+function looksLikeName(s: string): boolean {
+  const v = s.trim();
+  if (v.length < 2 || v.length > 60) return false;
+  if (/[?@]/.test(v) || /\d/.test(v)) return false; // questions/emails/numbers aren't names
+  if (!/[a-zà-ÿ]/i.test(v)) return false;
+  if (detectIntent(v)) return false; // matches a request intent → not a name
+  return true;
+}
+
+export type StepKind = 'name' | 'contact' | 'free';
+export function stepKind(key: string): StepKind {
+  if (key === 'Nome') return 'name';
+  if (key === 'Contacto') return 'contact';
+  return 'free';
+}
+
+export interface StepValidation {
+  ok: boolean;
+  /** The input is a literal question → answer it, then re-ask the step. */
+  answerQuestion?: boolean;
+  /** Message to re-prompt with when the input is not a usable answer. */
+  hint?: string;
+}
+export function validateAnswer(key: string, text: string): StepValidation {
+  const v = text.trim();
+  const kind = stepKind(key);
+  const isQuestion = /\?/.test(v);
+  if (kind === 'contact') {
+    if (isValidContact(v)) return { ok: true };
+    return {
+      ok: false,
+      answerQuestion: isQuestion,
+      hint: 'Para a equipa o poder contactar, preciso de um número de telefone (ex.: 912 345 678) ou de um email válido.',
+    };
+  }
+  if (kind === 'name') {
+    if (looksLikeName(v)) return { ok: true };
+    return {
+      ok: false,
+      answerQuestion: isQuestion,
+      hint: 'E qual é o seu nome? Assim sabemos como o tratar. 🙂',
+    };
+  }
+  return { ok: true };
+}
+
+// Build the structured lead the site's /api/lead proxy forwards to Novus.
+// Same shape family as the other forms (full_name/email/phone/form/consent).
+export function buildLeadPayload(flowId: FlowId, answers: Record<string, string>) {
+  const flow = flows[flowId];
+  const contact = (answers['Contacto'] || '').trim();
+  const details: Record<string, string> = {};
+  const lines: string[] = [`Objetivo: ${flow.objective}`];
+  for (const step of flow.steps) {
+    const val = answers[step.key];
+    if (!val) continue;
+    lines.push(`${step.key}: ${val}`);
+    if (step.key !== 'Nome' && step.key !== 'Contacto') details[step.key] = val;
+  }
+  return {
+    full_name: answers['Nome'] || null,
+    email: isEmail(contact) ? contact : null,
+    phone: isPhone(contact) ? contact.replace(/[^\d+]/g, '') : null,
+    form: 'support-chat',
+    objective: flow.objective,
+    details,
+    message: lines.join('\n'),
+    consent: { type: 'support_chat', text_version: 'v1' },
+  };
+}

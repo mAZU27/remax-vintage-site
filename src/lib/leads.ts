@@ -16,6 +16,8 @@ export const FORM_LABELS = {
   contacto: 'Contacto geral',
   'careers-application': 'Candidatura — Carreiras',
   'chat-assistente': 'Assistente (chat)',
+  'support-chat': 'Assistente (chat)',
+  newsletter: 'Newsletter',
 } as const;
 
 export type FormType = keyof typeof FORM_LABELS;
@@ -30,6 +32,8 @@ const EMAIL_REQUIRED: Record<FormType, boolean> = {
   contacto: true,
   'careers-application': true,
   'chat-assistente': false,
+  'support-chat': false, // contact is free text (phone OR email)
+  newsletter: true, // a newsletter signup is just an email
 };
 
 const EMAIL_RE = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;

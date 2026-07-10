@@ -245,7 +245,7 @@ import Icon from './Icon.astro';
 </style>
 
 <script>
-  import { getReply, getWelcome, flows, composeLead, type BotReply, type Chip, type FlowId } from '../data/supportResponses';
+  import { getReply, getWelcome, flows, composeLead, validateAnswer, buildLeadPayload, type BotReply, type Chip, type FlowId } from '../data/supportResponses';
   import { quickStart, contacts } from '../data/supportKnowledge';
 
   const root = document.querySelector<HTMLElement>('[data-cs]');
@@ -391,20 +391,37 @@ import Icon from './Icon.astro';
     // Pending lead awaiting an explicit consent tap before it is delivered.
     // submissionId is minted once here and reused across retries so the
     // server's Idempotency-Key dedupes a resent lead.
-    let pending: { objetivo: string; answers: Record<string, string>; summary: string; closing: string; submissionId: string } | null = null;
+    let pending: { flowId: FlowId; answers: Record<string, string>; summary: string; closing: string; submissionId: string } | null = null;
     let sending = false;
 
     function answerStep(value: string) {
       if (!flow) return;
       const f = flows[flow.id];
-      flow.answers[f.steps[flow.step].key] = value;
+      const step = f.steps[flow.step];
+      const v = value.trim();
+
+      // Intelligence: validate the answer for this step. A question or garbage
+      // typed at the name/contact step is NOT stored — we answer (if it was a
+      // question) and re-ask, so a lead never gets a bogus name/contact.
+      const check = validateAnswer(step.key, v);
+      if (!check.ok) {
+        if (check.answerQuestion) {
+          const r = getReply(v);
+          // Answer WITHOUT starting a nested flow (drop reply.flow).
+          botSay({ text: r.text, chips: r.chips, cta: r.cta });
+        }
+        botSay({ text: check.hint ?? step.question, stepChips: step.chips });
+        return; // stay on the same step
+      }
+
+      flow.answers[step.key] = v;
       flow.step += 1;
       if (flow.step < f.steps.length) { askStep(); return; }
       // All answers collected — hold the lead and ask for explicit consent
       // (with a link to /privacidade) before sending any personal data.
       const lead = composeLead(flow.id, flow.answers);
       pending = {
-        objetivo: flows[flow.id].objective,
+        flowId: flow.id,
         answers: { ...flow.answers },
         summary: lead.lines.join('\n'),
         closing: lead.closing,
@@ -441,23 +458,19 @@ import Icon from './Icon.astro';
     }
 
     // Deliver the chat lead through the same server-side endpoint every form
-    // uses. The confirmation is shown ONLY after the server confirms real
-    // delivery (delivered:true); on failure the pending lead is kept so the
-    // user can retry with a single tap.
+    // uses. Uses buildLeadPayload (intelligent name/contact mapping) and adds
+    // the stable submission_id for idempotency. The confirmation is shown ONLY
+    // after the server confirms real delivery (delivered:true); on failure the
+    // pending lead is kept so the user can retry with a single tap.
     async function sendLead() {
       if (!pending || sending) return; // block double-send while in flight
       sending = true;
       try {
+        const payload = buildLeadPayload(pending.flowId, pending.answers);
         const res = await fetch('/api/lead', {
           method: 'POST',
           headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify({
-            form: 'chat-assistente',
-            submission_id: pending.submissionId,
-            objetivo: pending.objetivo,
-            ...pending.answers,
-            consent: { type: 'assistente', text_version: 'v1' },
-          }),
+          body: JSON.stringify({ ...payload, submission_id: pending.submissionId }),
         });
         const data = await res.json().catch(() => ({}));
         if (res.ok && data.delivered === true) {
