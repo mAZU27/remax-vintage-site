@@ -2,7 +2,6 @@
 import SectionEyebrow from './SectionEyebrow.astro';
 import Icon from './Icon.astro';
 import { careersApplication as a, anchors } from '../data/carreiras';
-import { site } from '../data/site';
 ---
 <section class="section section--navy on-navy capply" id={anchors.apply}>
   <div class="container capply__grid">
@@ -13,25 +12,13 @@ import { site } from '../data/site';
       </h2>
       <p class="lede capply__lede" data-reveal style="--reveal-delay:150ms">{a.text}</p>
 
+      {/* Caixa da «diretora de RH» removida 2026-07-10: o contacto de
+          recrutamento era um placeholder (citação inventada + email fictício).
+          Repor apenas com a pessoa, citação e contacto reais e autorizados. */}
       <div class="capply__media" data-reveal style="--reveal-delay:200ms">
         <div class="capply__media-img">
           <img src={a.image} alt="" loading="lazy" decoding="async" />
         </div>
-        <figure class="capply__director">
-          <div class="capply__director-photo">
-            {a.director.photo
-              ? <img src={a.director.photo} alt={a.director.name} loading="lazy" decoding="async" />
-              : <span class="capply__director-initials">{a.director.initials}</span>}
-          </div>
-          <figcaption class="capply__director-body">
-            <span class="capply__director-role">{a.director.role}</span>
-            <strong class="capply__director-name">{a.director.name}</strong>
-            <p class="capply__director-text">{a.director.text}</p>
-            <a class="capply__director-cta" href={`mailto:${site.email}`}>
-              {a.director.ctaLabel} <Icon name="arrow" size={14} stroke={1.8} />
-            </a>
-          </figcaption>
-        </figure>
       </div>
     </div>
 
@@ -72,6 +59,9 @@ import { site } from '../data/site';
           <textarea id="ap-msg" name="mensagem" rows="4" placeholder="Conte-nos um pouco sobre si e as suas ambições."></textarea>
         </div>
 
+        {/* CV: mantido por decisão do Francisco (2026-07-10) — o binário não é
+            carregado (ingest é JSON); o NOME do ficheiro segue como contexto e
+            a equipa pede o documento no seguimento. */}
         <div class="cfield">
           <span class="cfield__label">Curriculum (CV)</span>
           <label class="cupload" for="ap-cv">
@@ -83,7 +73,7 @@ import { site } from '../data/site';
 
         <label class="cconsent">
           <input type="checkbox" name="consentimento" required />
-          <span>Autorizo o tratamento dos meus dados para efeitos de recrutamento, nos termos da política de privacidade.</span>
+          <span>Autorizo o tratamento dos meus dados para efeitos de recrutamento, nos termos da <a href="/privacidade">Política de Privacidade</a>.</span>
         </label>
 
         <button type="submit" class="btn btn--gold capply__submit">
@@ -105,41 +95,11 @@ import { site } from '../data/site';
   .capply__grid { display: grid; grid-template-columns: 0.92fr 1.08fr; gap: clamp(36px, 5vw, 80px); align-items: start; }
   .capply__title { margin-top: 16px; max-width: 20ch; }
   .capply__lede { margin-top: 16px; }
-  /* Building image + overlapping director box */
-  .capply__media { position: relative; margin-top: 28px; margin-bottom: clamp(70px, 9vw, 116px); }
+  /* Building image (a caixa da diretora sobreposta foi removida — sem margem extra) */
+  .capply__media { position: relative; margin-top: 28px; }
   .capply__media-img { border-radius: var(--radius-lg); overflow: hidden; border: 1px solid var(--hairline-gold); aspect-ratio: 16 / 11; }
   .capply__media-img img { width: 100%; height: 100%; object-fit: cover; display: block; }
 
-  .capply__director {
-    position: absolute; left: clamp(16px, 5%, 36px); right: clamp(16px, 5%, 36px); bottom: 0;
-    transform: translateY(42%); margin: 0;
-    display: flex; align-items: center; gap: clamp(14px, 1.6vw, 20px);
-    padding: clamp(16px, 1.6vw, 22px);
-    background: rgba(11, 26, 46, 0.96);
-    -webkit-backdrop-filter: blur(10px) saturate(135%); backdrop-filter: blur(10px) saturate(135%);
-    border: 1px solid var(--hairline-gold); border-radius: var(--radius-lg);
-    box-shadow: var(--shadow-float);
-  }
-  .capply__director-photo {
-    flex-shrink: 0; width: clamp(62px, 6vw, 82px); height: clamp(62px, 6vw, 82px);
-    border-radius: 50%; overflow: hidden; display: grid; place-items: center;
-    background: linear-gradient(160deg, var(--gold-light), var(--gold-deep));
-    box-shadow: 0 0 0 1px var(--hairline-gold-strong);
-  }
-  .capply__director-photo img { width: 100%; height: 100%; object-fit: cover; }
-  .capply__director-initials { font-family: var(--font-serif); font-weight: 600; font-size: 26px; color: var(--navy-ink); letter-spacing: 0.02em; }
-  .capply__director-body { min-width: 0; }
-  .capply__director-role { font-size: 10.5px; letter-spacing: 0.22em; text-transform: uppercase; color: var(--gold-light); font-weight: 600; }
-  .capply__director-name { display: block; margin-top: 3px; font-family: var(--font-serif); font-weight: 500; font-size: clamp(19px, 1.7vw, 23px); line-height: 1.1; color: var(--cream); }
-  .capply__director-text { margin: 9px 0 0; font-size: 13px; line-height: 1.5; color: var(--white-70); }
-  .capply__director-cta {
-    margin-top: 12px; display: inline-flex; align-items: center; gap: 8px;
-    font-size: 10.5px; letter-spacing: 0.16em; text-transform: uppercase; color: var(--gold-light);
-    text-decoration: none; font-weight: 600; transition: color var(--t-fast);
-  }
-  .capply__director-cta:hover { color: var(--cream); }
-  .capply__director-cta :global(.arrow) { transition: transform var(--t-fast); }
-  .capply__director-cta:hover :global(.arrow) { transform: translateX(4px); }
 
   /* Form */
   .capply__formwrap {
@@ -167,6 +127,7 @@ import { site } from '../data/site';
     box-shadow: 0 0 0 3px rgba(184, 153, 104, 0.22);
   }
 
+
   .cupload {
     display: flex; align-items: center; gap: 12px; cursor: pointer; color: var(--white-90);
     border: 1px dashed var(--hairline-gold-strong); border-radius: var(--radius); padding: 13px 14px;
@@ -192,10 +153,6 @@ import { site } from '../data/site';
   .capply__done p { margin: 10px auto 0; max-width: 36ch; color: var(--white-70); font-size: 15px; }
 
   @media (max-width: 900px) { .capply__grid { grid-template-columns: 1fr; } }
-  @media (max-width: 560px) {
-    .capply__media { margin-bottom: clamp(96px, 30vw, 132px); }
-    .capply__director { flex-direction: column; align-items: flex-start; gap: 12px; transform: translateY(34%); }
-  }
   @media (max-width: 480px) { .cfield--row { grid-template-columns: 1fr; } }
 </style>
 

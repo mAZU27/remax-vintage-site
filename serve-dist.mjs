@@ -1,4 +1,4 @@
-// Zero-dependency static server for the built site (dist/).
+// Zero-dependency static server for the built site.
 // Runs with the Node that ships in this project — no install needed.
 // Double-click `abrir-site.command` to launch it.
 import { createServer } from 'node:http';
@@ -7,7 +7,9 @@ import { fileURLToPath } from 'node:url';
 import { dirname, join, normalize, extname } from 'node:path';
 import { exec } from 'node:child_process';
 
-const ROOT = join(dirname(fileURLToPath(import.meta.url)), 'dist');
+// The @astrojs/vercel adapter writes the static site to dist/client/
+// (dist/server/ holds the on-demand functions, which this preview skips).
+const ROOT = join(dirname(fileURLToPath(import.meta.url)), 'dist', 'client');
 const START_PORT = 4321;
 
 const MIME = {

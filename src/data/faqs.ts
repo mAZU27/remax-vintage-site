@@ -63,7 +63,7 @@ export const faqs: Faq[] = [
   },
   {
     q: 'Posso agendar uma visita a um imóvel sem compromisso?',
-    a: 'Sim. Pode contactar-nos por telefone, email ou através do formulário de contacto. As visitas são sem compromisso e organizadas com total discrição.',
+    a: 'Sim. Pode contactar-nos por telefone ou através do formulário de contacto. As visitas são sem compromisso e organizadas com total discrição.',
   },
   {
     q: 'Como funciona a comissão de mediação?',
@@ -92,9 +92,8 @@ const mapsHref =
 // PLACEHOLDER(contacto): número, email e morada vêm de site.ts e estão
 // marcados lá como TODO(contacto) — substituir pelos reais antes de publicar.
 export const contactChannels: ContactChannel[] = [
-  { icon: 'whatsapp', label: 'WhatsApp', detail: 'Resposta imediata', sub: 'Conversa direta com a equipa', cta: { label: 'Abrir WhatsApp', href: site.whatsappHref }, external: true },
-  { icon: 'phone', label: 'Telefone', detail: site.phone, sub: `${site.hours[0]} · ${site.hours[1]}`, cta: { label: 'Ligar', href: site.phoneHref } },
-  { icon: 'mail', label: 'Email', detail: site.email, sub: 'Resposta rápida', cta: { label: 'Enviar email', href: `mailto:${site.email}` } },
+  { icon: 'phone', label: 'Telefone', detail: site.phone, sub: 'Chamada para a rede fixa nacional', cta: { label: 'Ligar', href: site.phoneHref } },
+  { icon: 'mail', label: 'Formulário', detail: 'Escreva-nos em qualquer momento', sub: 'Resposta com a discrição de sempre', cta: { label: 'Abrir formulário', href: '/contacto' } },
   { icon: 'pin', label: 'Visita', detail: site.address.join(', '), sub: 'Com marcação prévia', cta: { label: 'Ver no mapa', href: mapsHref }, external: true },
 ];
 
@@ -105,16 +104,15 @@ export interface QualityCommitment {
   label: string;
 }
 
-// NOTE(apoio-stats): valores de serviço a confirmar com a equipa.
-// "Até 4h úteis" e "7 dias/semana" são compromissos por validar — este último
-// diverge do horário em site.ts (Seg.–Sex.); confirmar disponibilidade real.
-// "Desde 2014" é facto real (site.established). Render limpo (sem badges),
-// seguindo a convenção de site.ts (stats ilustrativas só assinaladas em código).
+// NOTE(apoio-stats): apenas factos verificados ou compromissos qualitativos.
+// "Até 4h úteis" e "7 dias/semana" foram REMOVIDOS (2026-07-10): eram
+// compromissos por validar e contradiziam-se — repor apenas com confirmação
+// escrita da agência. "Desde 2014" é facto verificado (perfil oficial remax.pt).
 export const qualityCommitments: QualityCommitment[] = [
-  { icon: 'clock', value: 'Até 4h úteis', label: 'Tempo médio de resposta' },
-  { icon: 'phone', value: '7 dias/semana', label: 'Disponibilidade' },
   { icon: 'shield-check', value: '100% confidencial', label: 'Segurança e privacidade' },
   { icon: 'award', value: 'Desde 2014', label: 'Presença no Porto' },
+  { icon: 'users', value: 'Equipa dedicada', label: 'Acompanhamento próximo' },
+  { icon: 'diamond', value: 'Segmento premium', label: 'Especialistas no Porto' },
 ];
 
 /* ---------- Secção 6 — Guias úteis ---------- */
@@ -125,14 +123,14 @@ export interface Guide {
   kicker: string;
 }
 
-// PLACEHOLDER(guias): conteúdo dos guias por escrever. CTA aponta para
-// /insights (hub de conteúdo) até cada guia ter página própria. As imagens
-// são fotografia atmosférica real do Porto — substituir por capas dedicadas.
+// Guias: apontam para as páginas de método REAIS (/comprar e /vender, com
+// conteúdo dos guias oficiais impressos) e para a avaliação na homepage.
+// O cartão «Mercado» foi removido (2026-07-10): apontava para o hub /insights,
+// que só tem artigos placeholder (noindex) — repor quando houver conteúdo real.
 export const guides: Guide[] = [
-  { title: 'Guia do Comprador', kicker: 'Comprar', image: '/images/porto/editorial-visita.webp', href: '/insights' },
-  { title: 'Guia do Vendedor', kicker: 'Vender', image: '/images/porto/editorial-fotografia.webp', href: '/insights' },
-  { title: 'Como funciona a Avaliação', kicker: 'Avaliação', image: '/images/porto/editorial-consultoria.webp', href: '/insights' },
-  { title: 'Mercado Imobiliário no Porto', kicker: 'Mercado', image: '/images/porto/editorial-sala-vista.webp', href: '/insights' },
+  { title: 'Guia do Comprador', kicker: 'Comprar', image: '/images/porto/editorial-visita.webp', href: '/comprar' },
+  { title: 'Guia do Vendedor', kicker: 'Vender', image: '/images/porto/editorial-fotografia.webp', href: '/vender' },
+  { title: 'Como funciona a Avaliação', kicker: 'Avaliação', image: '/images/porto/editorial-consultoria.webp', href: '/#vender' },
 ];
 
 /* ---------- Secção 7 — Concierge ---------- */

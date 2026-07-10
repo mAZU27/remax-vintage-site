@@ -6,9 +6,7 @@ import SectionEyebrow from '../components/SectionEyebrow.astro';
 import Button from '../components/Button.astro';
 import Icon from '../components/Icon.astro';
 import TeamShowcase from '../components/TeamShowcase.astro';
-import AwardsGrid from '../components/AwardsGrid.astro';
-import TestimonialCard from '../components/TestimonialCard.astro';
-import { testimonials, primaryCta } from '../data/site';
+import { primaryCta } from '../data/site';
 import { zonas } from '../content/zonas';
 
 // Section 2 — three real facts about the agency (no invented metrics).
@@ -26,8 +24,6 @@ const methodSteps = [
   { num: 'IV', name: 'Negociar', icon: 'handshake', text: 'Acompanhamos o processo com método, critério e foco no melhor resultado possível.' },
 ];
 
-// Section 7 — reuse the first three (flagged placeholder) testimonials from site.ts.
-const aboutTestimonials = testimonials.slice(0, 3);
 ---
 <Base
   title="Sobre nós"
@@ -64,7 +60,6 @@ const aboutTestimonials = testimonials.slice(0, 3);
             valor exige.
           </p>
         </div>
-        <!-- PLACEHOLDER: fotografia atmosférica real do Porto. Substituir por foto do escritório / equipa quando disponível. -->
         <figure class="ab-origin__fig" data-reveal style="--reveal-delay:140ms">
           <img src="/images/porto/porto-aliados.webp" alt="O Porto, a Torre dos Clérigos e Aliados" loading="lazy" decoding="async" width="1000" height="1200" />
           <figcaption class="ab-origin__cap">O Porto, todos os dias.</figcaption>
@@ -82,8 +77,8 @@ const aboutTestimonials = testimonials.slice(0, 3);
     </div>
   </section>
 
-  <!-- S2.5 — Reconhecimento (prémios RE/MAX Portugal, rede) -->
-  <AwardsGrid />
+  {/* Secção de prémios (AwardsGrid): removida 2026-07-10 até a agência aprovar
+      por escrito os prémios (nome/ano/atribuição) a comunicar publicamente. */}
 
   <!-- S3 — Filosofia -->
   <section class="section section--ink on-navy ab-phil">
@@ -203,21 +198,9 @@ const aboutTestimonials = testimonials.slice(0, 3);
   <!-- S7 — Equipa (detalhe) -->
   <TeamShowcase />
 
-  <!-- S7 — Testemunhos -->
-  <section class="section section--cream-soft ab-tmt">
-    <div class="container">
-      <header class="ab-head ab-head--center">
-        <SectionEyebrow text="O que dizem os nossos clientes" center />
-        <h2 class="h2 ab-head__title" data-reveal style="--reveal-delay:80ms">A confiança constrói-se imóvel a imóvel.</h2>
-      </header>
-
-      <ul class="ab-tmt-grid">
-        {aboutTestimonials.map((t, i) => (
-          <li><TestimonialCard quote={t.quote} name={t.name} context={t.context} index={i} /></li>
-        ))}
-      </ul>
-    </div>
-  </section>
+  {/* Secção «Testemunhos»: removida 2026-07-10 — os testemunhos eram
+      ilustrativos (inventados). Repor apenas com testemunhos reais e
+      autorização escrita dos clientes. */}
 
   <!-- S8 — CTA final -->
   <section class="ab-final on-navy">
@@ -355,12 +338,6 @@ const aboutTestimonials = testimonials.slice(0, 3);
   }
   .ab-hood__chips :global(.icon) { color: var(--gold-light); flex-shrink: 0; }
 
-  /* S7 — Testemunhos */
-  .ab-tmt-grid {
-    list-style: none; margin: 0; padding: 0;
-    display: grid; grid-template-columns: repeat(3, 1fr); gap: clamp(18px, 2vw, 26px);
-  }
-
   /* S8 — CTA final */
   .ab-final {
     position: relative; isolation: isolate; overflow: hidden; text-align: center;
@@ -415,7 +392,6 @@ const aboutTestimonials = testimonials.slice(0, 3);
     .ab-origin__fig img { aspect-ratio: 16 / 10; }
     .ab-steps { grid-template-columns: repeat(2, 1fr); }
     .ab-hood-grid { grid-template-columns: repeat(2, 1fr); }
-    .ab-tmt-grid { grid-template-columns: 1fr; }
     .ab-phil__cols { grid-template-columns: 1fr; }
   }
   @media (max-width: 560px) {

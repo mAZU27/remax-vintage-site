@@ -48,10 +48,11 @@ const canonical = Astro.site ? new URL(Astro.url.pathname, Astro.site).href : As
 const ogImage = Astro.site ? new URL(image, Astro.site).href : image;
 const origin = Astro.site ? Astro.site.href : '/';
 
-// Global entity graph — agency + website. Contact details (phone/email) are
-// deliberately NOT emitted while site.ts still carries launch placeholders;
-// only verified facts go into structured data.
-const sameAs = site.social.map((s) => s.href).filter((h) => h && h !== '#');
+// Global entity graph — agency + website. Only VERIFIED facts go into
+// structured data: name/legalName/AMI/telephone/address/foundingDate were
+// confirmed against the official remax.pt agency profile (office 12382,
+// 2026-07-10). Email/hours/social stay out until the agency confirms them
+// (sameAs will be reintroduced when real profile URLs exist).
 const jsonLd = {
   '@context': 'https://schema.org',
   '@graph': [
@@ -59,15 +60,23 @@ const jsonLd = {
       '@type': 'RealEstateAgent',
       '@id': `${origin}#agency`,
       name: site.name,
+      legalName: site.legalName,
+      identifier: { '@type': 'PropertyValue', propertyID: 'AMI', value: site.ami },
       description: site.description,
       logo: new URL(site.logoFull, origin).href,
       image: new URL(site.logoFull, origin).href,
       url: origin,
+      telephone: site.phone,
       areaServed: 'Porto, Portugal',
-      address: { '@type': 'PostalAddress', addressLocality: 'Porto', addressCountry: 'PT' },
+      address: {
+        '@type': 'PostalAddress',
+        streetAddress: site.address[0],
+        postalCode: '4100-137',
+        addressLocality: 'Porto',
+        addressCountry: 'PT',
+      },
       priceRange: '€€€€',
       foundingDate: String(site.established),
-      ...(sameAs.length ? { sameAs } : {}),
     },
     {
       '@type': 'WebSite',
@@ -97,7 +106,7 @@ const pageSchemas = schema ? (Array.isArray(schema) ? schema : [schema]) : [];
     <title>{pageTitle}</title>
     <meta name="description" content={description} />
     <link rel="canonical" href={canonical} />
-    {noindex && <meta name="robots" content="noindex, nofollow" />}
+    {noindex && <meta name="robots" content="noindex, follow" />}
     <meta name="theme-color" content="#0B1A2E" />
     <meta name="color-scheme" content="light" />
 

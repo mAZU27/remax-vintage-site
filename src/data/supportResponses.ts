@@ -139,9 +139,7 @@ const NAV_CHIPS: Chip[] = [
 ];
 
 const humanChips: Chip[] = [
-  { label: 'WhatsApp', href: contacts.whatsappHref, external: true },
   { label: 'Ligar', href: contacts.phoneHref },
-  { label: 'Enviar email', href: contacts.emailHref },
   { label: 'Página de contacto', href: '/contacto' },
 ];
 
@@ -208,19 +206,19 @@ export function replyFor(intent: IntentId): BotReply {
 
     case 'contacto':
       return {
-        text: `Pode contactar-nos de várias formas:\n\n📞 Telefone: ${contacts.phone}\n💬 WhatsApp: resposta imediata\n📧 Email: ${contacts.email}\n\n⏰ Respondemos normalmente em 24h. Fora do horário, deixe mensagem que retornamos assim que possível.`,
+        text: `Pode contactar-nos de várias formas:\n\n📞 Telefone: ${contacts.phone}\n📍 Morada: ${contacts.address}\n📝 Formulário: na página de contacto\n\nRespondemos com a maior brevidade possível.`,
         chips: humanChips,
       };
 
     case 'localizacao':
       return {
-        text: `Estamos no ${contacts.city}.\n• Morada: ${contacts.address}\n• Horário: ${contacts.hours}\n\nAs visitas ao escritório são com marcação prévia.`,
+        text: `Estamos no ${contacts.city}.\n• Morada: ${contacts.address}\n\nAs visitas ao escritório são com marcação prévia.`,
         chips: [{ label: 'Ver no mapa', href: contacts.mapsHref, external: true }, ...NAV_CHIPS.slice(0, 2)],
       };
 
     case 'horario':
       return {
-        text: `O nosso horário é ${contacts.hours}. Fora deste horário pode deixar mensagem por email ou WhatsApp e respondemos assim que possível.`,
+        text: `Atendemos no nosso escritório na ${contacts.address}, com marcação prévia. Pode ligar-nos (${contacts.phone}) ou deixar mensagem no formulário de contacto — respondemos com a maior brevidade possível.`,
         chips: humanChips,
       };
 
@@ -321,8 +319,8 @@ export function replyFor(intent: IntentId): BotReply {
 
     case 'urgente':
       return {
-        text: 'Entendo que tem pressa! A nossa equipa está disponível para atender urgências.\n\nFale connosco por WhatsApp para uma resposta imediata:',
-        chips: [{ label: 'WhatsApp (urgente)', href: contacts.whatsappHref, external: true }, { label: 'Ligar', href: contacts.phoneHref }],
+        text: 'Entendo que tem pressa! A nossa equipa está disponível para o ajudar.\n\nLigue-nos para uma resposta rápida:',
+        chips: [{ label: 'Ligar', href: contacts.phoneHref }, { label: 'Página de contacto', href: '/contacto' }],
       };
 
     case 'problema':
@@ -357,11 +355,11 @@ export function getWelcome(): BotReply {
   return { text: assistant.welcome };
 }
 
-// Compose a human-readable lead summary (used for the WhatsApp hand-off + recap).
+// Compose a human-readable lead summary (recap shown in chat; the component
+// POSTs the answers to /api/lead — the same proxy every form on the site uses).
 export function composeLead(flowId: FlowId, answers: Record<string, string>): {
   lines: string[];
   closing: string;
-  waHref: string;
 } {
   const flow = flows[flowId];
   const lines = [`Objetivo: ${flow.objective}`];
@@ -369,7 +367,5 @@ export function composeLead(flowId: FlowId, answers: Record<string, string>): {
     const v = answers[step.key];
     if (v) lines.push(`${step.key}: ${v}`);
   }
-  const waText = `Olá, gostaria de avançar.\n\n${lines.join('\n')}`;
-  const waHref = `${contacts.whatsappHref}?text=${encodeURIComponent(waText)}`;
-  return { lines, closing: leadClosing, waHref };
+  return { lines, closing: leadClosing };
 }

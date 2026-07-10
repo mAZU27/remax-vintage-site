@@ -18,7 +18,7 @@ import {
   concierge,
 } from '../data/faqs';
 
-// Concierge aside reuses the two "talk now" channels (WhatsApp + Telefone).
+// Concierge aside reuses the two "talk now" channels (Telefone + Formulário).
 const conciergeChannels = [contactChannels[0], contactChannels[1]];
 
 // FAQPage structured data mirrors the accordion rendered below (same source).
@@ -139,7 +139,8 @@ const faqSchema = {
           <SectionEyebrow text="Guias úteis" />
           <h2 class="h2 ap-head__title" data-reveal style="--reveal-delay:80ms">Recursos para decidir com confiança.</h2>
         </div>
-        <Button href="/insights" variant="ghost-dark" arrow reveal>Ver todos os recursos</Button>
+        {/* Botão «Ver todos os recursos» → /insights removido 2026-07-10:
+            o hub está em noindex (artigos placeholder). Repor com o blog real. */}
       </header>
 
       <ul class="ap-guide-grid">

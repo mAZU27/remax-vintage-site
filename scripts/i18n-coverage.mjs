@@ -41,8 +41,8 @@ const ALLOW = new Set([
   'Superbrands Portugal 2026 — RE/MAX Portugal',
   'Consumer Award', 'Consumer Award · ’26', 'Of the Year', 'Of the Year · ’26',
   // places / addresses (kept as-is in EN)
-  'Baixa & Aliados', 'Lordelo do Ouro & Massarelos', 'Porto, Portugal', '4100-000 Porto, Portugal',
-  'Av. da Boavista 0000', 'Av. da Boavista 0000, 4100-000 Porto, Portugal', 'Av. da Boavista, Porto',
+  'Baixa & Aliados', 'Lordelo do Ouro & Massarelos', 'Porto, Portugal', '4100-137 Porto, Portugal',
+  'Avenida da Boavista, 3191/3195', 'Avenida da Boavista, 3191/3195, 4100-137 Porto, Portugal', 'Av. da Boavista, Porto',
   'Vila Nova de Gaia', 'Matosinhos Sul', 'Parque da Cidade', 'Foz do Douro, Porto', 'Boavista, Porto',
   'Ribeira, Porto', 'Porto · Monumental', 'Porto · Serralves',
   // people (testimonials / team placeholders)
@@ -52,7 +52,7 @@ const ALLOW = new Set([
   'Tiago Ferreira', 'Ricardo Nunes', 'Sofia A.', 'Sofia Lemos',
   // identical in EN
   'Blog & Insights', 'premium', 'T5+', 'T6+', 'Insights · Collection Vintage',
-  '📧 Email: collection@vintage.pt', 'Full-time',
+  'Full-time',
 ]);
 
 const htmlFiles = [];

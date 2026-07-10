@@ -246,7 +246,7 @@ import Icon from './Icon.astro';
 
 <script>
   import { getReply, getWelcome, flows, composeLead, type BotReply, type Chip, type FlowId } from '../data/supportResponses';
-  import { quickStart } from '../data/supportKnowledge';
+  import { quickStart, contacts } from '../data/supportKnowledge';
 
   const root = document.querySelector<HTMLElement>('[data-cs]');
   if (!root) {
@@ -394,10 +394,17 @@ import Icon from './Icon.astro';
       flow.step += 1;
       if (flow.step < f.steps.length) { askStep(); return; }
       const lead = composeLead(flow.id, flow.answers);
+      // Deliver the lead through the same server-side proxy every form uses
+      // (the previous WhatsApp hand-off pointed at a placeholder number).
+      fetch('/api/lead', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ form: 'chat-assistente', objetivo: flows[flow.id].objective, ...flow.answers }),
+        keepalive: true,
+      }).catch((err) => console.error('[lead]', err));
       botSay({
         text: lead.closing + '\n\n' + lead.lines.join('\n'),
-        cta: { label: 'Enviar à equipa (WhatsApp)', href: lead.waHref, external: true },
-        chips: [{ label: 'Página de contacto', href: '/contacto' }],
+        chips: [{ label: 'Ligar', href: contacts.phoneHref }, { label: 'Página de contacto', href: '/contacto' }],
       });
       flow = null;
     }

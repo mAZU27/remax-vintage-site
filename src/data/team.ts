@@ -5,15 +5,11 @@
 // Vintage roster (the 4 source screenshots G provided). Roles keep the exact
 // gender-neutral form used there, e.g. "Gestor(a) de Recursos Humanos".
 //
-// ⚠️ MOST PHOTOS ARE STILL PLACEHOLDERS — NOT FOR PRODUCTION.
-// Only Sónia Santos has her real photo on disk (sonia-santos.jpg). Everyone
-// else who has a photo on the official roster reuses an AI-generated portrait
-// (the 51 team-NN.jpg + 5 hand-picked .webp) — these are NOT the real person and
-// are misleading next to a real name. The 3 people the official roster shows
-// with a RE/MAX-balloon placeholder (Frederico Pinto, Alex Prazeres, Salviano
-// Cruz) fall back to our dignified gold-monogram (image: null). Before launch,
-// drop each real headshot into /public/images/team/ and add it to REAL_PHOTOS
-// below (same as Sónia) — the AI face for that person then disappears.
+// PHOTOS (estado 2026-07-10): os retratos gerados por IA foram REMOVIDOS do
+// site e do repositório — eram enganadores junto a nomes reais. Só a Sónia
+// Santos tem fotografia real (sonia-santos.jpg); todos os restantes usam o
+// monograma dourado até G fornecer cada headshot real (adicionar ficheiro em
+// /public/images/team/ + entrada em REAL_PHOTOS).
 //
 // NOTE: the official roster shows a "Collection" badge on some people and a
 // RE/MAX-balloon placeholder for those without photos. Our card component has
@@ -124,42 +120,23 @@ const REAL_TEAM: { name: string; role: string }[] = [
   { name: 'Sónia Santos', role: 'Gestor(a) de Recursos Humanos' },
 ];
 
-// AI placeholder portraits — NOT the real people (see header). Used to keep
-// every card filled until real headshots arrive: 51 numbered + 5 hand-picked.
-const AI_PORTRAITS: { image: string; hasWebp: boolean }[] = [
-  // team-49 excluded: it was the same face as sonia-santos.jpg (a real
-  // person's photo leaked into the placeholder pool → duplicated face).
-  ...Array.from({ length: 51 }, (_, i) => ({
-    image: `/images/team/team-${String(i + 1).padStart(2, '0')}`,
-    hasWebp: false,
-  })).filter((p) => !p.image.endsWith('team-49')),
-  { image: '/images/team/jose-vieira', hasWebp: true },
-  { image: '/images/team/ligia-mofreita', hasWebp: true },
-  { image: '/images/team/lubna-braylih', hasWebp: true },
-  { image: '/images/team/luis-abreu', hasWebp: true },
-  { image: '/images/team/luis-dinis', hasWebp: true },
-];
+// AI placeholder portraits: REMOVIDOS (2026-07-10). Retratos gerados por IA
+// junto a nomes de pessoas reais eram enganadores — quem não tem fotografia
+// real em REAL_PHOTOS usa agora o monograma dourado (fallback do componente).
+// Para repor fotografias: colocar o ficheiro real em /public/images/team/ e
+// acrescentar a pessoa a REAL_PHOTOS — nunca voltar a usar caras geradas.
 
 // Real photos we genuinely have on disk (the actual person). Add to this map as
-// G sends each real headshot — that person then stops using an AI placeholder.
+// G sends each real headshot.
 const REAL_PHOTOS: Record<string, { image: string; hasWebp: boolean }> = {
   'Sónia Santos': { image: '/images/team/sonia-santos', hasWebp: false },
 };
 
-// People the official roster shows WITHOUT a photo (RE/MAX-balloon placeholder)
-// → our dignified gold-monogram here, faithful to the source screenshots.
-const NO_PHOTO = new Set(['Frederico Pinto']);
-
-let aiCursor = 0;
 export const consultants: Consultant[] = REAL_TEAM.map((p) => {
   const base = { name: p.name, role: p.role, zone: null, phone: null, email: null };
   const real = REAL_PHOTOS[p.name];
   if (real) return { ...base, image: real.image, hasWebp: real.hasWebp, placeholder: false };
-  if (NO_PHOTO.has(p.name)) return { ...base, image: null, hasWebp: false, placeholder: true };
-  const face = AI_PORTRAITS[aiCursor++];
-  // Pool exhausted → gold-monogram fallback (never repeat a face).
-  if (!face) return { ...base, image: null, hasWebp: false, placeholder: true };
-  return { ...base, image: face.image, hasWebp: face.hasWebp, placeholder: true };
+  return { ...base, image: null, hasWebp: false, placeholder: true };
 });
 
 // HONEST by design — qualitative, brand-true claims, NO invented figures.

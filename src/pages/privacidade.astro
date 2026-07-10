@@ -1,18 +1,21 @@
 ---
-// Privacy-policy page. The footer and every form consent label link here —
-// before this page existed those links 404'd. The FULL legal text must be
-// provided/validated by the agency's legal counsel before launch; this page
-// carries only honest, non-invented interim content.
-// <!-- CONFIRMAR COM AGÊNCIA: texto jurídico completo da política de privacidade -->
+// Privacy-policy page — interim FACTUAL version (2026-07-10).
+// Every statement below reflects what the code actually does (formulários →
+// /api/lead → sistema de gestão de leads; alojamento Vercel; sem cookies nem
+// analytics). NÃO afirma conformidade RGPD nem revisão jurídica.
+// PENDENTE (não inventar): email de contacto para direitos RGPD, prazos de
+// retenção concretos, e REVISÃO POR ADVOGADO antes do lançamento comercial —
+// ver relatório da Fase 2A e a lista de factos a confirmar por G.
 import Base from '../layouts/Base.astro';
 import SectionEyebrow from '../components/SectionEyebrow.astro';
 import { site } from '../data/site';
+
+const updated = '10 de julho de 2026';
 ---
 <Base
   title="Política de Privacidade"
-  description="Política de privacidade da RE/MAX Collection Vintage."
+  description="Como a RE/MAX Collection Vintage trata os dados pessoais enviados através deste site: finalidades, destinatários e direitos dos titulares."
 >
-  <Fragment set:html={'<!-- CONFIRMAR COM AGÊNCIA: texto jurídico completo desta página -->'} />
   <section class="section section--cream priv">
     <div class="container container--narrow">
       <SectionEyebrow text="Privacidade" />
@@ -20,20 +23,60 @@ import { site } from '../data/site';
         Política de <em class="em-gold serif-it">Privacidade</em>.
       </h1>
       <div class="priv__body" data-reveal style="--reveal-delay:120ms">
-        <p class="lede">
-          Os dados pessoais recolhidos através dos formulários deste site são
-          utilizados exclusivamente para responder ao seu pedido de contacto,
-          avaliação ou informação, e são tratados de forma confidencial pela
-          equipa da {site.name}.
+        <p class="priv__meta">Última atualização: {updated}</p>
+
+        <h2 class="priv__h">Quem é o responsável pelo tratamento</h2>
+        <p>
+          {site.legalName} ({site.name}), licença {site.ami}, com estabelecimento
+          na {site.address[0]}, {site.address[1]}.
         </p>
-        <p class="lede">
-          Pode, a qualquer momento, exercer os seus direitos de acesso,
-          retificação ou eliminação dos seus dados — basta contactar-nos
-          através de <a href={`mailto:${site.email}`}>{site.email}</a>.
+
+        <h2 class="priv__h">Que dados recolhemos</h2>
+        <p>
+          Este site recolhe apenas os dados que nos envia voluntariamente através dos
+          formulários: nome, contactos (email e telefone), a sua mensagem e, no caso de
+          um pedido de avaliação, as características do imóvel que descrever. No caso de
+          uma candidatura espontânea, também a localidade e a área de interesse.
         </p>
-        <p class="priv__note">
-          O texto integral desta política encontra-se em preparação e será
-          publicado antes do lançamento do site.
+
+        <h2 class="priv__h">Para que os usamos</h2>
+        <p>
+          Exclusivamente para responder ao seu pedido — contacto, avaliação de imóvel,
+          estudo de mercado ou candidatura — e para o acompanhamento que dele decorra.
+          Não usamos os seus dados para outras finalidades, não os vendemos e não fazemos
+          envios de marketing não solicitados.
+        </p>
+
+        <h2 class="priv__h">Quem trata os dados</h2>
+        <p>
+          Os formulários são entregues através do nosso próprio servidor ao sistema de
+          gestão de contactos da equipa {site.shortName}. O site está alojado na Vercel,
+          cuja infraestrutura pode processar registos técnicos (por exemplo, endereço IP)
+          para operação e segurança do serviço.
+        </p>
+
+        <h2 class="priv__h">Cookies e armazenamento local</h2>
+        <p>
+          Este site não usa cookies nem ferramentas de análise de tráfego. É usado apenas
+          o armazenamento local do seu navegador para memorizar preferências de
+          apresentação (por exemplo, dispensar o painel de avaliação em ecrãs móveis) —
+          essa informação não sai do seu dispositivo.
+        </p>
+
+        <h2 class="priv__h">Durante quanto tempo</h2>
+        <p>
+          Conservamos os dados apenas pelo tempo necessário ao tratamento do seu pedido e
+          às obrigações legais aplicáveis.
+        </p>
+
+        <h2 class="priv__h">Os seus direitos</h2>
+        <p>
+          Pode, a qualquer momento, exercer os seus direitos de acesso, retificação,
+          apagamento, limitação e oposição. Para o fazer, contacte-nos por telefone
+          (<a href={site.phoneHref}>{site.phone}</a>), por carta para a morada acima, ou
+          através do <a href="/contacto">formulário de contacto</a>. Tem ainda o direito
+          de apresentar reclamação à autoridade de controlo (CNPD — Comissão Nacional de
+          Proteção de Dados).
         </p>
       </div>
     </div>
@@ -43,9 +86,12 @@ import { site } from '../data/site';
 <style>
   .priv { min-height: 60vh; padding-top: calc(var(--nav-h) + clamp(40px, 6vw, 80px)); }
   .priv__title { margin-top: 16px; }
-  .priv__body { margin-top: 28px; display: flex; flex-direction: column; gap: 18px; }
+  .priv__body { margin-top: 28px; display: flex; flex-direction: column; gap: 14px; max-width: 68ch; }
+  .priv__body p { margin: 0; font-size: 15.5px; line-height: 1.7; color: var(--ink-60); }
   .priv__body a { color: var(--gold-deep); }
-  .priv__note {
-    margin-top: 10px; font-size: 13px; color: var(--ink-40); letter-spacing: 0.02em;
+  .priv__meta { font-size: 13px; color: var(--ink-40); letter-spacing: 0.02em; }
+  .priv__h {
+    font-family: var(--font-serif); font-weight: 500; font-size: clamp(19px, 1.8vw, 23px);
+    color: var(--ink); margin: 18px 0 0; letter-spacing: -0.01em;
   }
 </style>
