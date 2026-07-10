@@ -160,7 +160,12 @@ const assuntos = ['Comprar um imóvel', 'Vender / avaliação', 'Estudo de merca
   .cform__success-icon { display: inline-grid; place-items: center; width: 58px; height: 58px; border-radius: 50%; background: var(--gold); color: var(--navy-ink); margin-bottom: 18px; }
   .cform__success p { margin: 10px auto 0; color: var(--ink-60); max-width: 42ch; }
 
-  @media (max-width: 860px) { .contacto { grid-template-columns: 1fr; } }
+  @media (max-width: 860px) {
+    .contacto { grid-template-columns: 1fr; }
+    /* Stacked layout: the form is the primary action — it comes first,
+       the info block follows below (owner ask 2026-07-10). */
+    .contacto__info { order: 2; }
+  }
   @media (max-width: 540px) { .cform__grid { grid-template-columns: 1fr; } }
 </style>
 
