@@ -53,6 +53,15 @@ test('no fabricated data (prices, stats, placeholders)', () => {
   });
 });
 
+test('no unverified award claims or specific vacancy assertions', () => {
+  const AWARDS = /cinco estrelas|escolha do consumidor|mais premiad|most awarded|12 anos de lideran/i;
+  const VACANCY = /vaga atual|current opening|full-time/i;
+  everyReply((text, where) => {
+    assert.ok(!AWARDS.test(text), `${where} asserts an unverified award: "${text}"`);
+    assert.ok(!VACANCY.test(text), `${where} asserts a specific vacancy: "${text}"`);
+  });
+});
+
 test('no phone number other than the real one appears in replies', () => {
   const realDigits = contacts.phone.replace(/\D/g, '');
   everyReply((text, where) => {

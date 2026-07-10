@@ -238,7 +238,7 @@ export function replyFor(intent: IntentId, lang: Lang = 'pt'): BotReply {
 
     case 'localizacao':
       return {
-        text: p(L(`Estamos na ${contacts.address}, ${contacts.city}. As visitas ao escritório são com marcação prévia.`, `We’re at ${contacts.address}, ${contacts.city}. Office visits are by appointment.`)),
+        text: p(L(`Estamos na ${contacts.address}. As visitas ao escritório são com marcação prévia.`, `We’re at ${contacts.address}. Office visits are by appointment.`)),
         chips: [{ label: lang === 'en' ? 'View on map' : 'Ver no mapa', href: contacts.mapsHref, external: true }, ...human],
       };
 
@@ -441,7 +441,7 @@ export function replyFor(intent: IntentId, lang: Lang = 'pt'): BotReply {
       };
 
     case 'reconhecimento':
-      return { text: p(L(company.recognition, company.recognitionEn)), chips: [{ label: lang === 'en' ? 'About us' : 'Sobre nós', href: '/sobre-nos' }] };
+      return { text: p(L(company.recognition, company.recognitionEn)), chips: human };
 
     case 'humano':
       return {

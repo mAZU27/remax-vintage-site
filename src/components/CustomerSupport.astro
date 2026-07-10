@@ -262,6 +262,14 @@ import Icon from './Icon.astro';
     const thread = root.querySelector<HTMLElement>('[data-cs-thread]');
     const form = root.querySelector<HTMLFormElement>('[data-cs-form]');
     const field = root.querySelector<HTMLInputElement>('[data-cs-text]');
+    const sendBtn = root.querySelector<HTMLButtonElement>('.cs__send');
+    // Lock the composer while a lead is being delivered so the user can't type
+    // or cancel mid-send (which would race the pending state / abort a request
+    // the server may already have processed).
+    const setComposerEnabled = (on: boolean) => {
+      if (field) field.disabled = !on;
+      if (sendBtn) sendBtn.disabled = !on;
+    };
 
     type Flow = { id: FlowId; step: number; answers: Record<string, string> };
     let started = false;
@@ -546,7 +554,7 @@ import Icon from './Icon.astro';
     async function sendLead() {
       if (!pending || sending) return; // block double-send while in flight
       sending = true;
-      const myTurn = turn;
+      setComposerEnabled(false); // lock the composer for the whole round-trip
       sendAbort = new AbortController();
       try {
         const payload = buildLeadPayload(pending.flowId, pending.answers);
@@ -559,20 +567,19 @@ import Icon from './Icon.astro';
         const data = await res.json().catch(() => ({}));
         if (res.ok && data.delivered === true) {
           pending = null;
-          sending = false;
-          if (myTurn === turn) botSay({ text: t('Enviado. A equipa entra em contacto em breve, normalmente em 24h.', 'Sent. The team will be in touch shortly, usually within 24h.'), chips: humanChips(lang) });
+          botSay({ text: t('Enviado. A equipa entra em contacto em breve, normalmente em 24h.', 'Sent. The team will be in touch shortly, usually within 24h.'), chips: humanChips(lang) });
           return;
         }
         throw new Error('not delivered');
       } catch (e) {
-        sending = false;
         if ((e as { name?: string })?.name === 'AbortError') return; // superseded
-        if (myTurn === turn) {
-          botSay({
-            text: t('Não consegui enviar agora. Pode tentar novamente ou contactar-nos diretamente.', 'I couldn’t send it just now. You can try again or contact us directly.'),
-            chips: [{ label: t('Tentar novamente', 'Try again'), consent: 'retry' }, { label: t('Ligar', 'Call'), href: contacts.phoneHref }],
-          });
-        }
+        botSay({
+          text: t('Não consegui enviar agora. Pode tentar novamente ou contactar-nos diretamente.', 'I couldn’t send it just now. You can try again or contact us directly.'),
+          chips: [{ label: t('Tentar novamente', 'Try again'), consent: 'retry' }, { label: t('Ligar', 'Call'), href: contacts.phoneHref }],
+        });
+      } finally {
+        sending = false;
+        setComposerEnabled(true);
       }
     }
 
@@ -601,10 +608,16 @@ import Icon from './Icon.astro';
       const step = flows[flow.id].steps[flow.step];
       const exp = stepExpectation(step.key);
       const slots = extractSlots(text);
-      let value = text.trim();
-      if (exp === 'zone' && slots.zone) value = slots.zone;
-      else if (exp === 'typology' && slots.typology) value = slots.typology;
-      else if (exp === 'budget' && slots.budget) value = slots.budget;
+      const raw = text.trim();
+      // Keep the user's own words when they give a range or alternatives
+      // ("T3 ou T4", "500-800 mil"); otherwise store the tidy extracted value.
+      const multi = /\b(ou|or|entre|between)\b|,|\/|\d\s*[–—-]\s*\d/i.test(raw);
+      let value = raw;
+      if (!multi) {
+        if (exp === 'zone' && slots.zone) value = slots.zone;
+        else if (exp === 'typology' && slots.typology) value = slots.typology;
+        else if (exp === 'budget' && slots.budget) value = slots.budget;
+      }
       flow.answers[step.key] = value;
       flow.step += 1;
       advanceOrAsk();
@@ -736,7 +749,9 @@ import Icon from './Icon.astro';
         });
         return;
       }
-      if (c.kind === 'question') botSay(replyConcise(text));
+      // Answer the question but WITHOUT its chips — while a lead awaits consent
+      // the only actionable chips must be the consent ones (re-rendered below).
+      if (c.kind === 'question') botSay({ text: replyConcise(text).text });
       askConsent(); // re-present the gate so the pending lead survives
     }
 
@@ -783,7 +798,7 @@ import Icon from './Icon.astro';
     /* ---------- input + chip events ---------- */
     form?.addEventListener('submit', (e) => {
       e.preventDefault();
-      if (!field) return;
+      if (!field || sending) return; // ignore input while a lead is being sent
       const v = field.value;
       field.value = '';
       route(v);
@@ -792,12 +807,16 @@ import Icon from './Icon.astro';
     thread?.addEventListener('click', (e) => {
       const target = e.target as HTMLElement;
       const btn = target.closest('button.cs__chip') as HTMLButtonElement | null;
-      if (!btn) return;
+      if (!btn || sending) return; // ignore taps while a lead is being sent
       const label = btn.textContent ?? '';
       clearChips();
       // Every chip tap is a user turn — bump `turn` so older bot output drops.
       if (btn.dataset.action) { turn += 1; onAction(btn.dataset.action); return; }
       if (btn.dataset.consent) { turn += 1; userSay(label); handleConsent(btn.dataset.consent); return; }
+      // While a lead awaits consent, a stray flow/answer/send chip must not
+      // start a new flow off the still-live `pending` — route it through the
+      // consent interruption instead (mirrors the typed-message guard).
+      if (pending) { turn += 1; userSay(label); handleConsentInterruption(label); return; }
       if (btn.dataset.answer) { turn += 1; userSay(label); doAnswer(label); return; }
       if (btn.dataset.flow) { turn += 1; userSay(label); startFlow(btn.dataset.flow as FlowId, {}); return; }
       if (btn.dataset.send) { turn += 1; userSay(label); deliverConcise(getReply(btn.dataset.send, lang)); return; }

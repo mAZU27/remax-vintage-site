@@ -72,6 +72,12 @@ const ZONE_INTENTS = new Set<IntentId>([
   'zona_nevogilde', 'zona_lordelo', 'zona_bonfim', 'zona_baixa',
 ]);
 const TYPE_INTENTS = new Set<IntentId>(['tipo_moradia', 'tipo_apartamento', 'tipo_t1_t2', 'tipo_t3_t4']);
+// Intents that describe a property (a valid answer at a free-text step like
+// "Imóvel de interesse"); anything else recognised there is an interruption.
+const PROPERTY_INTENTS = new Set<IntentId>([
+  ...ZONE_INTENTS, ...TYPE_INTENTS,
+  'lifestyle_privacidade', 'lifestyle_centralidade', 'lifestyle_investimento', 'lifestyle_reforma', 'lifestyle_historia',
+]);
 
 export type StepExpectation = 'zone' | 'typology' | 'budget' | 'name' | 'contact' | 'free';
 
@@ -262,18 +268,28 @@ export function classifyMessage(text: string, ctx: ClassifyCtx): Classification 
     const expected = stepExpectation(ctx.stepKey);
     const intent = detectIntent(raw);
 
-    // 5. Correction: a marker, or a slot value that belongs to a DIFFERENT step
-    //    than the one being asked (e.g. "prefiro Foz" while at the typology step).
-    const otherSlot =
-      (!!slots.zone && expected !== 'zone') ||
-      (!!slots.typology && expected !== 'typology') ||
-      (!!slots.budget && expected !== 'budget');
-    if ((marker || otherSlot) && (slots.zone || slots.typology || slots.budget)) {
+    // 5. Correction: a slot value whose step EXISTS in this flow, updated either
+    //    with an explicit marker ("afinal T3") or while a different step is being
+    //    asked ("prefiro Foz" at the typology step). A slot the flow has no step
+    //    for (e.g. a zone mentioned at the visita free step) is NOT a correction.
+    const flowSteps = flows[ctx.flowId!].steps;
+    const hasStepFor = (k: StepExpectation) => flowSteps.some((s) => stepExpectation(s.key) === k);
+    const targets = (['zone', 'typology', 'budget'] as const).filter(
+      (k) => (k === 'zone' ? !!slots.zone : k === 'typology' ? !!slots.typology : !!slots.budget) && hasStepFor(k),
+    );
+    const otherTarget = targets.some((k) => k !== expected);
+    if (targets.length && (marker || otherTarget)) {
       return { kind: 'correction', slots };
     }
 
     // 6. Answer: fits the current step and is not a stand-alone question.
-    const clearlyQuestion = hasQuestion || (!!intent && !isSlotIntent(intent, expected) && !fitsStep(expected, raw, slots));
+    //    At a FREE step (fitsStep is always true), a recognised intent that
+    //    does NOT describe a property (e.g. "quem são vocês", "contactos") is
+    //    still an interruption, never stored as the answer.
+    const clearlyQuestion =
+      hasQuestion ||
+      (!!intent && !isSlotIntent(intent, expected) && !fitsStep(expected, raw, slots)) ||
+      (expected === 'free' && !!intent && !PROPERTY_INTENTS.has(intent));
     if (!clearlyQuestion && fitsStep(expected, raw, slots)) {
       return { kind: 'answer' };
     }

@@ -144,6 +144,18 @@ test('idle question maps to a flow objective for prefill', () => {
   if (c.kind === 'question') assert.equal(c.slots.objective, 'comprar');
 });
 
+const visiting = (stepKey: string): ClassifyCtx => ({ inFlow: true, flowId: 'visita', stepKey });
+
+test('a non-property question at a FREE step is a question, not swallowed', () => {
+  assert.equal(classifyMessage('quem são vocês', visiting('Imóvel de interesse')).kind, 'question');
+  assert.equal(classifyMessage('quais os vossos contactos', visiting('Imóvel de interesse')).kind, 'question');
+});
+
+test('a property description at a FREE step is a valid answer', () => {
+  assert.equal(classifyMessage('a moradia na Foz', visiting('Imóvel de interesse')).kind, 'answer');
+  assert.equal(classifyMessage('CV-1042', visiting('Imóvel de interesse')).kind, 'answer');
+});
+
 test('budget with a k suffix is recognised', () => {
   assert.ok(extractSlots('around 800k').budget);
   assert.ok(extractSlots('até 500 k').budget);

@@ -166,16 +166,19 @@ export const company = {
     'A RE/MAX Collection® é a linha premium da rede RE/MAX, dedicada a imóveis de alto valor e carácter. "Vintage" é a nossa agência no Porto, especializada em imóveis com história, arquitetura e localização distintas. Não vendemos casas — vendemos capítulos de vidas em locais inesquecíveis.',
   philosophy:
     'Discretion, selectivity, expertise. Cada cliente é único. Cada imóvel conta uma história. O nosso trabalho é encontrar o encaixe perfeito — com paciência, rigor e sem compromissos.',
+  // Kept deliberately free of specific/unverified award claims (Phase 2A
+  // removed the awards belt/grid as unconfirmed — "NUNCA inventar").
   recognition:
-    'Fazemos parte da RE/MAX, a marca imobiliária mais premiada de Portugal (12 anos de liderança, Escolha do Consumidor 2026, Prémio Cinco Estrelas 2025 e 2026). A Collection Vintage representa esse padrão no segmento de luxo do Porto.',
+    'Somos a linha premium da rede RE/MAX no Porto. Para distinções específicas prefiro confirmar com a equipa — quer que a ponha em contacto?',
   recognitionEn:
-    'We are part of RE/MAX, Portugal’s most awarded real-estate brand (12 years of leadership, Consumer Choice 2026, Five Star Award 2025 and 2026). Collection Vintage carries that standard into Porto’s luxury segment.',
+    'We’re the premium line of the RE/MAX network in Porto. For specific distinctions I’d rather confirm with the team — shall I connect you?',
 };
 
 // Careers.
 export const careers = {
-  text: 'Estamos à procura de consultores que entendam o segmento premium. Vaga atual: Consultor Imobiliário (Porto, full-time). Aceitamos também candidaturas espontâneas — talentos excepcionais são sempre bem-vindos.',
-  textEn: 'We look for consultants who understand the premium segment. Current opening: Real Estate Consultant (Porto, full-time). We also welcome speculative applications — exceptional talent is always welcome.',
+  // No specific vacancy is asserted (Phase 2A removed the fictional job list).
+  text: 'Procuramos consultores para o segmento premium e aceitamos candidaturas espontâneas. Quer candidatar-se?',
+  textEn: 'We look for consultants for the premium segment and welcome speculative applications. Would you like to apply?',
   href: '/carreiras',
 };
 
@@ -188,8 +191,8 @@ export const team = {
 
 // Blog.
 export const blog = {
-  text: 'Análises de mercado, guias profundos de zona e perspetivas sobre o segmento de luxo no Porto — escrito por quem vive o mercado.',
-  textEn: 'Market analysis, in-depth area guides and perspectives on Porto’s luxury segment — written by people who live the market.',
+  text: 'Publicamos análises e perspetivas sobre o mercado premium do Porto. Quer ver o blog?',
+  textEn: 'We publish analysis and perspectives on Porto’s premium market. Want to see the blog?',
   href: '/insights',
 };
 
