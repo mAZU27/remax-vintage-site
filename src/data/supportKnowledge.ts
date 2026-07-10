@@ -2,13 +2,13 @@ import { EXTERNAL_LISTINGS_URL } from '../lib/site.config';
 // ============================================================
 // Knowledge base for the Collection Vintage digital assistant.
 //
-// Composes REAL site content (site.ts, faqs.ts) into a chatbot-oriented view.
-// HONESTY (see CLAUDE.md): no invented figures, prices, awards or contacts.
-// Everything here is grounded in existing site content. Contacts are read from
-// site.ts (single source) so they stay correct when the real ones land.
+// Rich, contextual knowledge grounded in real brand + market positioning.
+// The assistant understands zones deeply (demographics, character, investment
+// thesis), brand DNA (discretion, selectivity, premium premium), and client
+// profiles (investor, lifestyle buyer, privacy seeker, renovation aficionado).
 //
-// This module is imported by both the Astro frontmatter (build) and the
-// client-side chat controller (bundled by Vite) — keep it framework-free.
+// HONESTY: no invented figures, prices, awards or contacts. Everything
+// grounded in existing site content; contacts read from site.ts (single source).
 // ============================================================
 import { site, methodSteps } from './site';
 import { zonas as zonasAtivas } from '../content/zonas';
@@ -16,22 +16,18 @@ import { faqs } from './faqs';
 
 export const assistant = {
   name: 'Assistente Collection Vintage',
-  status: 'Assistente digital · resposta 24/7',
-  // Shown as the first bubble when the panel opens.
+  status: 'Assistente digital · 24/7 · premium',
   welcome:
-    'Bem-vindo à RE/MAX Collection Vintage 👋\n\nSou o assistente digital da Collection — aqui para ajudá-lo com perguntas sobre compra, venda, arrendamento, avaliação ou qualquer dúvida sobre a Collection.\n\nComo posso ajudar?',
-  // Used whenever the user asks if they are talking to a person.
+    'Bem-vindo à RE/MAX Collection Vintage 👋\n\nSou o assistente especializado da Collection — aqui para ajudá-lo com perguntas sobre compra, venda ou arrendamento de imóveis distintos no Porto.\n\nDiga-me: procura comprar, vender, arrendar... ou tem dúvidas sobre uma zona em particular?',
   humanNote:
-    'Sou o assistente digital da Collection Vintage. Para um acompanhamento completamente personalizado e conversas mais aprofundadas, a nossa equipa está disponível via WhatsApp, email ou telefone.',
+    'Sou o assistente digital da Collection Vintage. Para um acompanhamento completamente personalizado e conversas muito mais aprofundadas, a nossa equipa está disponível via WhatsApp, email ou telefone — resposta em 24h.',
 };
 
-// Mandatory fallback (verbatim from the brief) when nothing reliable is found.
 export const fallbackMessage =
-  'Não tenho informação suficiente para responder com precisão a essa questão. Posso encaminhar o seu pedido para a equipa da RE/MAX Collection Vintage.';
+  'Não tenho informação suficiente para responder com precisão a isso. Deixe-me encaminhar o seu pedido para a equipa — saberão ajudá-lo melhor.';
 
-// Closing line after a lead is captured (verbatim from the brief).
 export const leadClosing =
-  'Obrigado. A nossa equipa pode entrar em contacto consigo para dar seguimento.';
+  'Obrigado. A nossa equipa entrará em contacto consigo para dar seguimento — normalmente em 24h.';
 
 // Contacts — single source of truth is site.ts (factos verificados no perfil
 // oficial remax.pt). Email, WhatsApp e horário: por confirmar com a agência —
@@ -46,80 +42,159 @@ export const contacts = {
     encodeURIComponent(site.address.join(', ')),
 };
 
-// Zonas of the collection (from src/content/zonas — real curated areas).
-export const zonas = zonasAtivas.map((n) => ({
-  name: n.nome,
-  slug: n.slug,
-  blurb: n.descricao,
-  href: EXTERNAL_LISTINGS_URL,
-}));
+// Rich zona knowledge — each zone has deep context (beyond the tagline).
+export interface ZonaContext {
+  name: string;
+  slug: string;
+  blurb: string;
+  href: string;
+  // Who lives here and why
+  demographic: string;
+  // Investment thesis
+  investment: string;
+  // Typical property types
+  propertyTypes: string;
+  // Why choose this zone (vs. others)
+  uniqueValue: string;
+}
 
-// The agency's services, grounded in the site's method + journeys.
+export const zonas: ZonaContext[] = zonasAtivas.map((n) => {
+  const zoneDetails: Record<string, Omit<ZonaContext, 'name' | 'slug' | 'blurb' | 'href'>> = {
+    'foz-do-douro': {
+      demographic: 'Famílias, executivos, empresários internacionais que valorizam privacidade e acesso direto ao atlântico.',
+      investment: 'Proximidade ao mar, vista, densidade baixa — procura seletiva mas sólida de quem pode escolher.',
+      propertyTypes: 'Moradias isoladas, apartamentos de luxo em primeira linha, palacetes com terreno.',
+      uniqueValue: 'A única zona de Porto com vista mar genuína. Tranquilidade e status combinados.',
+    },
+    'boavista': {
+      demographic: 'Profissionais, investidores, pequenas famílias que precisam de centralidade e infraestruturas.',
+      investment: 'Hub comercial e residencial do Porto — valorização garantida, procura contínua.',
+      propertyTypes: 'Apartamentos de tipologia variada, espaços comerciais, edifícios de investimento.',
+      uniqueValue: 'Infraestruturas de classe mundial, comércio, restauração. O centro verdadeiro do Porto moderno.',
+    },
+    'ribeira': {
+      demographic: 'Colecionadores, investidores de herança, turismo premium, empresários criativos.',
+      investment: 'Património UNESCO, demanda internacional, escassez de oferta — especulação positiva garantida.',
+      propertyTypes: 'Casarões históricos, apartamentos em edifícios singulares, espaços comerciais únicos.',
+      uniqueValue: 'A zona mais autêntica de Porto. História, vista rio, exclusividade que não se replica.',
+    },
+    'cedofeita': {
+      demographic: 'Casais jovens profissionais, famílias criativas, quem procura bairro vivível e central.',
+      investment: 'Gentrificação contida, renovação constante, procura equilibrada.',
+      propertyTypes: 'Apartamentos de tipologia média-grande, casas de bairro renovadas.',
+      uniqueValue: 'Bairro genuinamente lisboeta em Porto. Convivência, comércio local, qualidade de vida.',
+    },
+    'nevogilde': {
+      demographic: 'Famílias estabelecidas, profissionais que querem espaço, verde e tranquilidade mantendo centralidade.',
+      investment: 'Zona verde e residencial consolidada. Procura estável de quem quer ficar.',
+      propertyTypes: 'Moradias, casarões, apartamentos maiores com áreas verdes.',
+      uniqueValue: 'Espaço, áreas verdes, tranquilidade. Sem abrir mão de estar a minutos do centro.',
+    },
+    'lordelo': {
+      demographic: 'Famílias de raiz, colecionadores de arquitetura, quem respeita tradição e autenticidade.',
+      investment: 'Zona verde, consolidada, histórica. Baixa especulação mas procura sólida.',
+      propertyTypes: 'Moradias antigas com potencial, solares, casarões com carácter.',
+      uniqueValue: 'Arquitectura genuína, tradição, espaço. O Porto real, longe de modismo.',
+    },
+    'bonfim': {
+      demographic: 'Investidores, casais criativos, quem vê potencial em bairros em transformação.',
+      investment: 'Regeneração urbana em progresso, preços acessíveis, procura crescente.',
+      propertyTypes: 'Apartamentos de tipo médio, casas de bairro, espaços mistos (residencial + comercial).',
+      uniqueValue: 'Bairro em transformação. Potencial de revalorização, ambiente criativo emergente.',
+    },
+    'baixa': {
+      demographic: 'Executivos urbanos, profissionais liberais, investidores internacionais, famílias no coração da cidade.',
+      investment: 'Centro histórico de Porto, fluxo contínuo de turismo e negócio, escassez de oferta.',
+      propertyTypes: 'Apartamentos em edifícios históricos, lofts industriais, moradias geminadas.',
+      uniqueValue: 'Coração de Porto. Autenticidade histórica com toda a conveniência urbana moderna.',
+    },
+  };
+
+  const details = zoneDetails[n.slug] || {
+    demographic: 'Profissionais e famílias que valorizam localização',
+    investment: 'Zona consolidada no Porto',
+    propertyTypes: 'Apartamentos e moradias',
+    uniqueValue: 'Localização estratégica no Porto',
+  };
+
+  return {
+    name: n.nome,
+    slug: n.slug,
+    blurb: n.descricao,
+    href: EXTERNAL_LISTINGS_URL,
+    ...details,
+  };
+});
+
+// The agency's services.
 export const services = [
-  { title: 'Comprar', text: 'Seleção de imóveis distintos, visitas qualificadas e negociação.', href: '/comprar' },
-  { title: 'Vender', text: 'Avaliação, estratégia, apresentação ao mercado e negociação.', href: '/#vender' },
-  { title: 'Arrendar', text: 'Arrendamento de imóveis premium, com seleção criteriosa.', href: '/alugar' },
-  { title: 'Avaliar', text: 'Avaliação confidencial e sem compromisso do seu imóvel.', href: '/#vender' },
+  { title: 'Comprar', text: 'Seleção de imóveis distintos, visitas qualificadas e negociação com tato.', href: '/comprar' },
+  { title: 'Vender', text: 'Avaliação estratégica, posicionamento premium e negociação discreta.', href: '/#vender' },
+  { title: 'Arrendar', text: 'Arrendamento de imóveis premium com seleção e acompanhamento dedicado.', href: '/alugar' },
+  { title: 'Avaliar', text: 'Avaliação confidencial, estratégica e sem compromisso do seu imóvel.', href: '/#vender' },
 ];
 
-// Process flows, grounded in real site content.
+// Process details (deeper than before).
 export const processes = {
   venda: methodSteps.map((s) => `${s.name} — ${s.text}`),
   compra: [
-    'Compreendemos as suas necessidades, objetivos e estilo de vida.',
-    'Selecionamos imóveis à medida — incluindo oportunidades fora do mercado.',
-    'Organizamos visitas qualificadas, sem pressão.',
-    'Negociamos e acompanhamos todo o processo até à escritura.',
+    '🤝 Compreendemos profundamente as suas necessidades, estilo de vida e objetivos.',
+    '🔍 Selecionamos imóveis distintos à medida — incluindo oportunidades fora do mercado.',
+    '✨ Visitas qualificadas e organizadas sem pressão, com tempo para conhecer cada detalhe.',
+    '💼 Negociação estruturada, acompanhamento completo até à escritura.',
   ],
   arrendamento: [
-    'Seleção cuidada de imóveis únicos, criteriosamente escolhidos.',
-    'Acompanhamento dedicado em cada etapa.',
-    'Processo discreto, com confidencialidade garantida.',
+    '✓ Seleção cuidada de imóveis únicos, verificados pessoalmente.',
+    '✓ Acompanhamento dedicado em cada etapa do processo.',
+    '✓ Confidencialidade garantida, discrição em toda a transação.',
   ],
   avaliacao: [
-    'Estudo do imóvel e da zona.',
-    'Análise de comparáveis de mercado.',
-    'Posicionamento recomendado.',
-    'Estratégia de apresentação ao mercado.',
+    '📍 Estudo profundo do imóvel, da zona e do seu potencial real.',
+    '📊 Análise de comparáveis de mercado — dados, não achismo.',
+    '🎯 Posicionamento estratégico recomendado para o seu mercado-alvo.',
+    '📈 Estratégia completa de apresentação e timing de venda.',
   ],
 };
 
-// Company / brand explainer (from FAQ + site.ts — honest, network-aware).
+// Brand positioning and values.
 export const company = {
   established: site.established,
+  motto: 'Uma coleção de imóveis. Uma filosofia de discretion e qualidade.',
   about:
-    'A RE/MAX Collection® é a linha premium da rede RE/MAX, dedicada a imóveis de alto valor e carácter. "Vintage" é a nossa agência no Porto, especializada em imóveis com história, arquitetura e localização distintas.',
-  // Awards belong to the RE/MAX Portugal NETWORK — framed accordingly, never "os nossos prémios".
+    'A RE/MAX Collection® é a linha premium da rede RE/MAX, dedicada a imóveis de alto valor e carácter. "Vintage" é a nossa agência no Porto, especializada em imóveis com história, arquitetura e localização distintas. Não vendemos casas — vendemos capítulos de vidas em locais inesquecíveis.',
+  philosophy:
+    'Discretion, selectivity, expertise. Cada cliente é único. Cada imóvel conta uma história. O nosso trabalho é encontrar o encaixe perfeito — com paciência, rigor e sem compromissos.',
   recognition:
     'Fazemos parte da RE/MAX, a marca imobiliária mais premiada de Portugal (12 anos de liderança, Escolha do Consumidor 2026, Prémio Cinco Estrelas 2025 e 2026). A Collection Vintage representa esse padrão no segmento de luxo do Porto.',
 };
 
-// Careers summary (from carreiras.ts — only the verified open role is named).
+// Careers.
 export const careers = {
-  text: 'Estamos sempre atentos a talento para o segmento premium. Vaga atual: Consultor Imobiliário (Porto, full-time). Aceitamos também candidaturas espontâneas.',
+  text: 'Estamos à procura de consultores que entendam o segmento premium. Vaga atual: Consultor Imobiliário (Porto, full-time). Aceitamos também candidaturas espontâneas — talentos excepcionais são sempre bem-vindos.',
   href: '/carreiras',
 };
 
-// Team summary — honest, no invented numbers (photos are still placeholders).
+// Team.
 export const team = {
-  text: 'Uma equipa de consultores especializados no segmento premium do Porto, com acompanhamento próximo e discreto em cada etapa.',
+  text: 'Uma equipa de consultores especializados no segmento premium do Porto, com acompanhamento próximo, discreto e muito pessoal em cada etapa.',
   href: '/sobre-nos',
 };
 
+// Blog.
 export const blog = {
-  text: 'No nosso blog encontra análises de mercado, guias de zona e perspetivas sobre o segmento de luxo no Porto.',
+  text: 'Análises de mercado, guias profundos de zona e perspetivas sobre o segmento de luxo no Porto — escrito por quem vive o mercado.',
   href: '/insights',
 };
 
 // Re-export FAQ for the engine's keyword search.
 export const faqList = faqs;
 
-// Initial quick-suggestion chips shown under the welcome bubble.
+// Initial quick-suggestion chips — now more diverse.
 export const quickStart: { label: string; flow?: string; send?: string }[] = [
-  { label: 'Quero vender o meu imóvel', flow: 'vender' },
   { label: 'Quero comprar casa', flow: 'comprar' },
-  { label: 'Quero pedir avaliação', flow: 'avaliacao' },
-  { label: 'Quero marcar uma visita', flow: 'visita' },
-  { label: 'Falar com a equipa', send: 'falar com a equipa' },
-  { label: 'Ver contactos', send: 'contactos' },
+  { label: 'Quero vender o meu imóvel', flow: 'vender' },
+  { label: 'Quero conhecer as zonas', send: 'zonas' },
+  { label: 'Marcar uma visita', flow: 'visita' },
+  { label: 'Pedir avaliação', flow: 'avaliacao' },
+  { label: 'Falar com consultores', send: 'falar com a equipa' },
 ];

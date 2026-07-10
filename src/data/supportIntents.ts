@@ -22,6 +22,23 @@ export type IntentId =
   | 'localizacao'
   | 'horario'
   | 'zonas'
+  | 'zona_foz'
+  | 'zona_boavista'
+  | 'zona_ribeira'
+  | 'zona_cedofeita'
+  | 'zona_nevogilde'
+  | 'zona_lordelo'
+  | 'zona_bonfim'
+  | 'zona_baixa'
+  | 'tipo_moradia'
+  | 'tipo_apartamento'
+  | 'tipo_t1_t2'
+  | 'tipo_t3_t4'
+  | 'lifestyle_privacidade'
+  | 'lifestyle_centralidade'
+  | 'lifestyle_investimento'
+  | 'lifestyle_reforma'
+  | 'lifestyle_historia'
   | 'imoveis'
   | 'processo_compra'
   | 'processo_venda'
@@ -90,6 +107,29 @@ export const intents: Intent[] = [
   { id: 'contacto', keywords: ['contacto', 'contactos', 'telefone', 'telemovel', 'email', 'mail', 'whatsapp', 'numero', 'como contactar', 'contact', 'phone', 'number'], phrases: ['como vos contacto', 'qual o contacto', 'qual e o contacto', 'dados de contacto', 'how do i contact you', 'how can i contact you', 'contact details', 'phone number'] },
   { id: 'localizacao', keywords: ['onde', 'morada', 'localizacao', 'endereco', 'escritorio', 'sede', 'ficam', 'ficais', 'mapa', 'address', 'location', 'office', 'map'], phrases: ['onde ficam', 'onde estao', 'onde fica', 'qual a morada', 'where are you', 'where is your office', 'your address'] },
   { id: 'horario', keywords: ['horario', 'horarios', 'aberto', 'abrem', 'fecham', 'funciona', 'atende', 'hours', 'open', 'opening', 'closing'], phrases: ['a que horas', 'horario de funcionamento', 'quando abrem', 'opening hours', 'what time', 'when are you open'] },
+
+  // Specific zones — deeper intent matching for zone-aware responses.
+  { id: 'zona_foz', keywords: ['foz', 'douro', 'atlantico', 'mar', 'privacidade', 'isolado'], phrases: ['foz do douro', 'em foz', 'zona de foz', 'foz me interessa'] },
+  { id: 'zona_boavista', keywords: ['boavista', 'aliados', 'central', 'centro'], phrases: ['boavista', 'em boavista', 'zona de boavista', 'boavista me interessa'] },
+  { id: 'zona_ribeira', keywords: ['ribeira', 'historico', 'patrimonio', 'rio', 'turismo'], phrases: ['ribeira', 'em ribeira', 'zona de ribeira', 'ribeira me interessa'] },
+  { id: 'zona_cedofeita', keywords: ['cedofeita', 'lapa', 'bairro', 'convivio'], phrases: ['cedofeita', 'em cedofeita', 'zona de cedofeita', 'cedofeita me interessa'] },
+  { id: 'zona_nevogilde', keywords: ['nevogilde', 'verde', 'espaco', 'familia'], phrases: ['nevogilde', 'em nevogilde', 'zona de nevogilde', 'nevogilde me interessa'] },
+  { id: 'zona_lordelo', keywords: ['lordelo', 'solares', 'tradicao', 'arquitectura'], phrases: ['lordelo', 'em lordelo', 'zona de lordelo', 'lordelo me interessa'] },
+  { id: 'zona_bonfim', keywords: ['bonfim', 'potencial', 'investimento', 'regeneracao'], phrases: ['bonfim', 'em bonfim', 'zona de bonfim', 'bonfim me interessa'] },
+  { id: 'zona_baixa', keywords: ['baixa', 'aliados', 'historico', 'centro', 'cidade'], phrases: ['baixa', 'em baixa', 'zona de baixa', 'baixa me interessa'] },
+
+  // Property types — helps narrow down recommendations.
+  { id: 'tipo_moradia', keywords: ['moradia', 'moradias', 'house', 'isolada', 'garden', 'terreno', 'quintal'], phrases: ['uma moradia', 'procuro moradia', 'casa isolada', 'com terreno'] },
+  { id: 'tipo_apartamento', keywords: ['apartamento', 'apartamentos', 'apto', 'flat', 'studio'], phrases: ['um apartamento', 'procuro apartamento', 'apartamento centro'] },
+  { id: 'tipo_t1_t2', keywords: ['t1', 't2', 'pequeno', 'minimo'], phrases: ['t1', 't2', 'apartamento pequeno'] },
+  { id: 'tipo_t3_t4', keywords: ['t3', 't4', 't5', 'grande', 'familiar'], phrases: ['t3', 't4', 't5', 'apartamento grande', 'para familia'] },
+
+  // Lifestyle and investment intent — informs recommendations.
+  { id: 'lifestyle_privacidade', keywords: ['privacidade', 'discreto', 'isolado', 'tranquilo', 'sossego', 'isolamento'], phrases: ['preciso de privacidade', 'zona tranquila', 'sem vizinhos proximos'] },
+  { id: 'lifestyle_centralidade', keywords: ['central', 'centro', 'perto', 'proximidade', 'conveniencia', 'infrastructura'], phrases: ['perto de tudo', 'no centro', 'zona central', 'muito central'] },
+  { id: 'lifestyle_investimento', keywords: ['investimento', 'investidor', 'rentavel', 'valorizacao', 'apreciacao', 'retorno'], phrases: ['investimento imobiliario', 'imobiliario', 'como investimento', 'valor de investimento'] },
+  { id: 'lifestyle_reforma', keywords: ['reforma', 'renovacao', 'construcao', 'projeto', 'obra', 'potencial'], phrases: ['para reformar', 'precisa reforma', 'em estado bruto', 'potencial de obra'] },
+  { id: 'lifestyle_historia', keywords: ['historia', 'caractér', 'autentico', 'original', 'classico', 'artístico', 'archi'], phrases: ['com historia', 'com caracter', 'edificio classico', 'patrimonio'] },
 
   { id: 'zonas', keywords: ['zona', 'zonas', 'foz', 'boavista', 'ribeira', 'cedofeita', 'area', 'areas', 'neighbourhood', 'neighbourhoods', 'neighborhood', 'neighborhoods', 'zones', 'district', 'districts'], phrases: ['que zonas', 'em que zonas', 'quais sao as zonas', 'which areas', 'what areas', 'which neighbourhoods', 'which neighborhoods'] },
   { id: 'imoveis', keywords: ['imoveis', 'imovel', 'casas', 'casa', 'apartamento', 'apartamentos', 'moradia', 'moradias', 'catalogo', 'listagem', 'disponivel', 'disponiveis', 't2', 't3', 't4', 'properties', 'property', 'houses', 'house', 'apartment', 'apartments', 'listings', 'listing', 'catalogue', 'catalog', 'available'], phrases: ['imoveis disponiveis', 'que imoveis', 'tem casas', 'tem apartamentos', 'ver imoveis', 'available properties', 'what properties', 'do you have houses', 'do you have apartments', 'see properties', 'view properties'] },

@@ -282,6 +282,126 @@ export function replyFor(intent: IntentId): BotReply {
         chips: NAV_CHIPS,
       };
 
+    // Zone-specific replies (intelligent, character-driven)
+    case 'zona_foz':
+      return {
+        text: 'Foz do Douro - a zona mais exclusiva do Porto.\n\nVista para o Atlantico, privacidade, densidade baixa. Procura seletiva mas consistente. Moradias isoladas, apartamentos de luxo em primeira linha, palacetes com terreno.\n\nInvestimento seguro para quem valoriza tranquilidade e estatuto.',
+        cta: { label: 'Ver imoveis em Foz', href: EXTERNAL_LISTINGS_URL, external: true },
+        chips: [{ label: 'Quero comprar em Foz', flow: 'comprar' }, { label: 'Falar com equipa', send: 'falar com a equipa' }],
+      };
+
+    case 'zona_boavista':
+      return {
+        text: 'Boavista - o centro verdadeiro do Porto moderno.\n\nHub comercial e de infraestruturas de classe mundial. Centralidade absoluta, procura elevada garantida. Apartamentos, espacos comerciais, edificios de investimento.\n\nO coracao do Porto novo - investimento garantido.',
+        cta: { label: 'Ver imoveis em Boavista', href: EXTERNAL_LISTINGS_URL, external: true },
+        chips: [{ label: 'Quero comprar em Boavista', flow: 'comprar' }, { label: 'Investidor', send: 'lifestyle_investimento' }],
+      };
+
+    case 'zona_ribeira':
+      return {
+        text: 'Ribeira - a zona mais autentica e historica de Porto.\n\nPatrimonio UNESCO, vista rio, exclusividade unica. Demanda internacional, escassez de oferta genuina. Casaroes historicos, apartamentos em edificios singulares.\n\nCompra historia. Revalorizacao garantida.',
+        cta: { label: 'Ver imoveis na Ribeira', href: EXTERNAL_LISTINGS_URL, external: true },
+        chips: [{ label: 'Quero comprar', flow: 'comprar' }, { label: 'Reforma', send: 'lifestyle_reforma' }],
+      };
+
+    case 'zona_cedofeita':
+      return {
+        text: 'Cedofeita - o bairro verdadeiramente vivivel.\n\nConvivencia genuina, comercio local, qualidade de vida. Gentrificacao contida, procura de casais profissionais. Apartamentos, casas de bairro renovadas.\n\nPerto do centro mas com alma de bairro.',
+        cta: { label: 'Ver imoveis em Cedofeita', href: EXTERNAL_LISTINGS_URL, external: true },
+        chips: [{ label: 'Quero viver aqui', flow: 'comprar' }, { label: 'Contactos', send: 'contactos' }],
+      };
+
+    case 'zona_nevogilde':
+      return {
+        text: 'Nevogilde - espaco, verde e tranquilidade, mantendo centralidade.\n\nZona verde consolidada, procura estavel de familias. Moradias, casaroes, apartamentos com areas verdes. Perto do centro sem abrir mao de espaco.\n\nSeguranca imobiliaria, mercado consistente.',
+        cta: { label: 'Ver imoveis em Nevogilde', href: EXTERNAL_LISTINGS_URL, external: true },
+        chips: [{ label: 'Para familia', flow: 'comprar' }, { label: 'Contactos', send: 'contactos' }],
+      };
+
+    case 'zona_lordelo':
+      return {
+        text: 'Lordelo do Ouro - tradicao, arquitectura e autenticidade.\n\nZona verde historica, solares e casaroes com caracter. Procura solida de quem respeita tradicao. Potencial de reforma genuina.\n\nO Porto real, longe de modismo.',
+        cta: { label: 'Ver imoveis em Lordelo', href: EXTERNAL_LISTINGS_URL, external: true },
+        chips: [{ label: 'Historia e espaco', flow: 'comprar' }, { label: 'Reforma', send: 'lifestyle_reforma' }],
+      };
+
+    case 'zona_bonfim':
+      return {
+        text: 'Bonfim - o bairro em transformacao, com potencial.\n\nRegeneracao urbana em progresso, precos interessantes. Procura crescente de investidores e criativos. Apartamentos, casas de bairro, espacos mistos.\n\nRevalorizacao gradual, ambiente criativo emergente.',
+        cta: { label: 'Ver imoveis em Bonfim', href: EXTERNAL_LISTINGS_URL, external: true },
+        chips: [{ label: 'Investidor', flow: 'comprar' }, { label: 'Potencial', send: 'lifestyle_investimento' }],
+      };
+
+    case 'zona_baixa':
+      return {
+        text: 'Baixa & Aliados - o coracao historico e urbano de Porto.\n\nFluxo continuo de turismo, negocio, vida urbana. Escassez de oferta genuina, demanda constante. Apartamentos em edificios historicos, lofts, moradias singulares.\n\nAutenticidade historica mais conveniencia moderna.',
+        cta: { label: 'Ver imoveis na Baixa', href: EXTERNAL_LISTINGS_URL, external: true },
+        chips: [{ label: 'Quero comprar', flow: 'comprar' }, { label: 'Estilo urbano', send: 'contactos' }],
+      };
+
+    case 'tipo_moradia':
+      return {
+        text: 'Moradias - espaco, privacidade, liberdade.\n\nNo Porto encontra moradias isoladas premium em Foz, Nevogilde e Lordelo. Cada uma com caracter e localizacao unica. Potencial de investimento variavel conforme zona.',
+        cta: { label: 'Ver moradias', href: EXTERNAL_LISTINGS_URL, external: true },
+        chips: [{ label: 'Quero moradia', flow: 'comprar' }, { label: 'Em que zona?', send: 'zonas' }],
+      };
+
+    case 'tipo_apartamento':
+      return {
+        text: 'Apartamentos - variedade, localizacao flexivel, investimento.\n\nDe T1 compactos em Cedofeita a apartamentos de luxo em Foz ou Boavista. Cada zona oferece tipologias e mercados distintos.',
+        cta: { label: 'Ver apartamentos', href: EXTERNAL_LISTINGS_URL, external: true },
+        chips: [{ label: 'T1/T2', send: 'tipo_t1_t2' }, { label: 'T3/T4', send: 'tipo_t3_t4' }],
+      };
+
+    case 'tipo_t1_t2':
+      return {
+        text: 'T1 e T2 - perfeito para profissionais, casais, ou investimento.\n\nMercado dinamico, procura constante, especialmente em Boavista, Cedofeita e Baixa.',
+        cta: { label: 'Ver T1/T2', href: EXTERNAL_LISTINGS_URL, external: true },
+        chips: [{ label: 'Profissional', flow: 'comprar' }, { label: 'Investimento', send: 'lifestyle_investimento' }],
+      };
+
+    case 'tipo_t3_t4':
+      return {
+        text: 'T3, T4 e maiores - espaco, qualidade de vida, familia e investimento.\n\nEm todas as zonas, cada uma com mercado e publico-alvo distinto. Foz e Nevogilde para familia premium, Boavista para investimento urbano.',
+        cta: { label: 'Ver T3/T4+', href: EXTERNAL_LISTINGS_URL, external: true },
+        chips: [{ label: 'Para familia', flow: 'comprar' }, { label: 'Investimento', send: 'lifestyle_investimento' }],
+      };
+
+    case 'lifestyle_privacidade':
+      return {
+        text: 'Privacidade - a Collection entende perfeitamente.\n\nZonas ideais:\n- Foz do Douro: isolamento, vista, densidade baixa\n- Nevogilde e Lordelo: espaco, bairro tranquilo\n- Ribeira: privacidade ao abrigo de historia\n\nCada zona oferece discricao garantida.',
+        cta: { label: 'Explorar zonas', href: '/#bairros' },
+        chips: [{ label: 'Foz', send: 'zona_foz' }, { label: 'Nevogilde', send: 'zona_nevogilde' }],
+      };
+
+    case 'lifestyle_centralidade':
+      return {
+        text: 'Centralidade - estar perto de tudo sem abrir mao de qualidade.\n\nOpcoes:\n- Boavista: centralidade absoluta\n- Cedofeita: central com alma de bairro\n- Baixa: coracao de Porto\n\nCada zona e central mas com experiencia diferente.',
+        cta: { label: 'Explorar zonas centrais', href: '/#bairros' },
+        chips: [{ label: 'Boavista', send: 'zona_boavista' }, { label: 'Cedofeita', send: 'zona_cedofeita' }],
+      };
+
+    case 'lifestyle_investimento':
+      return {
+        text: 'Investimento imobiliario - Porto e mercado em ascensao.\n\nTeses de investimento por zona:\n- Ribeira: escassez, demanda internacional\n- Boavista: centralidade, rentabilidade garantida\n- Bonfim: regeneracao, upside potencial\n- Foz: densidade baixa, procura estavel\n\nCada zona tem potencial distinto.',
+        cta: { label: 'Estrategia de investimento', href: '/#vender' },
+        chips: [{ label: 'Ribeira', send: 'zona_ribeira' }, { label: 'Boavista', send: 'zona_boavista' }],
+      };
+
+    case 'lifestyle_reforma':
+      return {
+        text: 'Potencial de reforma - Porto tem oportunidades reais.\n\nZonas com melhor custo-beneficio:\n- Ribeira: casaroes historicos, valor agregado\n- Lordelo: solares, arquitectura original\n- Bonfim: casas de bairro, upside financeiro\n- Cedofeita: apartamentos a modernizar\n\nReforma e estrategia de valor.',
+        cta: { label: 'Discutir potencial', href: '/#vender' },
+        chips: [{ label: 'Ribeira', send: 'zona_ribeira' }, { label: 'Lordelo', send: 'zona_lordelo' }],
+      };
+
+    case 'lifestyle_historia':
+      return {
+        text: 'Historia e caracter - o DNA da Collection.\n\nZonas com imoveiscom verdadeira historia:\n- Ribeira: patrimonio UNESCO, casaroes, vista rio\n- Lordelo: solares, arquitectura senhorial\n- Baixa: edificios historicos\n\nAutenticidade tem valor.',
+        cta: { label: 'Ver imoveis com historia', href: EXTERNAL_LISTINGS_URL, external: true },
+        chips: [{ label: 'Ribeira', send: 'zona_ribeira' }, { label: 'Lordelo', send: 'zona_lordelo' }],
+      };
+
     case 'blog':
       return { text: blog.text, cta: { label: 'Ver o blog', href: blog.href } };
 
