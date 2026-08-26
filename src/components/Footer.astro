@@ -5,6 +5,18 @@ import Icon from './Icon.astro';
 import FinalBrand from './FinalBrand.astro';
 
 const year = new Date().getFullYear();
+
+// Single source for the legal disclosure — rendered IDENTICALLY in the desktop
+// and mobile layouts. Values come from src/data/site.ts (verified against the
+// official agency profile); never hardcode them here and never add data that
+// has not been confirmed in writing (NIF, e-mail, sede).
+const legalLine =
+  `© ${year} ${site.brandLine} · ${site.legalName} · Licença ${site.ami} · Cada agência é juridicamente independente.`;
+
+// Livro de Reclamações Eletrónico — the official government platform. A
+// consumer-facing business in Portugal must make it reachable; the mobile
+// footer previously rendered it as a dead `#` link.
+const COMPLAINTS_BOOK_URL = 'https://www.livroreclamacoes.pt/Inicio/';
 ---
 
 <FinalBrand />
@@ -80,12 +92,13 @@ const year = new Date().getFullYear();
     <div class="foot__divider"></div>
 
     <div class="container foot__footer-bar">
-      <p class="foot__copy">
-        © {year} {site.brandLine} · {site.legalName} · Licença {site.ami} · Cada agência é juridicamente independente.
-      </p>
+      <p class="foot__copy">{legalLine}</p>
 
       <nav class="foot__legal-links" aria-label="Legal">
         <a href="/privacidade">Política de Privacidade</a>
+        <a href={COMPLAINTS_BOOK_URL} target="_blank" rel="noopener noreferrer">
+          Livro de Reclamações
+        </a>
       </nav>
     </div>
   </div>
@@ -200,34 +213,19 @@ const year = new Date().getFullYear();
         </div>
       </section>
 
-      <!-- 6. Social + Legal -->
+      <!-- 6. Legal -->
+      <!-- The social icon row was removed: the agency has not confirmed any
+           official profile URLs, and four dead placeholder links are worse
+           than none. Restore it only with real URLs confirmed in writing. -->
       <div class="foot__mobile-divider"></div>
 
-      <div class="foot__mobile-social-bar">
-        <nav class="foot__mobile-social" aria-label="Redes sociais">
-          <a href="#" class="foot__mobile-social-link" aria-label="Instagram">
-            <Icon name="instagram" size={20} stroke={1.4} />
-          </a>
-          <a href="#" class="foot__mobile-social-link" aria-label="LinkedIn">
-            <Icon name="linkedin" size={20} stroke={1.4} />
-          </a>
-          <a href="#" class="foot__mobile-social-link" aria-label="Facebook">
-            <Icon name="facebook" size={20} stroke={1.4} />
-          </a>
-          <a href="#" class="foot__mobile-social-link" aria-label="YouTube">
-            <Icon name="youtube" size={20} stroke={1.4} />
-          </a>
-        </nav>
-      </div>
-
       <div class="foot__mobile-legal">
-        <p class="foot__mobile-copy">
-          © {year} RE/MAX Collection Vintage. Todos os direitos reservados.
-        </p>
+        <p class="foot__mobile-copy">{legalLine}</p>
         <nav class="foot__mobile-legal-links" aria-label="Legal">
           <a href="/privacidade">Política de Privacidade</a>
-          <a href="#">Termos e Condições</a>
-          <a href="#">Livro de Reclamações</a>
+          <a href={COMPLAINTS_BOOK_URL} target="_blank" rel="noopener noreferrer">
+            Livro de Reclamações
+          </a>
         </nav>
       </div>
     </div>
@@ -659,33 +657,6 @@ const year = new Date().getFullYear();
       font-size: 8px;
       background: var(--navy-ink);
       padding: 0 6px;
-    }
-
-    .foot__mobile-social-bar {
-      text-align: center;
-      margin-bottom: clamp(32px, 5vw, 48px);
-    }
-
-    .foot__mobile-social {
-      display: flex;
-      justify-content: center;
-      gap: clamp(32px, 8vw, 48px);
-    }
-
-    .foot__mobile-social-link {
-      display: inline-flex;
-      align-items: center;
-      justify-content: center;
-      width: 44px;
-      height: 44px;
-      color: var(--gold);
-      text-decoration: none;
-      transition: color var(--t-fast), transform var(--t-fast);
-    }
-
-    .foot__mobile-social-link:hover {
-      color: var(--gold-light);
-      transform: scale(1.1);
     }
 
     /* Legal -->
