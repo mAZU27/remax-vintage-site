@@ -1,25 +1,24 @@
 # Delivery record — 16 September 2026
 
-Implementation commit: `9f7bcde` on local branch `codex/seo-geo-porto-20260916`, in this repository. The working changes were committed after all substantive checks passed.
+Current publication status: **GitHub review branch and hosted Vercel preview**. [Draft PR #2](https://github.com/mAZU27/remax-vintage-site/pull/2) targets main and has not been merged. Production remains at baseline `c7f20a8e1935acfe346fe7654775d91481db2d97`.
 
-Current publication status: **local tested preview only**. No GitHub review branch, PR, hosted Vercel preview or production release was created at this checkpoint.
+- Branch: `codex/seo-geo-porto-20260916`.
+- Implementation commit: `9f7bcde`; initial published head: `5de5075ecb4cadfb9bbc1c7ae8ebff36ea195bde`.
+- [Branch preview](https://remax-vintage-site-git-5fe75d-henriqueaguiar2000-9493s-projects.vercel.app/).
+- Verified initial preview deployment: `dpl_F8Dj53qhaGJ7Z2REMA6GkeGjQBot`, READY; GitHub Vercel status success.
+- [Pinned implementation preview](https://remax-vintage-site-7eeqkix8n-henriqueaguiar2000-9493s-projects.vercel.app/).
+- No production deployment, live form submission, CRM mutation or analytics activation performed.
 
-The GitHub connector upload was rejected by automatic approval review because the full tree payload (312,367 bytes) exceeds its 200,000-byte review limit. No alternative publishing route was attempted. Explicit permission to publish the review branch and draft PR was requested. This is an upload-review limit, not a failing application test.
+## Approval and publication
 
-The local mock preview is served by `python3 scripts/qa-preview.py` at http://127.0.0.1:4322 while that process is running. It never delivers forms externally. See [validation](validation.md) for reproducible checks and exact production release/rollback steps.
+The first connector tree upload exceeded automatic approval review's 200,000-byte limit. After the user explicitly approved publishing the branch and draft PR, the standard Git push succeeded. The initial upload block is resolved. A documentation-only follow-up records the final delivery status; the tested application code is unchanged.
 
-## Prepared draft PR
+## Hosted validation boundary
 
-Title: Improve Porto recruitment, buyer journeys and SEO integrity
+Vercel built the branch successfully using the existing Git integration. The hosted preview is protected by Vercel Authentication. Unauthenticated HTTP checks redirected to the Vercel login page; they are not evidence of the application's own 200/404 responses. The authenticated connector fetch also returned an SSO redirect, with `X-Robots-Tag: noindex`. No deployment-protection setting was weakened.
 
-Body:
+The application HTML noindex/canonical, sitemap,404 and form behavior checks remain those of the locally built production/preview artifacts documented in [validation](validation.md). Do not claim that protected hosted HTML was inspected. An authorized Vercel user should open the preview to review it. The local mock preview at http://127.0.0.1:4322 remains useful while `python3 scripts/qa-preview.py` is running; it never delivers submissions externally.
 
-The careers and buying pages lacked clear local intent and enquiry routing. The valuation journey also calculated and submitted prices from placeholder data even though no range was displayed.
+## Release gate
 
-This change clarifies PT-PT recruitment and buying content, discloses filename-only CV handling, routes buyer and viewing enquiries, and turns the valuation modal into a professional-assessment request without calculated prices. It preserves existing URLs and delivery integrations while adding verified agency/breadcrumb markup, preview noindex guards and privacy-safe local outcome hooks.
-
-Validation: 82 tests passed; Astro check has 0 errors and 0 warnings (one existing hint); production and preview builds passed. Built-route audit checked 16 HTML files, nine sitemap URLs and 748 internal links/anchors. Local-only browser tests covered confirmed/failed form submissions, delivered:false, mobile navigation, FAQ behavior and representative responsive layouts. No live submissions were sent.
-
-Review limits: analytics collection is not connected, Search Console property access is unavailable, native inventory requires an authorized feed, and business hours/benefit/guide details need agency confirmation. Full evidence, action statuses and release/rollback plan are in `docs/audits/seo-geo-2026-09-16/`.
-
-Draft for review. Do not merge until the agency authorizes production publication.
+Review the draft PR and preview before separately authorizing a merge to main. Follow the exact [release and rollback steps](validation.md). The next visibility checkpoint is 30 days after actual production publication, with 60/90-day reviews thereafter.

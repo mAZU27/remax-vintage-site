@@ -18,6 +18,6 @@ The most consequential limitations are external-only property inventory and unav
 
 ## Delivery boundaries
 
-Implemented and locally tested on `codex/seo-geo-porto-20260916`, from production baseline `c7f20a8e1935acfe346fe7654775d91481db2d97`. Publication evidence will be recorded in the PR and release record. No production merge, property feed import, CRM mutation, live form submission, analytics activation, profile edit, outreach or review request was performed.
+Implemented and locally tested on `codex/seo-geo-porto-20260916`, from production baseline `c7f20a8e1935acfe346fe7654775d91481db2d97`. Published to a review branch with draft PR #2 and a READY Vercel preview; see the release record for links and authentication limits. No production merge, property feed import, CRM mutation, live form submission, analytics activation, profile edit, outreach or review request was performed.
 
 Implemented is distinct from published; crawlable is distinct from indexed; neither implies ranking or AI citation. Search visibility and qualified-lead changes cannot yet be measured. First visibility review: 30 days after authorized publication, then day 60 and day 90. Immediate next checkpoint: review the preview, approve the release through the existing workflow, and grant property-level Search Console access.
