@@ -14,6 +14,8 @@ The most consequential limitations are external-only property inventory and unav
 - [Measurement and 30/60/90-day maintenance plan](measurement.md)
 - Public machine evidence: [HTTP baseline](http-baseline.json), [production build checks](built-production-checks.json), [preview build checks](built-preview-checks.json)
 
+- [Current publication status and prepared PR](release-record.md)
+
 ## Delivery boundaries
 
 Implemented and locally tested on `codex/seo-geo-porto-20260916`, from production baseline `c7f20a8e1935acfe346fe7654775d91481db2d97`. Publication evidence will be recorded in the PR and release record. No production merge, property feed import, CRM mutation, live form submission, analytics activation, profile edit, outreach or review request was performed.
