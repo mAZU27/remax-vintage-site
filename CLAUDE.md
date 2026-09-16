@@ -242,3 +242,15 @@ O que mudou (e NÃO deve ser revertido sem dados reais):
   vence no Vercel) + cache imutável para `/media/`.
 
 Lista completa de factos pendentes de G: secção 18 da auditoria.
+
+
+## 9. Current SEO implementation — 2026-09-16
+
+See `docs/audits/seo-geo-2026-09-16/README.md` for evidence, intent map, action status, validation, external dependencies and release steps. Earlier static-site backlog entries are historical; the README now describes the actual Astro/Vercel build and forms.
+
+- Existing public routes and nine sitemap URLs are preserved. Preview/development HTML is noindex; production canonicals always use the apex domain and trailing slash. Do not enable SITE_NOINDEX on production.
+- Careers accepts spontaneous commercial applications, not an invented vacancy. The optional CV picker sends only its filename; visible copy and privacy text disclose this. No JobPosting markup.
+- Buyers use the official office12382 inventory and can send search criteria or request a visit. Native property data remains external-only pending an approved feed and rights.
+- The former valuation simulator is an assessment request: never reconnect the legacy placeholder pricing model or send its estimates as real values.
+- Local measurement hooks fire only on confirmed delivery; they do not create an analytics collector. New reporting requires destination, consent and CRM reconciliation.
+- Official entity facts were rechecked. Hours and detailed business promises still require owner confirmation; do not infer them from existing copy.

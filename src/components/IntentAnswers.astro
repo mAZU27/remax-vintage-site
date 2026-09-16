@@ -1,0 +1,21 @@
+---
+import FaqAccordion from './FaqAccordion.astro';
+import SectionEyebrow from './SectionEyebrow.astro';
+import type { Faq } from '../data/faqs';
+interface Props { title: string; items: Faq[]; id: string; }
+const { title, items, id } = Astro.props;
+---
+<section class="section section--cream" id={id}>
+  <div class="container container--narrow">
+    <header class="shead">
+      <SectionEyebrow text="Antes do próximo passo" />
+      <h2 class="h2" data-reveal>{title}</h2>
+    </header>
+    <FaqAccordion items={items} />
+    <slot />
+  </div>
+</section>
+<style>
+  .shead { margin-bottom: 30px; }
+  h2 { margin-top: 16px; }
+</style>

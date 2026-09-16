@@ -1,6 +1,6 @@
 User-agent: *
 Allow: /
 Disallow: /api/
-Disallow: /mobile-preview
+# QA page declares noindex. Allow crawling so that directive can be read.
 
 Sitemap: https://remaxcollectionvintage.pt/sitemap.xml

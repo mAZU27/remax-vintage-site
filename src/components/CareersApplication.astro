@@ -63,13 +63,13 @@ import { careersApplication as a, anchors } from '../data/carreiras';
             carregado (ingest é JSON); o NOME do ficheiro segue como contexto e
             a equipa pede o documento no seguimento. */}
         <div class="cfield">
-          <span class="cfield__label">Curriculum (CV)</span>
+          <span class="cfield__label">Identificar CV (opcional; sem envio do documento)</span>
           <label class="cupload" for="ap-cv">
             <Icon name="download" size={20} stroke={1.5} />
-            <span class="cupload__text" data-cv-text>Carregar ficheiro <em>(PDF ou Word)</em></span>
-            <input id="ap-cv" name="cv" type="file" accept=".pdf,.doc,.docx" />
+            <span class="cupload__text" data-cv-text>Selecionar o nome do ficheiro <em>(PDF ou Word)</em></span>
+            <input id="ap-cv" name="cv" type="file" accept=".pdf,.doc,.docx" aria-describedby="ap-cv-note" />
           </label>
-          <p class="cupload__note">O ficheiro não é enviado nesta fase. A nossa equipa solicitará o CV durante o contacto.</p>
+          <p class="cupload__note" id="ap-cv-note">Só é enviado o nome do ficheiro. O documento não é carregado nem guardado pelo site. Pode candidatar-se sem o selecionar; a equipa solicitará o CV durante o contacto.</p>
         </div>
 
         <label class="cconsent">
@@ -164,15 +164,14 @@ import { careersApplication as a, anchors } from '../data/carreiras';
 </style>
 
 <script>
+  import { recordLeadSuccess } from '../lib/measurement';
   const form = document.querySelector('[data-apply-form]') as HTMLFormElement | null;
   const done = document.querySelector('[data-apply-done]') as HTMLElement | null;
   if (form) {
     const cvInput = form.querySelector('#ap-cv') as HTMLInputElement | null;
     const cvText = form.querySelector('[data-cv-text]') as HTMLElement | null;
     cvInput?.addEventListener('change', () => {
-      if (cvText && cvInput.files && cvInput.files.length) {
-        cvText.textContent = cvInput.files[0].name;
-      }
+      if (cvText) cvText.textContent = cvInput?.files?.[0]?.name ?? 'Selecionar o nome do ficheiro (PDF ou Word)';
     });
 
     const submitBtn = form.querySelector<HTMLButtonElement>('button[type="submit"]');
@@ -229,6 +228,7 @@ import { careersApplication as a, anchors } from '../data/carreiras';
         });
         const data = await res.json().catch(() => ({}));
         if (res.ok && data.delivered === true) {
+          recordLeadSuccess('careers-application', submissionId);
           submissionId = crypto.randomUUID(); // fresh id for any subsequent lead
           if (done) {
             form.hidden = true;

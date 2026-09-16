@@ -36,17 +36,17 @@ export const anchors = {
 // ---------- 1. Hero ----------
 export const careersHero = {
   eyebrow: 'Carreiras',
-  titleLead: 'Constrói connosco o futuro do imobiliário',
-  titleEmphasis: 'distinto',
+  titleLead: 'O seu próximo passo como consultor imobiliário',
+  titleEmphasis: 'no Porto',
   lede:
-    'Junta-te a uma equipa de excelência em propriedades premium no Porto e eleva a tua carreira ao mais alto nível. Aqui, o teu talento encontra propósito, formação de elite e oportunidades sem teto.',
+    'Quer trabalhar no imobiliário, mudar de profissão ou conhecer uma nova agência? Apresente o seu percurso à RE/MAX Collection Vintage, na Avenida da Boavista, através de uma candidatura espontânea para a área comercial.',
   // Secção de vagas removida (placeholders) → CTAs apontam para a candidatura.
   primary: { label: 'Candidatura espontânea', href: `#${anchors.apply}` },
-  secondary: { label: 'Falar connosco', href: '/contacto' },
+  secondary: { label: 'Conhecer a equipa', href: '/sobre-nos' },
   // Cinematic Porto avenue (Aliados) as an aspirational careers backdrop.
   background: '/images/porto/porto-aliados.webp',
   cards: [
-    { icon: 'target', title: 'Crescimento real', text: 'Plano de carreira estruturado e comissões acima da média em propriedades premium.' },
+    { icon: 'target', title: 'O seu percurso', text: 'Partilhe a sua experiência e esclareça com a equipa as condições de uma possível colaboração.' },
     { icon: 'compass', title: 'Formação curada', text: 'Acesso a formação contínua, mentoria especializada e ferramentas de excelência.' },
     { icon: 'award', title: 'Marca de prestígio', text: 'Representa o padrão global da RE/MAX Collection® e destaca-te no segmento de luxo.' },
   ] as CardItem[],
@@ -83,13 +83,13 @@ export const careersWhyJoin = {
   text:
     'Acreditamos no talento, na ambição e na criação de valor. Na RE/MAX Collection Vintage encontra o ecossistema ideal para crescer, com o respaldo de uma marca global e a proximidade de uma equipa que o apoia em cada passo.',
   benefits: [
-    { icon: 'diamond', title: 'Comissão premium', text: 'Modelo de remuneração orientado ao mérito e ao segmento de luxo.' },
+    { icon: 'diamond', title: 'Condições claras', text: 'Esclareça o modelo de colaboração, a remuneração e eventuais custos antes de tomar uma decisão.' },
     { icon: 'compass', title: 'Formação contínua', text: 'Aprendizagem permanente, do conhecimento de mercado à negociação.' },
     { icon: 'award', title: 'Marca de prestígio', text: 'A força de uma marca global ao serviço da sua reputação.' },
     { icon: 'users', title: 'Acompanhamento de liderança', text: 'Mentoria próxima de quem já percorreu o caminho.' },
   ] as CardItem[],
-  // Career progression path (illustrative stages, not a contractual promise).
-  path: ['Consultor', 'Consultor Sénior', 'Gestor de Equipa', 'Diretor de Sucesso'],
+  // Topics for a candidate conversation, not a promised progression ladder.
+  path: ['O seu percurso', 'A atividade comercial', 'Apoio e recursos', 'Condições de colaboração'],
   // Roles section is not rendered (placeholders removed) → CTA goes to the form.
   cta: { label: 'Enviar candidatura', href: `#${anchors.apply}` },
 };
@@ -104,12 +104,12 @@ export const careersBenefits = {
   items: [
     { icon: 'compass', title: 'Formação contínua', text: 'Programas de desenvolvimento ao longo de todo o percurso.' },
     { icon: 'users', title: 'Mentoria especializada', text: 'Apoio individual de profissionais experientes.' },
-    { icon: 'clock', title: 'Flexibilidade total', text: 'Autonomia para gerir o seu tempo e a sua agenda.' },
+    { icon: 'clock', title: 'Organização da atividade', text: 'Converse com a equipa sobre a disponibilidade e a organização do trabalho.' },
     { icon: 'handshake', title: 'Networking exclusivo', text: 'Acesso a uma rede seleta de clientes e parceiros.' },
     { icon: 'camera', title: 'Apoio de marketing', text: 'Produção e divulgação à altura de cada imóvel.' },
     { icon: 'sliders', title: 'Ferramentas premium', text: 'Tecnologia e processos que libertam o seu tempo.' },
     { icon: 'award', title: 'Reconhecimento', text: 'O mérito é celebrado — interna e publicamente.' },
-    { icon: 'star', title: 'Incentivos & viagens', text: 'Recompensas que acompanham os grandes resultados.' },
+    { icon: 'star', title: 'Objetivos profissionais', text: 'Partilhe o que pretende desenvolver na sua próxima etapa profissional.' },
   ] as CardItem[],
   strip: {
     text: 'O seu sucesso é o nosso compromisso.',
@@ -135,8 +135,8 @@ export const careersRoles = {
   titleEmphasis: 'abertas',
   text:
     'Faça parte de uma marca global que representa o mais alto padrão no mercado imobiliário de luxo. Descubra as vagas disponíveis e encontre o próximo passo da sua carreira.',
-  // Only one verified, currently-open role. Add further entries here as real
-  // vacancies open — the filter UI auto-enables when more than one job exists.
+  // Legacy draft only: NOT verified as currently open and NOT rendered.
+  // Confirm an individual vacancy before publishing this or JobPosting data.
   jobs: [
     {
       id: 'consultor-premium',
@@ -257,17 +257,17 @@ export const careersTeam = {
 
 // ---------- 8. Vida no escritório ----------
 export const careersOffice = {
-  eyebrow: 'Vida no escritório',
+  eyebrow: 'A atividade imobiliária',
   titleLead: 'Onde a ambição encontra o',
   titleEmphasis: 'ambiente certo',
   text:
     'Acreditamos que o sucesso é construído em conjunto. No nosso escritório no Porto encontrará um ambiente de excelência, colaboração genuína e inspiração diária para ir mais longe.',
-  // Editorial lifestyle placeholders until real office/team photos exist.
+  // Editorial illustrations; do not present these as photographs of the office.
   images: [
-    { src: '/images/porto/editorial-consultoria.webp', caption: 'Escritório com vista sobre o Porto' },
-    { src: '/images/porto/editorial-curadoria.webp', caption: 'Espaços de reunião e lounge' },
-    { src: '/images/porto/editorial-fotografia.webp', caption: 'Colaboração de equipa' },
-    { src: '/images/porto/editorial-secretaria.webp', caption: 'O dia a dia de um consultor' },
+    { src: '/images/porto/editorial-consultoria.webp', caption: 'Acompanhamento · imagem ilustrativa' },
+    { src: '/images/porto/editorial-curadoria.webp', caption: 'Preparação · imagem ilustrativa' },
+    { src: '/images/porto/editorial-fotografia.webp', caption: 'Apresentação · imagem ilustrativa' },
+    { src: '/images/porto/editorial-secretaria.webp', caption: 'Organização · imagem ilustrativa' },
   ],
   cards: [
     { icon: 'pin', title: 'Localização premium' },
@@ -285,8 +285,8 @@ export const careersOffice = {
 // ---------- 9. Candidatura espontânea ----------
 export const careersApplication = {
   eyebrow: 'Candidatura espontânea',
-  titleLead: 'Ainda não encontrou a função certa? Adoramos conhecer talento',
-  titleEmphasis: 'excecional',
+  titleLead: 'Apresente-nos o seu percurso e o que procura na',
+  titleEmphasis: 'área comercial',
   text:
     'Na RE/MAX Collection Vintage acreditamos que o talento, a ambição e a discrição são essenciais para elevar o mercado imobiliário de luxo. Valorizamos profissionais que partilham a nossa paixão pela excelência e pelo serviço verdadeiramente excecional.',
   image: '/images/porto/porto-ribeira-barcos.webp',
@@ -314,5 +314,5 @@ export const careersFinalCta = {
     'Estamos sempre à procura de talento, ambição e pessoas que queiram fazer parte de algo verdadeiramente extraordinário. O seu futuro começa agora.',
   primary: { label: 'Candidatura espontânea', href: `#${anchors.apply}` },
   secondary: { label: 'Falar com a equipa', href: '/contacto' },
-  trust: ['Equipa de excelência', 'Carreira sem limites', 'Marca de prestígio', 'Alcance global'],
+  trust: ['Equipa local', 'Candidatura espontânea', 'Marca RE/MAX Collection', 'Porto'],
 };

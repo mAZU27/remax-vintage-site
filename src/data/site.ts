@@ -17,7 +17,7 @@ export const site = {
   logoFull: '/assets/remax-vintage-horizontal.png',
   tagline: 'A coleção mais rara do Porto.',
   description:
-    'Imóveis vintage e premium no Porto — oito zonas de eleição, da Foz do Douro à Baixa. Avaliação confidencial e uma apresentação à altura de cada imóvel distinto.',
+    'Agência imobiliária no Porto, na Avenida da Boavista. Acompanhamento na compra e venda de imóveis, avaliação e candidaturas para a área comercial.',
   // Contactos VERIFICADOS no perfil oficial da agência em remax.pt
   // (remax.pt/pt/agencia/remax-collection-vintage/12382, consultado 2026-07-10).
   // Email, redes sociais e WhatsApp: por confirmar com a agência —

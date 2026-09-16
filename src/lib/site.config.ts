@@ -1,4 +1,6 @@
 // Single source of truth for cross-cutting site config.
+// Identity rechecked against the official office profile, 2026-09-16.
+export const OFFICIAL_AGENCY_URL = 'https://www.remax.pt/pt/agencia/remax-collection-vintage/12382';
 
 // Property search moved OFF this site: listings now live on the official RE/MAX
 // search, pre-filtered to this agency's portfolio (newest first). Every "explore properties / ver imóveis" CTA points here and

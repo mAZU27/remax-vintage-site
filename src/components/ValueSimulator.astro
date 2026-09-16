@@ -1,9 +1,9 @@
 ---
 // Value simulator — accessible multi-step modal mounted ONCE (in Base.astro).
 // Opens via event delegation on any [data-open-simulator] trigger anywhere on
-// the page. Gives an instant indicative range (client-side, see
-// data/valuation-config.ts) then captures the lead. No backend yet — the submit
-// reveals a success state and leaves a clear TODO for the email/CRM endpoint.
+// the page. Collects property details for a consultant assessment. No automated
+// prices: the legacy valuation model contains unverified placeholder values.
+// Submission succeeds only after the configured server delivery channel accepts it.
 import Icon from './Icon.astro';
 import { zonas } from '../content/zonas';
 import {
@@ -42,20 +42,20 @@ const TOTAL = 6;
     tabindex="-1"
     data-vsim-dialog
   >
-    <button type="button" class="vsim__x" data-vsim-close aria-label="Fechar simulador">
+    <button type="button" class="vsim__x" data-vsim-close aria-label="Fechar pedido de avaliação">
       <Icon name="close" size={20} stroke={1.7} />
     </button>
 
     <header class="vsim__head">
-      <span class="vsim__eyebrow">Simulador de valor</span>
+      <span class="vsim__eyebrow">Pedido de avaliação</span>
       <h2 id="vsim-title" class="vsim__title">Quanto vale, hoje, o seu imóvel?</h2>
       <p id="vsim-sub" class="vsim__sub">
-        Em menos de um minuto, uma estimativa indicativa para o mercado do Porto.
+        Descreva o seu imóvel no Porto para pedir uma avaliação à nossa equipa.
       </p>
       <div
         class="vsim__progress"
         role="progressbar"
-        aria-label="Progresso do simulador"
+        aria-label="Progresso do pedido"
         aria-valuemin="1"
         aria-valuemax={TOTAL}
         aria-valuenow="1"
@@ -157,16 +157,11 @@ const TOTAL = 6;
 
       <!-- 5 · Resultado -->
       <section class="vsim__panel vsim__panel--result" data-panel="5" hidden>
-        <span class="vsim-result__eyebrow">Estimativa indicativa de valor</span>
-        <p class="vsim-result__range">
-          <span data-vsim-low>—</span>
-          <span class="vsim-result__sep">–</span>
-          <span data-vsim-high>—</span>
-        </p>
+        <span class="vsim-result__eyebrow">Confirme os dados do seu imóvel</span>
         <p class="vsim-result__summary" data-vsim-summary></p>
         <p class="vsim-result__disclaimer">
           <Icon name="shield-check" size={16} stroke={1.6} />
-          <span>Estimativa indicativa — não substitui uma avaliação profissional.</span>
+          <span>A equipa analisará o pedido. Este formulário não calcula o valor do imóvel.</span>
         </p>
         <ul class="vsim-result__next">
           <li><Icon name="check" size={15} stroke={2} /> Avaliação detalhada e fundamentada por um consultor.</li>
@@ -177,10 +172,10 @@ const TOTAL = 6;
 
       <!-- 4 · Captação -->
       <section class="vsim__panel" data-panel="4" hidden>
-        <h3 class="vsim__q">Para onde enviamos a sua estimativa?</h3>
+        <h3 class="vsim__q">Como podemos contactá-lo?</h3>
         <p class="vsim__hint">
-          Deixe o seu contacto e revelamos já a estimativa indicativa. Um consultor analisa o
-          seu imóvel e contacta-o em 24h com a avaliação detalhada — confidencial e sem compromisso.
+          Deixe o seu contacto para que a equipa possa analisar o pedido e esclarecer
+          consigo os próximos passos da avaliação, sem compromisso.
         </p>
         <div class="vsim-grid2">
           <p class="vsim-field vsim-field--full">
@@ -210,8 +205,8 @@ const TOTAL = 6;
         <span class="vsim-done__icon"><Icon name="check" size={28} stroke={2} /></span>
         <h3 class="vsim__q">Pedido recebido.</h3>
         <p class="vsim__hint">
-          Obrigado. Um consultor entra em contacto dentro de 24 horas com a avaliação
-          detalhada — com total confidencialidade.
+          Obrigado. A equipa irá analisar o seu pedido e contactá-lo sobre a avaliação
+          do imóvel.
         </p>
         <button type="button" class="btn btn--gold" data-vsim-close><span>Fechar</span></button>
       </section>
@@ -468,7 +463,8 @@ const TOTAL = 6;
 </style>
 
 <script>
-  import { estimateRange, formatEUR, typeOptions, conditionOptions } from '../data/valuation-config';
+  import { recordLeadSuccess } from '../lib/measurement';
+  import { typeOptions, conditionOptions } from '../data/valuation-config';
   import { zonas } from '../content/zonas';
 
   const root = document.querySelector<HTMLElement>('[data-vsim]');
@@ -481,8 +477,6 @@ const TOTAL = 6;
     const backBtn = root.querySelector<HTMLButtonElement>('[data-vsim-back]')!;
     const nextBtn = root.querySelector<HTMLButtonElement>('[data-vsim-next]')!;
     const nextLabel = nextBtn.querySelector<HTMLElement>('span')!;
-    const lowEl = root.querySelector<HTMLElement>('[data-vsim-low]')!;
-    const highEl = root.querySelector<HTMLElement>('[data-vsim-high]')!;
     const summaryEl = root.querySelector<HTMLElement>('[data-vsim-summary]')!;
 
     const reduce = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
@@ -501,7 +495,7 @@ const TOTAL = 6;
 
     const panelByName = (name: string) => panels.find((p) => p.dataset.panel === name)!;
     const labelFor = (i: number) =>
-      i <= 3 ? 'Continuar' : i === 4 ? 'Ver a minha estimativa' : 'Receber avaliação detalhada';
+      i <= 3 ? 'Continuar' : i === 4 ? 'Rever o pedido' : 'Enviar pedido de avaliação';
 
     const focusFirst = (panel: HTMLElement) => {
       const el = panel.querySelector<HTMLElement>('input, button, [tabindex]:not([tabindex="-1"])');
@@ -552,23 +546,6 @@ const TOTAL = 6;
     };
 
     // ---- result ----
-    const countUp = (el: HTMLElement, target: number) => {
-      if (reduce) {
-        el.textContent = formatEUR(target);
-        return;
-      }
-      const dur = 900;
-      const start = performance.now();
-      const tick = (now: number) => {
-        const t = Math.min(1, (now - start) / dur);
-        const eased = 1 - Math.pow(1 - t, 3);
-        el.textContent = formatEUR(Math.round((target * eased) / 1000) * 1000);
-        if (t < 1) requestAnimationFrame(tick);
-        else el.textContent = formatEUR(target);
-      };
-      requestAnimationFrame(tick);
-    };
-
     const renderResult = () => {
       const input = {
         zone: getRadio('vsim-zone'),
@@ -578,8 +555,6 @@ const TOTAL = 6;
         condition: getRadio('vsim-condition'),
         extras: getExtras(),
       };
-      const r = estimateRange(input);
-      // Value sent via email — do not display in the modal
       summaryEl.textContent = [
         typeLabels[input.type],
         zoneLabels[input.zone],
@@ -591,14 +566,14 @@ const TOTAL = 6;
         .join(' · ');
     };
 
-    // ---- lead capture (front-end only) ----
+    // ---- validated lead capture ----
     const fieldErr = (input: HTMLInputElement, on: boolean) => {
       input.setAttribute('aria-invalid', String(on));
       const err = input.parentElement?.querySelector<HTMLElement>('[data-err]');
       if (err) err.hidden = !on;
     };
 
-    // Contact gate — runs at step 4, before the estimate is revealed.
+    // Contact gate — runs at step 4, before the property summary.
     const validateCapture = (): boolean => {
       const panel = panelByName('4');
       const nome = panel.querySelector<HTMLInputElement>('input[name="nome"]')!;
@@ -649,14 +624,6 @@ const TOTAL = 6;
       const p4 = panelByName('4');
       const val = (n: string) =>
         p4.querySelector<HTMLInputElement>(`input[name="${n}"]`)?.value.trim() ?? '';
-      const est = estimateRange({
-        zone: getRadio('vsim-zone'),
-        type: getRadio('vsim-type'),
-        area: getArea(),
-        typology: getRadio('vsim-typology'),
-        condition: getRadio('vsim-condition'),
-        extras: getExtras(),
-      });
       const utm: Record<string, string> = {};
       new URLSearchParams(location.search).forEach((v, k) => {
         if (k.startsWith('utm_')) utm[k] = v;
@@ -683,8 +650,6 @@ const TOTAL = 6;
             typology: getRadio('vsim-typology'),
             condition: getRadio('vsim-condition'),
             extras: getExtras(),
-            estimate_low: est.low,
-            estimate_high: est.high,
             form: 'value-simulator',
             submission_id: submissionId,
             utm,
@@ -693,6 +658,7 @@ const TOTAL = 6;
         });
         const data = await res.json().catch(() => ({}));
         if (res.ok && data.delivered === true) {
+          recordLeadSuccess('value-simulator', submissionId);
           showDone();
           return;
         }
