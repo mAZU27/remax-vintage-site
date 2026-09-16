@@ -1,0 +1,280 @@
+{
+  "release_sha": "f1d219c39ccffa735e393292eda0dead06a059d2",
+  "requests": [
+    {
+      "requested": "https://remaxcollectionvintage.pt/",
+      "url": "https://remaxcollectionvintage.pt/",
+      "status": 200,
+      "redirects": [],
+      "x_robots": null,
+      "title": "RE/MAX Collection Vintage — Agência imobiliária no Porto",
+      "canonical": [
+        "https://remaxcollectionvintage.pt/"
+      ],
+      "robots": [],
+      "h1_count": 1,
+      "jsonld_count": 1
+    },
+    {
+      "requested": "https://remaxcollectionvintage.pt/comprar/",
+      "url": "https://remaxcollectionvintage.pt/comprar/",
+      "status": 200,
+      "redirects": [],
+      "x_robots": null,
+      "title": "Comprar casa no Porto | RE/MAX Collection Vintage",
+      "canonical": [
+        "https://remaxcollectionvintage.pt/comprar/"
+      ],
+      "robots": [],
+      "h1_count": 1,
+      "jsonld_count": 1
+    },
+    {
+      "requested": "https://remaxcollectionvintage.pt/carreiras/",
+      "url": "https://remaxcollectionvintage.pt/carreiras/",
+      "status": 200,
+      "redirects": [],
+      "x_robots": null,
+      "title": "Consultor imobiliário no Porto: carreiras | RE/MAX Collection Vintage",
+      "canonical": [
+        "https://remaxcollectionvintage.pt/carreiras/"
+      ],
+      "robots": [],
+      "h1_count": 1,
+      "jsonld_count": 1
+    },
+    {
+      "requested": "https://remaxcollectionvintage.pt/vender/",
+      "url": "https://remaxcollectionvintage.pt/vender/",
+      "status": 200,
+      "redirects": [],
+      "x_robots": null,
+      "title": "Vender casa no Porto e pedir avaliação | RE/MAX Collection Vintage",
+      "canonical": [
+        "https://remaxcollectionvintage.pt/vender/"
+      ],
+      "robots": [],
+      "h1_count": 1,
+      "jsonld_count": 1
+    },
+    {
+      "requested": "https://remaxcollectionvintage.pt/sobre-nos/",
+      "url": "https://remaxcollectionvintage.pt/sobre-nos/",
+      "status": 200,
+      "redirects": [],
+      "x_robots": null,
+      "title": "A nossa agência e equipa no Porto | RE/MAX Collection Vintage",
+      "canonical": [
+        "https://remaxcollectionvintage.pt/sobre-nos/"
+      ],
+      "robots": [],
+      "h1_count": 1,
+      "jsonld_count": 1
+    },
+    {
+      "requested": "https://remaxcollectionvintage.pt/contacto/",
+      "url": "https://remaxcollectionvintage.pt/contacto/",
+      "status": 200,
+      "redirects": [],
+      "x_robots": null,
+      "title": "Contactos e agência na Boavista, Porto | RE/MAX Collection Vintage",
+      "canonical": [
+        "https://remaxcollectionvintage.pt/contacto/"
+      ],
+      "robots": [],
+      "h1_count": 1,
+      "jsonld_count": 1
+    },
+    {
+      "requested": "https://remaxcollectionvintage.pt/alugar/",
+      "url": "https://remaxcollectionvintage.pt/alugar/",
+      "status": 200,
+      "redirects": [],
+      "x_robots": null,
+      "title": "Arrendar | RE/MAX Collection Vintage",
+      "canonical": [
+        "https://remaxcollectionvintage.pt/alugar/"
+      ],
+      "robots": [],
+      "h1_count": 1,
+      "jsonld_count": 1
+    },
+    {
+      "requested": "https://remaxcollectionvintage.pt/apoio/",
+      "url": "https://remaxcollectionvintage.pt/apoio/",
+      "status": 200,
+      "redirects": [],
+      "x_robots": null,
+      "title": "Apoio ao cliente | RE/MAX Collection Vintage",
+      "canonical": [
+        "https://remaxcollectionvintage.pt/apoio/"
+      ],
+      "robots": [],
+      "h1_count": 1,
+      "jsonld_count": 2
+    },
+    {
+      "requested": "https://remaxcollectionvintage.pt/privacidade/",
+      "url": "https://remaxcollectionvintage.pt/privacidade/",
+      "status": 200,
+      "redirects": [],
+      "x_robots": null,
+      "title": "Política de Privacidade | RE/MAX Collection Vintage",
+      "canonical": [
+        "https://remaxcollectionvintage.pt/privacidade/"
+      ],
+      "robots": [],
+      "h1_count": 1,
+      "jsonld_count": 1
+    },
+    {
+      "requested": "https://remaxcollectionvintage.pt/insights/",
+      "url": "https://remaxcollectionvintage.pt/insights/",
+      "status": 200,
+      "redirects": [],
+      "x_robots": null,
+      "title": "Insights | RE/MAX Collection Vintage",
+      "canonical": [
+        "https://remaxcollectionvintage.pt/insights/"
+      ],
+      "robots": [
+        "noindex, follow"
+      ],
+      "h1_count": 1,
+      "jsonld_count": 1
+    },
+    {
+      "requested": "https://remaxcollectionvintage.pt/mobile-preview/",
+      "url": "https://remaxcollectionvintage.pt/mobile-preview/",
+      "status": 200,
+      "redirects": [],
+      "x_robots": null,
+      "title": "Mobile Preview (QA) — RE/MAX Collection Vintage",
+      "canonical": [],
+      "robots": [
+        "noindex, nofollow"
+      ],
+      "h1_count": 0,
+      "jsonld_count": 0
+    },
+    {
+      "requested": "https://remaxcollectionvintage.pt/sitemap.xml",
+      "url": "https://remaxcollectionvintage.pt/sitemap.xml",
+      "status": 200,
+      "redirects": [],
+      "x_robots": null,
+      "title": "",
+      "canonical": [],
+      "robots": [],
+      "h1_count": 0,
+      "jsonld_count": 0
+    },
+    {
+      "requested": "https://remaxcollectionvintage.pt/robots.txt",
+      "url": "https://remaxcollectionvintage.pt/robots.txt",
+      "status": 200,
+      "redirects": [],
+      "x_robots": null,
+      "title": "",
+      "canonical": [],
+      "robots": [],
+      "h1_count": 0,
+      "jsonld_count": 0
+    },
+    {
+      "requested": "https://remaxcollectionvintage.pt/seo-release-missing-20260916",
+      "url": "https://remaxcollectionvintage.pt/seo-release-missing-20260916",
+      "status": 404,
+      "redirects": [],
+      "x_robots": null,
+      "title": "Página não encontrada | RE/MAX Collection Vintage",
+      "canonical": [
+        "https://remaxcollectionvintage.pt/404/"
+      ],
+      "robots": [
+        "noindex, follow"
+      ],
+      "h1_count": 1,
+      "jsonld_count": 1
+    },
+    {
+      "requested": "https://remaxcollectionvintage.pt/api/lead",
+      "url": "https://remaxcollectionvintage.pt/api/lead",
+      "status": 405,
+      "redirects": [],
+      "x_robots": null,
+      "title": "",
+      "canonical": [],
+      "robots": [],
+      "h1_count": 0,
+      "jsonld_count": 0
+    },
+    {
+      "requested": "http://remaxcollectionvintage.pt/",
+      "url": "https://remaxcollectionvintage.pt/",
+      "status": 200,
+      "redirects": [
+        {
+          "from": "http://remaxcollectionvintage.pt/",
+          "status": 308,
+          "to": "https://remaxcollectionvintage.pt/"
+        }
+      ],
+      "x_robots": null,
+      "title": "RE/MAX Collection Vintage — Agência imobiliária no Porto",
+      "canonical": [
+        "https://remaxcollectionvintage.pt/"
+      ],
+      "robots": [],
+      "h1_count": 1,
+      "jsonld_count": 1
+    },
+    {
+      "requested": "https://www.remaxcollectionvintage.pt/",
+      "url": "https://remaxcollectionvintage.pt/",
+      "status": 200,
+      "redirects": [
+        {
+          "from": "https://www.remaxcollectionvintage.pt/",
+          "status": 308,
+          "to": "https://remaxcollectionvintage.pt/"
+        }
+      ],
+      "x_robots": null,
+      "title": "RE/MAX Collection Vintage — Agência imobiliária no Porto",
+      "canonical": [
+        "https://remaxcollectionvintage.pt/"
+      ],
+      "robots": [],
+      "h1_count": 1,
+      "jsonld_count": 1
+    },
+    {
+      "requested": "http://www.remaxcollectionvintage.pt/",
+      "url": "https://remaxcollectionvintage.pt/",
+      "status": 200,
+      "redirects": [
+        {
+          "from": "http://www.remaxcollectionvintage.pt/",
+          "status": 308,
+          "to": "https://www.remaxcollectionvintage.pt/"
+        },
+        {
+          "from": "https://www.remaxcollectionvintage.pt/",
+          "status": 308,
+          "to": "https://remaxcollectionvintage.pt/"
+        }
+      ],
+      "x_robots": null,
+      "title": "RE/MAX Collection Vintage — Agência imobiliária no Porto",
+      "canonical": [
+        "https://remaxcollectionvintage.pt/"
+      ],
+      "robots": [],
+      "h1_count": 1,
+      "jsonld_count": 1
+    }
+  ],
+  "sitemap_urls": 9,
+  "errors": []
+}

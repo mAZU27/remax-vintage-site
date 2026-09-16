@@ -46,11 +46,15 @@ Search Console indexing/positions, GA4 reporting, GBP activity and field Core We
 
 The added FAQs use the existing accordion and accessible buttons/regions, with answers in source HTML. No JobPosting is appropriate for this evergreen page: [Google requires a specific single job posting](https://developers.google.com/search/docs/appearance/structured-data/job-posting). Existing /apoio FAQ vocabulary is not a rich-result promise.
 
-## Exact release workflow
+## Release workflow (completed for PR #2)
+
+The user authorized production on 16 September 2026. The merged release and public HTTP checks are recorded in [release-record.md](release-record.md). The following steps remain the repeatable procedure for later releases.
+
+### Procedure
 
 1. Review the draft PR and Vercel branch preview associated with its current SHA. Verify /carreiras/, /comprar/, /contacto?assunto=comprar#formulario and the assessment flow visually. Do not submit preview forms unless their backend is explicitly a safe test environment.
 2. Confirm preview HTML has noindex and production canonical URLs. Deployment authentication may also protect preview; noindex is not access control.
-3. Agency confirms the revised copy and release. Production was not authorized merely by this SEO request, so no main merge is performed here.
+3. Agency confirms the revised copy and release. Confirm explicit publication authorization before merging; authorization was subsequently supplied for PR #2.
 4. Maintainer merges the reviewed branch into main through the existing GitHub workflow. Vercel automatically builds production. Preserve existing server-only delivery variables. Ensure production VERCEL_ENV=production and SITE_NOINDEX is not true.
 5. Record production SHA/deployment URL/time. GET the six priority pages, sitemap.xml and robots.txt; check200, page metadata/canonicals, absence of priority noindex, genuine404 for a missing path and HTTPS/apex redirects.
 6. With the receiving team's agreement, run one clearly labeled end-to-end form check if required, verify receipt and exclude it from reports. Keep personal values out of evidence.

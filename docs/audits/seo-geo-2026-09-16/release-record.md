@@ -1,24 +1,34 @@
-# Delivery record — 16 September 2026
+# Production release — 16 September 2026
 
-Current publication status: **GitHub review branch and hosted Vercel preview**. [Draft PR #2](https://github.com/mAZU27/remax-vintage-site/pull/2) targets main and has not been merged. Production remains at baseline `c7f20a8e1935acfe346fe7654775d91481db2d97`.
+**Live:** https://remaxcollectionvintage.pt/  
+**Application release:** [merged PR #2](https://github.com/mAZU27/remax-vintage-site/pull/2), commit `f1d219c39ccffa735e393292eda0dead06a059d2`.  
+**Vercel deployment:** `dpl_HbDPMesbEHcSboHUgcpPFZRaxXUh`, production, READY at 16:25:49 UTC. Deployment build phase took approximately 15.4 seconds (the build command reported 9 seconds). Framework: Astro 5.
 
-- Branch: `codex/seo-geo-porto-20260916`.
-- Implementation commit: `9f7bcde`; initial published head: `5de5075ecb4cadfb9bbc1c7ae8ebff36ea195bde`.
-- [Branch preview](https://remax-vintage-site-git-5fe75d-henriqueaguiar2000-9493s-projects.vercel.app/).
-- Verified initial preview deployment: `dpl_F8Dj53qhaGJ7Z2REMA6GkeGjQBot`, READY; GitHub Vercel status success.
-- [Pinned implementation preview](https://remax-vintage-site-7eeqkix8n-henriqueaguiar2000-9493s-projects.vercel.app/).
-- No production deployment, live form submission, CRM mutation or analytics activation performed.
+The user explicitly authorized production publication. PR #2 was marked ready and merged using the expected reviewed head SHA. The existing main-branch Vercel integration rebuilt with production environment settings. The preview artifact was not promoted because preview HTML contains noindex.
 
-## Approval and publication
+## Production validation
 
-The first connector tree upload exceeded automatic approval review's 200,000-byte limit. After the user explicitly approved publishing the branch and draft PR, the standard Git push succeeded. The initial upload block is resolved. A documentation-only follow-up records the final delivery status; the tested application code is unchanged.
+[Machine-readable HTTP evidence](production-http-checks.json) records 18 read-only checks:
 
-## Hosted validation boundary
+- All nine sitemap pages returned 200, their own production canonicals and no accidental noindex; current recruitment/buyer titles and revised assessment content were present.
+- JSON-LD parsed on the commercial pages; one source H1 was present per sitemap page.
+- Sitemap and robots.txt returned 200; sitemap contained the nine expected URLs.
+- Insights and mobile QA pages retained noindex.
+- A nonexistent URL returned a genuine 404 and noindex.
+- HTTP and www requests redirected to the HTTPS apex.
+- GET /api/lead returned 405 as designed. No real form submission, email, appointment or CRM record was created.
+- GitHub's Vercel status for the release commit was success. Vercel production aliases included the apex and www hostnames.
 
-Vercel built the branch successfully using the existing Git integration. The hosted preview is protected by Vercel Authentication. Unauthenticated HTTP checks redirected to the Vercel login page; they are not evidence of the application's own 200/404 responses. The authenticated connector fetch also returned an SSO redirect, with `X-Robots-Tag: noindex`. No deployment-protection setting was weakened.
+Initial deployment-scoped error/fatal runtime log scan (since 1h, immediately after release) returned no matching entries. No build errors were reported. This short observation window is not proof of long-term reliability or live delivery. Log drains were not inspected. Search Console property access and analytics collection remain outstanding.
 
-The application HTML noindex/canonical, sitemap,404 and form behavior checks remain those of the locally built production/preview artifacts documented in [validation](validation.md). Do not claim that protected hosted HTML was inspected. An authorized Vercel user should open the preview to review it. The local mock preview at http://127.0.0.1:4322 remains useful while `python3 scripts/qa-preview.py` is running; it never delivers submissions externally.
+## Earlier preview and upload history
 
-## Release gate
+The first GitHub connector tree upload exceeded the automatic review payload limit. After explicit user approval, the standard Git push succeeded and the draft PR/preview were created. Preview authentication was preserved. Those preview HTTP checks reached Vercel SSO, so pre-release HTML/form validation used local production/preview builds. Production HTTP evidence above now verifies the public release.
 
-Review the draft PR and preview before separately authorizing a merge to main. Follow the exact [release and rollback steps](validation.md). The next visibility checkpoint is 30 days after actual production publication, with 60/90-day reviews thereafter.
+## Review and rollback
+
+First visibility/qualified-enquiry review: 16 October 2026; subsequent reviews 15 November and 15 December, subject to available collection coverage. These are checkpoints, not promised ranking dates.
+
+The prior production deployment is `dpl_HkaabYD29b16GkiV5FjjNcpDfk52`, baseline commit `c7f20a8e1935acfe346fe7654775d91481db2d97`. Restore it through Vercel deployment history if a material regression appears, or revert PR #2 and rebuild. Follow [validation and release procedures](validation.md); no database migration was introduced.
+
+Documentation-only follow-ups may have later commit/deployment IDs without changing the application code validated here.
