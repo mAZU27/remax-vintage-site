@@ -1,3 +1,5 @@
+// LEGACY MODEL: not used by the live enquiry flow. Do not re-enable without
+// defensible market inputs, agency approval and a validated methodology.
 // ============================================================
 // Value-simulator configuration (client-side estimate).
 //

@@ -25,9 +25,8 @@ import { careersWhyJoin as w } from '../data/carreiras';
     </div>
 
     <aside class="cwhy__path">
-      <span class="cwhy__path-eyebrow">Percurso de carreira</span>
+      <span class="cwhy__path-eyebrow">O que conversar com a equipa</span>
       <ol class="cpath" data-reveal>
-        <span class="cpath__line" aria-hidden="true"></span>
         {w.path.map((stage, i) => (
           <li class="cpath__node" style={`--d:${i * 140}ms`}>
             <span class="cpath__dot">{i + 1}</span>
@@ -63,12 +62,13 @@ import { careersWhyJoin as w } from '../data/carreiras';
   }
   .cwhy__path-eyebrow { font-size: 11px; letter-spacing: 0.28em; text-transform: uppercase; color: var(--gold-light); font-weight: 500; }
   .cpath { list-style: none; margin: 26px 0 0; padding: 0; position: relative; }
-  .cpath__line {
+  .cpath::before {
+    content: '';
     position: absolute; left: 17px; top: 14px; bottom: 14px; width: 1px;
     background: linear-gradient(to bottom, var(--gold-light), var(--hairline-gold));
     transform: scaleY(0); transform-origin: top; transition: transform 1100ms var(--t-ease-emph);
   }
-  .cpath.is-in .cpath__line { transform: scaleY(1); }
+  .cpath.is-in::before { transform: scaleY(1); }
   .cpath__node {
     position: relative; display: flex; align-items: center; gap: 18px; padding: 14px 0;
     opacity: 0; transform: translateX(14px); transition: opacity var(--t-slow), transform var(--t-slow); transition-delay: var(--d);

@@ -1,6 +1,5 @@
 ---
-// Seller lead capture. Front-end only for now (no backend) — see CLAUDE.md P5.
-// Validates client-side and shows an inline success state.
+// Seller lead capture through /api/lead. Show success only on delivered:true.
 import { zonas } from '../content/zonas';
 import Button from './Button.astro';
 import Icon from './Icon.astro';
@@ -117,6 +116,7 @@ const tipologias = ['T0', 'T1', 'T2', 'T3', 'T4', 'T5+', 'Moradia', 'Outro'];
 </style>
 
 <script>
+  import { recordLeadSuccess } from '../lib/measurement';
   document.querySelectorAll<HTMLFormElement>('form[data-valuation]').forEach((form) => {
     if (form.dataset.bound) return;
     form.dataset.bound = 'true';
@@ -198,6 +198,7 @@ const tipologias = ['T0', 'T1', 'T2', 'T3', 'T4', 'T5+', 'Moradia', 'Outro'];
         });
         const data = await res.json().catch(() => ({}));
         if (res.ok && data.delivered === true) {
+          recordLeadSuccess('valuation-form', submissionId);
           submissionId = crypto.randomUUID(); // fresh id for any subsequent lead
           if (body) body.hidden = true;
           if (success) success.hidden = false;

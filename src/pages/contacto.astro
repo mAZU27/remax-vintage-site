@@ -4,9 +4,10 @@ import PageHeader from '../components/PageHeader.astro';
 import Button from '../components/Button.astro';
 import Icon from '../components/Icon.astro';
 import { site } from '../data/site';
+import { OFFICIAL_AGENCY_URL } from '../lib/site.config';
 
-// Email e horário: por confirmar com a agência — deliberadamente ausentes
-// (o formulário desta página é o canal escrito; nunca publicar dados fictícios).
+// O formulário é o canal escrito. O horário existente requer confirmação da
+// agência e não é incluído no schema; nunca inventar um email de contacto.
 const details = [
   { icon: 'pin', label: 'Morada', lines: site.address },
   { icon: 'phone', label: 'Telefone', lines: [site.phone], href: site.phoneHref },
@@ -16,7 +17,7 @@ const details = [
 const assuntos = ['Comprar um imóvel', 'Vender / avaliação', 'Estudo de mercado', 'Agendar uma visita', 'Outro assunto'];
 ---
 <Base
-  title="Contacto"
+  title="Contactos e agência na Boavista, Porto"
   description="Fale com a RE/MAX Collection Vintage — Porto. Avaliação confidencial, visitas e qualquer questão sobre a nossa coleção de imóveis."
   pageType="ContactPage"
 >
@@ -43,11 +44,12 @@ const assuntos = ['Comprar um imóvel', 'Vender / avaliação', 'Estudo de merca
             </li>
           ))}
         </ul>
+        <p><a href={OFFICIAL_AGENCY_URL} target="_blank" rel="noopener noreferrer">Perfil oficial da agência na RE/MAX</a></p>
         {/* Bloco «Seguir» removido 2026-07-10: os links sociais eram '#'
             (placeholders). Repor quando existirem perfis reais. */}
       </aside>
 
-      <form class="cform" data-contact novalidate aria-label="Formulário de contacto">
+      <form class="cform" id="formulario" data-contact novalidate aria-label="Formulário de contacto">
         <div class="cform__body">
           <div class="cform__grid">
             <p class="field field--full">
@@ -74,7 +76,8 @@ const assuntos = ['Comprar um imóvel', 'Vender / avaliação', 'Estudo de merca
             </p>
             <p class="field field--full">
               <label for="c-msg">Mensagem</label>
-              <textarea id="c-msg" name="mensagem" rows="4" required></textarea>
+              <textarea id="c-msg" name="mensagem" rows="4" required aria-describedby="c-msg-help"></textarea>
+              <span class="field__help" id="c-msg-help">Descreva o seu pedido. Para comprar: zonas, tipologia, orçamento e prazo. Para uma visita: referência do anúncio e disponibilidade. Não envie documentos de identificação ou dados bancários.</span>
               <span class="field__err" data-err hidden>Escreva a sua mensagem.</span>
             </p>
           </div>
@@ -104,6 +107,8 @@ const assuntos = ['Comprar um imóvel', 'Vender / avaliação', 'Estudo de merca
 </Base>
 
 <style>
+  #formulario { scroll-margin-top: calc(var(--nav-h) + 24px); }
+  .field__help { display: block; margin-top: 8px; font-size: 13px; line-height: 1.5; color: var(--ink-60); }
   .contacto { display: grid; grid-template-columns: 0.8fr 1.2fr; gap: clamp(36px, 5vw, 80px); align-items: start; }
 
   .contacto__details { list-style: none; margin: 0; padding: 0; display: flex; flex-direction: column; gap: 26px; }
@@ -162,6 +167,7 @@ const assuntos = ['Comprar um imóvel', 'Vender / avaliação', 'Estudo de merca
 </style>
 
 <script>
+  import { recordLeadSuccess } from '../lib/measurement';
   const form = document.querySelector<HTMLFormElement>('form[data-contact]');
   if (form) {
     const body = form.querySelector<HTMLElement>('.cform__body');
@@ -256,6 +262,7 @@ const assuntos = ['Comprar um imóvel', 'Vender / avaliação', 'Estudo de merca
         });
         const data = await res.json().catch(() => ({}));
         if (res.ok && data.delivered === true) {
+          recordLeadSuccess('contacto', submissionId, g('assunto'));
           submissionId = crypto.randomUUID(); // fresh id for any subsequent lead
           if (body) body.hidden = true;
           if (success) success.hidden = false;

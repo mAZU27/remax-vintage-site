@@ -6,6 +6,8 @@ import Footer from '../components/Footer.astro';
 import ValueSimulator from '../components/ValueSimulator.astro';
 import CustomerSupport from '../components/CustomerSupport.astro';
 import { site } from '../data/site';
+import { canonicalUrl, pageLabels, serializeSchema } from '../lib/seo';
+import { OFFICIAL_AGENCY_URL } from '../lib/site.config';
 
 interface Props {
   title?: string;
@@ -43,16 +45,17 @@ const {
   heroPreload,
 } = Astro.props;
 
-const pageTitle = title ? `${title} · ${site.shortName}` : `${site.name} — ${site.tagline}`;
-const canonical = Astro.site ? new URL(Astro.url.pathname, Astro.site).href : Astro.url.pathname;
+const pageTitle = title ? `${title} | ${site.name}` : `${site.name} — Agência imobiliária no Porto`;
+const canonical = canonicalUrl(Astro.url.pathname, Astro.site?.href ?? Astro.url.origin);
+const preventIndexing = noindex || import.meta.env.DEV || import.meta.env.VERCEL_ENV === 'preview' || import.meta.env.SITE_NOINDEX === 'true';
+const breadcrumbLabel = pageLabels[new URL(canonical).pathname];
 const ogImage = Astro.site ? new URL(image, Astro.site).href : image;
 const origin = Astro.site ? Astro.site.href : '/';
 
 // Global entity graph — agency + website. Only VERIFIED facts go into
 // structured data: name/legalName/AMI/telephone/address/foundingDate were
-// confirmed against the official remax.pt agency profile (office 12382,
-// 2026-07-10). Email/hours/social stay out until the agency confirms them
-// (sameAs will be reintroduced when real profile URLs exist).
+// rechecked against the official remax.pt agency profile (office 12382,
+// 2026-09-16). Email/hours stay out until the agency confirms them.
 const jsonLd = {
   '@context': 'https://schema.org',
   '@graph': [
@@ -66,6 +69,7 @@ const jsonLd = {
       logo: new URL(site.logoFull, origin).href,
       image: new URL(site.logoFull, origin).href,
       url: origin,
+      sameAs: [OFFICIAL_AGENCY_URL],
       telephone: site.phone,
       areaServed: 'Porto, Portugal',
       address: {
@@ -75,7 +79,6 @@ const jsonLd = {
         addressLocality: 'Porto',
         addressCountry: 'PT',
       },
-      priceRange: '€€€€',
       foundingDate: String(site.established),
     },
     {
@@ -88,12 +91,23 @@ const jsonLd = {
     },
     {
       '@type': pageType,
+      '@id': `${canonical}#webpage`,
       url: canonical,
       name: pageTitle,
       description,
       inLanguage: 'pt-PT',
       isPartOf: { '@id': `${origin}#website` },
+      about: { '@id': `${origin}#agency` },
+      ...(breadcrumbLabel ? { breadcrumb: { '@id': `${canonical}#breadcrumb` } } : {}),
     },
+    ...(breadcrumbLabel ? [{
+      '@type': 'BreadcrumbList',
+      '@id': `${canonical}#breadcrumb`,
+      itemListElement: [
+        { '@type': 'ListItem', position: 1, name: 'Início', item: origin },
+        { '@type': 'ListItem', position: 2, name: breadcrumbLabel, item: canonical },
+      ],
+    }] : []),
   ],
 };
 const pageSchemas = schema ? (Array.isArray(schema) ? schema : [schema]) : [];
@@ -106,9 +120,10 @@ const pageSchemas = schema ? (Array.isArray(schema) ? schema : [schema]) : [];
     <title>{pageTitle}</title>
     <meta name="description" content={description} />
     <link rel="canonical" href={canonical} />
-    {noindex && <meta name="robots" content="noindex, follow" />}
+    {preventIndexing && <meta name="robots" content="noindex, follow" />}
     <meta name="theme-color" content="#0B1A2E" />
     <meta name="color-scheme" content="light" />
+    <noscript><style is:global>[data-reveal] { opacity: 1 !important; transform: none !important; }</style></noscript>
 
     {(heroPreload ? (Array.isArray(heroPreload) ? heroPreload : [heroPreload]) : []).map((p) => (
       <link
@@ -151,9 +166,9 @@ const pageSchemas = schema ? (Array.isArray(schema) ? schema : [schema]) : [];
       href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,400;0,500;0,600;1,400;1,500&family=Jost:wght@400;500&display=swap"
     />
 
-    <script type="application/ld+json" set:html={JSON.stringify(jsonLd)} />
+    <script is:inline type="application/ld+json" set:html={serializeSchema(jsonLd)} />
     {pageSchemas.map((s) => (
-      <script type="application/ld+json" set:html={JSON.stringify({ '@context': 'https://schema.org', ...s })} />
+      <script is:inline type="application/ld+json" set:html={serializeSchema({ '@context': 'https://schema.org', ...s })} />
     ))}
   </head>
   <body>
@@ -161,12 +176,17 @@ const pageSchemas = schema ? (Array.isArray(schema) ? schema : [schema]) : [];
     <Nav overHero={overHeroNav} />
     <main id="main">
       <slot />
+      {breadcrumbLabel && <nav class="page-breadcrumb container" aria-label="Percurso da página">
+        <a href="/">Início</a><span aria-hidden="true"> / </span><span aria-current="page">{breadcrumbLabel}</span>
+      </nav>}
     </main>
     <Footer />
     <ValueSimulator />
     <CustomerSupport />
 
     <script>
+      import { initInteractionEvents } from '../lib/measurement';
+      initInteractionEvents();
       // Reveal-on-scroll — single observer for every [data-reveal] on the page.
       const reduce = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
       const items = document.querySelectorAll('[data-reveal]');
@@ -189,3 +209,8 @@ const pageSchemas = schema ? (Array.isArray(schema) ? schema : [schema]) : [];
     </script>
   </body>
 </html>
+
+<style>
+  .page-breadcrumb { padding-block: 20px; font-size: 13px; color: var(--ink-60); }
+  .page-breadcrumb a { text-decoration: underline; text-underline-offset: 3px; }
+</style>

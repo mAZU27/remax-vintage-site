@@ -11,6 +11,7 @@ node_modules/
 dist/
 .astro/
 .cache/
+.firecrawl/
 
 # image-slot runtime sidecar (builder-only, legacy)
 .image-slots.state.json

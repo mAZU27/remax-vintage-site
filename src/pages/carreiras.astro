@@ -8,10 +8,12 @@ import CareersProcess from '../components/CareersProcess.astro';
 import CareersOfficeLife from '../components/CareersOfficeLife.astro';
 import CareersApplication from '../components/CareersApplication.astro';
 import CareersFinalCTA from '../components/CareersFinalCTA.astro';
+import IntentAnswers from '../components/IntentAnswers.astro';
+import { careersFaqs } from '../data/search-intent';
 ---
 <Base
-  title="Carreiras"
-  description="Construa carreira na RE/MAX Collection Vintage — Porto. Equipa de excelência em imóveis premium, formação curada, mentoria e crescimento real. Veja as oportunidades abertas."
+  title="Consultor imobiliário no Porto: carreiras"
+  description="Quer ser consultor imobiliário no Porto ou mudar de agência? Conheça a RE/MAX Collection Vintage, esclareça as condições e envie a sua candidatura espontânea."
   overHeroNav
 >
   {/* CareersOpenRoles e CareersTeamVoices removidos 2026-07-10: a lista de
@@ -24,6 +26,9 @@ import CareersFinalCTA from '../components/CareersFinalCTA.astro';
   <CareersBenefits />
   <CareersProcess />
   <CareersOfficeLife />
+  <IntentAnswers id="perguntas-carreiras" title="Trabalhar no imobiliário no Porto: as suas perguntas" items={careersFaqs}>
+    <p class="lede">Conheça <a href="/sobre-nos">a agência e a equipa</a> ou consulte a <a href="/contacto">morada no Porto</a>.</p>
+  </IntentAnswers>
   <CareersApplication />
   <CareersFinalCTA />
 </Base>
